@@ -42,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         infoItemList.add(new InfoItem("学校通知"));
         infoLinkList.add(new InfoLink("bilibili"));
         infoLinkList.add(new InfoLink("zhihu"));
+        for (int i = 0; i < 20; i++) {
+            infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem"));
+            infoLinkList.add(new InfoLink(Integer.toString(i)+"infolink"));
+
+        }
         //TODO 构造测试数据
     }
 

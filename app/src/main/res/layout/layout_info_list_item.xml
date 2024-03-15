@@ -21,7 +21,7 @@
             android:textSize="26sp"/>
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="500dp"
             android:layout_below="@id/info_list_item_title"
             android:id="@+id/info_link_recyclerview"
             android:paddingTop = "20dp"
