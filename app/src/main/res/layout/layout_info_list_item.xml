@@ -19,5 +19,14 @@
             android:id="@+id/info_list_item_title"
             android:text="@string/info_item_title"
             android:textSize="26sp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/info_list_item_title"
+            android:paddingTop = "20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_centerHorizontal="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
