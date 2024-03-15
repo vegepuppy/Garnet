@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Garnet</string>
+    <string name="info_item_title">Title</string>
+    <string name="info_link_text">button</string>
+</resources>
