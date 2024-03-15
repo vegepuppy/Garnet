@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/info_link_text"
-    android:drawableLeft="@drawable/baseline_123_24"
+    android:drawableStart="@drawable/baseline_123_24"
     xmlns:tools="http://schemas.android.com/tools">
 
 </Button>
