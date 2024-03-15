@@ -14,7 +14,7 @@ public class InfoLink {
 //        return url;
 //    }
 
-    public InfoLink(String title, URL url) {
+    public InfoLink(String title) {
         this.title = title;
 //        this.url = url;
     }
