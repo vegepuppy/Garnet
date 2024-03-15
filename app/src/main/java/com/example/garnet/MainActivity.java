@@ -70,4 +70,5 @@ public class MainActivity extends AppCompatActivity {
 //            this.linkListRecyclerView = itemView.findViewById(R.id.link_list_recyclerview);
         }
     }
+    public void trygit(){return ;}
 }
