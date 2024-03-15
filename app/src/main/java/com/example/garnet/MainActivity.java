@@ -5,12 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +15,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView infoItemListRecyclerView;
-    private MyAdapter myAdapter;
+    private FirstAdapter firstAdapter;
     private List<InfoItem> infoItemList = new ArrayList<InfoItem>();
 
     @Override
@@ -27,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         infoItemListRecyclerView = findViewById(R.id.info_item_recyclerview);
-        myAdapter = new MyAdapter();
-        infoItemListRecyclerView.setAdapter(myAdapter);
+        firstAdapter = new FirstAdapter();
+        infoItemListRecyclerView.setAdapter(firstAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         infoItemListRecyclerView.setLayoutManager(layoutManager);
         infoItemList.add(new InfoItem("高等数学"));
@@ -37,17 +33,17 @@ public class MainActivity extends AppCompatActivity {
         //TODO 构造测试数据
     }
 
-    class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    private class FirstAdapter extends RecyclerView.Adapter<FirstViewHolder> {
         @NonNull
         @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public FirstViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = View.inflate(MainActivity.this, R.layout.layout_info_list_item, null);
-            MyViewHolder myViewHolder = new MyViewHolder(view);
-            return myViewHolder;
+            FirstViewHolder firstViewHolder = new FirstViewHolder(view);
+            return firstViewHolder;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull FirstViewHolder holder, int position) {
             InfoItem infoItem = infoItemList.get(position);
             holder.infoListItemTitleTextView.setText(infoItem.getTitle());
             //TODO 设置holder的另一个属性
@@ -59,12 +55,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class MyViewHolder extends RecyclerView.ViewHolder {
+    private class FirstViewHolder extends RecyclerView.ViewHolder {
         TextView infoListItemTitleTextView;
 //        RecyclerView linkListRecyclerView;
 
 
-        public MyViewHolder(@NonNull View itemView) {
+        public FirstViewHolder(@NonNull View itemView) {
             super(itemView);
             this.infoListItemTitleTextView = itemView.findViewById(R.id.info_list_item_title);
 //            this.linkListRecyclerView = itemView.findViewById(R.id.link_list_recyclerview);

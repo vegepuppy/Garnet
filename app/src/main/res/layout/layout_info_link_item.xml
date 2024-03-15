@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:text="@string/info_link_text"
     android:drawableStart="@drawable/baseline_123_24"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/info_link_button">
 
 </Button>
