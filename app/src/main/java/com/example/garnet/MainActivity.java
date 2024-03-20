@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity  {
         //数据部分
         infoItemList.add(new InfoItem("高等数学"));
         infoItemList.add(new InfoItem("学校通知"));
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 5; i++) {
             infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem"));
         }
         //TODO 构造测试数据
@@ -65,8 +66,11 @@ public class MainActivity extends AppCompatActivity  {
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
-                        toast.show();
+//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
+//                        toast.show();
+                        EditText editText = addWindow.findViewById(R.id.title_edit_text);
+                        InfoItem newInfoItem = new InfoItem(editText.getText().toString());
+                        infoItemList.add(newInfoItem);
                     }
                 });
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
