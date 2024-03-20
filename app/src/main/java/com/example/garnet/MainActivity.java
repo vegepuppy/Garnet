@@ -1,5 +1,6 @@
 package com.example.garnet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,17 +10,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
     private RecyclerView infoItemListRecyclerView;
     private myAdapter myAdapter;
-    private List<InfoItem> infoItemList = new ArrayList<InfoItem>();
+
+    private List<InfoItem> infoItemList = DataBase.getDatabase();
 
 
     @Override
@@ -34,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         infoItemListRecyclerView.setLayoutManager(layoutManager);
 
+        //FAB部分
+        MyClickListener myClickListener = new MyClickListener();
+        FloatingActionButton floatingActionButton= findViewById(R.id.fab_add);
+        floatingActionButton.setOnClickListener(myClickListener);
 
         //数据部分
         infoItemList.add(new InfoItem("高等数学"));
@@ -42,6 +51,34 @@ public class MainActivity extends AppCompatActivity {
             infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem"));
         }
         //TODO 构造测试数据
+    }
+
+
+    class MyClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.fab_add) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("创建");
+                View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
+                builder.setView(addWindow);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        }
     }
 
     private class myAdapter extends RecyclerView.Adapter<MyViewHolder> {

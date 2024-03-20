@@ -2,4 +2,9 @@
     <string name="app_name">Garnet</string>
     <string name="info_item_title">Title</string>
     <string name="info_link_text">button</string>
+    <string name="title">标题</string>
+    <string name="to_hint">Enter title</string>
+    <string name="link">链接</string>
+    <string name="hint">Enter link</string>
+    <string name="enter">OK</string>
 </resources>
