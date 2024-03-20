@@ -1,9 +1,10 @@
 package com.example.garnet;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,9 +16,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView infoItemListRecyclerView;
-    private FirstAdapter firstAdapter;
+    private myAdapter myAdapter;
     private List<InfoItem> infoItemList = new ArrayList<InfoItem>();
-
 
 
     @Override
@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
         //infoItem部分
         infoItemListRecyclerView = findViewById(R.id.info_item_recyclerview);
-        firstAdapter = new FirstAdapter();
-        infoItemListRecyclerView.setAdapter(firstAdapter);
+        myAdapter = new myAdapter();
+        infoItemListRecyclerView.setAdapter(myAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
         infoItemListRecyclerView.setLayoutManager(layoutManager);
 
@@ -42,21 +42,24 @@ public class MainActivity extends AppCompatActivity {
         //TODO 构造测试数据
     }
 
-    private class FirstAdapter extends RecyclerView.Adapter<FirstViewHolder> {
+    private class myAdapter extends RecyclerView.Adapter<MyViewHolder> {
         //此处可能不安全
         private View view;
         @NonNull
         @Override
-        public FirstViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            view = View.inflate(MainActivity.this,R.layout.layout_info_list_item,null);
-            FirstViewHolder firstViewHolder = new FirstViewHolder(view);
-            return firstViewHolder;
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            //view = View.inflate(MainActivity.this,R.layout.layout_info_list_item,null);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_info_list_item, parent, false);
+            // 我不理解，不要动这里
+
+            MyViewHolder myViewHolder = new MyViewHolder(view);
+            return myViewHolder;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull FirstViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             InfoItem infoItem = infoItemList.get(position);
-            holder.infoListButton.setText(infoItem.getTitle());
+            holder.infoListTitleTextView.setText(infoItem.getTitle());
         }
 
         @Override
@@ -65,12 +68,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class FirstViewHolder extends RecyclerView.ViewHolder {
-        Button infoListButton;
+    private class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView infoListTitleTextView;
 
-        public FirstViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.infoListButton = itemView.findViewById(R.id.info_list_button);
+            this.infoListTitleTextView = itemView.findViewById(R.id.text_in_card);
         }
     }
 
