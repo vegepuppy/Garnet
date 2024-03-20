@@ -1,10 +1,12 @@
 package com.example.garnet;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,6 +76,19 @@ public class MainActivity extends AppCompatActivity {
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             this.infoListTitleTextView = itemView.findViewById(R.id.text_in_card);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        InfoItem infoItem = infoItemList.get(position);
+                        Toast toast = Toast.makeText(MainActivity.this, infoItem.getTitle(), Toast.LENGTH_LONG);
+                        toast.show();
+                        Intent intent = new Intent(MainActivity.this,InfoLinkActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
         }
     }
 
