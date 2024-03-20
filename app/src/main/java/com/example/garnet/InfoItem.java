@@ -1,5 +1,8 @@
 package com.example.garnet;
 
+import android.icu.text.IDNA;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +13,6 @@ public class InfoItem {
     private String title;
 //    private List<String> infoLinkTitleList;
     //TODO 以后要实现链接，可能不是用的String，而是一个新的类
-
 
     public String getTitle() {
         return title;

@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(MainActivity.this, infoItem.getTitle(), Toast.LENGTH_LONG);
                         toast.show();
                         Intent intent = new Intent(MainActivity.this,InfoLinkActivity.class);
+                        intent.putExtra(InfoLinkActivity.INFO_POS, position);
                         startActivity(intent);
                     }
                 }
