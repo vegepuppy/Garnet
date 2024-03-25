@@ -28,5 +28,7 @@ public class InfoItem {
         this.urlList.add("www.baidu.com");
     }
 
-
+    public List<String> getUrlList() {
+        return urlList;
+    }
 }

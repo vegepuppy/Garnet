@@ -5,7 +5,6 @@ import java.util.List;
 
 public class DataBase {
     private static List<InfoItem> infoItemList = new ArrayList<>();
-
     public DataBase() {
         infoItemList.add(new InfoItem("高等数学"));
         infoItemList.add(new InfoItem("学校通知"));

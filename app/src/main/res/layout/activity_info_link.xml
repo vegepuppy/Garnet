@@ -10,7 +10,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/info_item_recyclerview"
+        android:id="@+id/second_recyclerview"
         android:paddingTop = "20dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"

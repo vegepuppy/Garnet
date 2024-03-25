@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Button xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="@string/info_link_text"
     android:drawableStart="@drawable/baseline_123_24"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/info_link_button">
+    android:id="@+id/info_link_cardview"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/info_link_textview"
+        android:textSize="30sp" />
 
-</Button>
+</androidx.cardview.widget.CardView>

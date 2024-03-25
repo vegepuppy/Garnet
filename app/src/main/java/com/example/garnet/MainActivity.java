@@ -23,7 +23,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity  {
     private RecyclerView infoItemListRecyclerView;
     private myAdapter myAdapter;
-    private DataBase db = new DataBase();
+    private static DataBase db = new DataBase();
 
     public DataBase getDb() {
         return db;
