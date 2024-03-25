@@ -18,10 +18,8 @@ public class InfoLinkActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_link);
-        TextView textView = findViewById(R.id.text);
         Intent intent = getIntent();
         int position = intent.getIntExtra(INFO_POS, -1);
 
-        textView.setText(Integer.toString(position));
     }
 }

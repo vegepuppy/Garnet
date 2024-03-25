@@ -18,15 +18,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity  {
     private RecyclerView infoItemListRecyclerView;
     private myAdapter myAdapter;
+    private DataBase db = new DataBase();
 
-    private List<InfoItem> infoItemList = DataBase.getDatabase();
-
+    public DataBase getDb() {
+        return db;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +46,7 @@ public class MainActivity extends AppCompatActivity  {
         FloatingActionButton floatingActionButton= findViewById(R.id.fab_add);
         floatingActionButton.setOnClickListener(myClickListener);
 
-        //数据部分
-        infoItemList.add(new InfoItem("高等数学"));
-        infoItemList.add(new InfoItem("学校通知"));
-        for (int i = 0; i < 5; i++) {
-            infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem", Integer.toString(i)+"url"));
-        }
+
         //TODO 构造测试数据
     }
 
@@ -70,7 +66,7 @@ public class MainActivity extends AppCompatActivity  {
 //                        toast.show();
                         EditText editText = addWindow.findViewById(R.id.title_edit_text);
                         InfoItem newInfoItem = new InfoItem(editText.getText().toString());
-                        infoItemList.add(newInfoItem);
+                        db.getInfoItemList().add(newInfoItem);
                     }
                 });
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -101,13 +97,13 @@ public class MainActivity extends AppCompatActivity  {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            InfoItem infoItem = infoItemList.get(position);
+            InfoItem infoItem = db.getInfoItemList().get(position);
             holder.infoListTitleTextView.setText(infoItem.getTitle());
         }
 
         @Override
         public int getItemCount() {
-            return infoItemList.size();
+            return db.getInfoItemList().size();
         }
     }
 
@@ -122,7 +118,7 @@ public class MainActivity extends AppCompatActivity  {
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        InfoItem infoItem = infoItemList.get(position);
+                        InfoItem infoItem = db.getInfoItemList().get(position);
                         Toast toast = Toast.makeText(MainActivity.this, infoItem.getTitle(), Toast.LENGTH_LONG);
                         toast.show();
                         Intent intent = new Intent(MainActivity.this,InfoLinkActivity.class);

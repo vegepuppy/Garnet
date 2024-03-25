@@ -6,12 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InfoLinkActivity">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:layout_centerInParent="true"
-        android:textSize="50sp"
-        android:id="@+id/text"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/info_item_recyclerview"
+        android:paddingTop = "20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_centerHorizontal="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
 
 </RelativeLayout>

@@ -14,11 +14,9 @@ public class InfoItem {
     private String title;
 //    private List<String> infoLinkTitleList;
     //TODO 以后要实现链接，可能不是用的String，而是一个新的类
-    private String url;
 
-    public String getUrl() {
-        return url;
-    }
+    private List<String> urlList = new ArrayList<>();
+
 
     public String getTitle() {
         return title;
@@ -26,10 +24,9 @@ public class InfoItem {
 
     public InfoItem(String title) {
         this.title = title;
+        this.urlList.add("www.bilibili.com");
+        this.urlList.add("www.baidu.com");
     }
 
-    public InfoItem(String title, String url) {
-        this.title = title;
-        this.url = url;
-    }
+
 }
