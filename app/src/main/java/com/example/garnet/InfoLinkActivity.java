@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
     public static final String INFO_LIST = "info_list";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

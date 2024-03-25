@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity  {
         infoItemList.add(new InfoItem("高等数学"));
         infoItemList.add(new InfoItem("学校通知"));
         for (int i = 0; i < 5; i++) {
-            infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem"));
+            infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem", Integer.toString(i)+"url"));
         }
         //TODO 构造测试数据
     }
