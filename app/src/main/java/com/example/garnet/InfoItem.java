@@ -24,8 +24,8 @@ public class InfoItem {
 
     public InfoItem(String title) {
         this.title = title;
-        this.urlList.add("www.bilibili.com");
-        this.urlList.add("www.baidu.com");
+        this.urlList.add("http://www.bilibili.com");
+        this.urlList.add("http://www.baidu.com");
     }
 
     public List<String> getUrlList() {

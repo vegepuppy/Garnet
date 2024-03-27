@@ -2,6 +2,7 @@ package com.example.garnet;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -11,7 +12,7 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.net.URL;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -120,6 +121,13 @@ public class InfoLinkActivity extends AppCompatActivity {
                         InfoItem infoItem = db.getInfoItemList().get(position);
                         Toast toast = Toast.makeText(InfoLinkActivity.this, "Clicked!!", Toast.LENGTH_LONG);
                         toast.show();
+                        Uri uri = Uri.parse(db.getInfoItemList().get(linkPosition).getUrlList().get(position));
+                        Intent intent = new Intent(Intent.ACTION_VIEW,uri);
+                        try{
+                            startActivity(intent);
+                        }catch (android.content.ActivityNotFoundException e){
+                            Toast.makeText(InfoLinkActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });
