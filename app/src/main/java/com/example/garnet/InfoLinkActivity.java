@@ -1,17 +1,22 @@
 package com.example.garnet;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
@@ -35,7 +40,42 @@ public class InfoLinkActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(InfoLinkActivity.this);
         secondRecyclerView.setLayoutManager(layoutManager);
 
+        //FAB部分
+        MyClickListener myClickListener = new MyClickListener();
+        FloatingActionButton floatingActionButton= findViewById(R.id.second_fab_add);
+        floatingActionButton.setOnClickListener(myClickListener);
+
     }
+
+    private class MyClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.second_fab_add) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
+                builder.setTitle("创建");
+                View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
+                builder.setView(addWindow);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
+//                        toast.show();
+                        EditText editText = addWindow.findViewById(R.id.link_edit_text);
+                        db.getInfoItemList().get(linkPosition).getUrlList().add(editText.getText().toString());
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        }
+    }
+
 
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {

@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-    class MyClickListener implements View.OnClickListener{
+    private class MyClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.fab_add) {
