@@ -31,4 +31,8 @@ public class InfoItem {
     public List<String> getUrlList() {
         return urlList;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

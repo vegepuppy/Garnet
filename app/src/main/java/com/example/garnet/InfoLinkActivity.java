@@ -149,6 +149,28 @@ public class InfoLinkActivity extends AppCompatActivity {
                     myAdapter.notifyItemRemoved(position);
                 } else if (itemId == R.id.modify) {
                     Toast.makeText(InfoLinkActivity.this, "点击了修改", Toast.LENGTH_LONG).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
+                    builder.setTitle("修改");
+                    View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
+                    builder.setView(addWindow);
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
+//                        toast.show();
+                            EditText editText = addWindow.findViewById(R.id.link_edit_text);
+                            db.getInfoItemList().get(linkPosition).getUrlList().set(position,editText.getText().toString());
+                            myAdapter.notifyItemChanged(position);
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
                 return true;
             }
