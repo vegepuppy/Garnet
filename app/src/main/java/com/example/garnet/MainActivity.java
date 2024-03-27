@@ -4,9 +4,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,7 +129,36 @@ public class MainActivity extends AppCompatActivity  {
                     }
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION){
+                        showPopupMenu(v,position);
+                    }
+                    return true;
+                }
+            });
         }
+    }
+    private void showPopupMenu(View view, int position){
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_popupmenu,popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.delete) {
+                    Toast.makeText(MainActivity.this, "点击了删除", Toast.LENGTH_LONG).show();
+                    db.getInfoItemList().remove(position);
+                    myAdapter.notifyItemRemoved(position);
+                } else if (itemId == R.id.modify) {
+                    Toast.makeText(MainActivity.this, "点击了修改", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+        });
     }
 
 }
