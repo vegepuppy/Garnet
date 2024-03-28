@@ -35,4 +35,6 @@ public class InfoItem {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    // testing in new branch
 }
