@@ -17,6 +17,4 @@ public class DataBase {
         return infoItemList;
     }
 
-    // This is a test comment.
-    // first pr
 }
