@@ -16,4 +16,6 @@ public class DataBase {
     public static List<InfoItem> getInfoItemList() {
         return infoItemList;
     }
+
+    // This is a test comment.
 }
