@@ -3,6 +3,8 @@ package com.example.garnet;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -53,14 +57,40 @@ public class MainActivity extends AppCompatActivity  {
     private class MyClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
+            final View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
+            final int MAX_LENGTH = 20;
+            final TextView tv = addWindow.findViewById(R.id.text_count);
+            final EditText et = addWindow.findViewById(R.id.title_edit_text);
+
+
             if (v.getId() == R.id.fab_add) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
                 builder.setTitle("创建");
 
                 // 设置对应的xml为窗口布局
-                View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
                 builder.setView(addWindow);
+
+                // 创建一个监听器用于显示已输入字数
+                et.addTextChangedListener(new TextWatcher() {
+                    private CharSequence wordNum;//记录输入的字数
+                    private int selectionStart;
+                    private int selectionEnd;
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        wordNum= s;//实时记录输入的字数
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        tv.setText(s.length() + "/" + MAX_LENGTH);
+                    }
+                });
 
                 // 设置确定按钮，因为需要点击之后不消失，所以需要另外写Listener
                 builder.setPositiveButton("确定", null);
@@ -79,8 +109,7 @@ public class MainActivity extends AppCompatActivity  {
                 alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText editText = addWindow.findViewById(R.id.title_edit_text);
-                        String title = editText.getText().toString();
+                        String title = et.getText().toString();
 
                         //判断标题不能为空
                         if(title.trim().isEmpty()){
@@ -88,7 +117,7 @@ public class MainActivity extends AppCompatActivity  {
                                     .show();
                         }
                         else{
-                            InfoItem newInfoItem = new InfoItem(editText.getText().toString());
+                            InfoItem newInfoItem = new InfoItem(et.getText().toString());
                             db.getInfoItemList().add(newInfoItem);
                             alertDialog.dismiss();
                         }

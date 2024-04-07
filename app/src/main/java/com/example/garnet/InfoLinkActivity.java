@@ -81,6 +81,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                             Toast.makeText(InfoLinkActivity.this,"链接不能为空",Toast.LENGTH_SHORT)
                                     .show();
                         }
+
                         else{
                             InfoItem newInfoItem = new InfoItem(editText.getText().toString());
                             db.getInfoItemList().get(linkPosition).getUrlList().add(title.trim());
