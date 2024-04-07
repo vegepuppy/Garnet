@@ -57,14 +57,9 @@ public class InfoLinkActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
                 builder.setTitle("创建");
                 View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
+
                 builder.setView(addWindow);
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText editText = addWindow.findViewById(R.id.link_edit_text);
-                        db.getInfoItemList().get(linkPosition).getUrlList().add(editText.getText().toString());
-                    }
-                });
+                builder.setPositiveButton("确定", null);
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -72,7 +67,27 @@ public class InfoLinkActivity extends AppCompatActivity {
                     }
                 });
                 AlertDialog alertDialog = builder.create();
+
                 alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = addWindow.findViewById(R.id.link_edit_text);
+                        String title = editText.getText().toString();
+
+                        //判断标题不能为空
+                        if(title.trim().isEmpty()){
+                            Toast.makeText(InfoLinkActivity.this,"链接不能为空",Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                        else{
+                            InfoItem newInfoItem = new InfoItem(editText.getText().toString());
+                            db.getInfoItemList().get(linkPosition).getUrlList().add(title.trim());
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
             }
         }
     }
