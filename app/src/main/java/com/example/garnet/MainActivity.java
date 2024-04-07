@@ -47,9 +47,6 @@ public class MainActivity extends AppCompatActivity  {
         MyClickListener myClickListener = new MyClickListener();
         FloatingActionButton floatingActionButton= findViewById(R.id.fab_add);
         floatingActionButton.setOnClickListener(myClickListener);
-
-
-        //TODO 构造测试数据
     }
 
 
@@ -58,26 +55,41 @@ public class MainActivity extends AppCompatActivity  {
         public void onClick(View v) {
             if (v.getId() == R.id.fab_add) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+
                 builder.setTitle("创建");
-                View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
+
+                // 设置对应的xml为窗口布局
+                View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
                 builder.setView(addWindow);
+
+                // 设置确定按钮
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
-//                        toast.show();
                         EditText editText = addWindow.findViewById(R.id.title_edit_text);
-                        InfoItem newInfoItem = new InfoItem(editText.getText().toString());
-                        db.getInfoItemList().add(newInfoItem);
+                        String title = editText.getText().toString();
+
+                        //判断标题不能为空
+                        if(title.trim().isEmpty()){
+                            Toast.makeText(MainActivity.this,"标题不能为空",Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                        else{
+                            InfoItem newInfoItem = new InfoItem(editText.getText().toString());
+                            db.getInfoItemList().add(newInfoItem);
+                        }
                     }
                 });
+
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
+
                 AlertDialog alertDialog = builder.create();
+
                 alertDialog.show();
             }
         }
