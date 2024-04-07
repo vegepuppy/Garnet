@@ -62,24 +62,8 @@ public class MainActivity extends AppCompatActivity  {
                 View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
                 builder.setView(addWindow);
 
-                // 设置确定按钮
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText editText = addWindow.findViewById(R.id.title_edit_text);
-                        String title = editText.getText().toString();
-
-                        //判断标题不能为空
-                        if(title.trim().isEmpty()){
-                            Toast.makeText(MainActivity.this,"标题不能为空",Toast.LENGTH_SHORT)
-                                    .show();
-                        }
-                        else{
-                            InfoItem newInfoItem = new InfoItem(editText.getText().toString());
-                            db.getInfoItemList().add(newInfoItem);
-                        }
-                    }
-                });
+                // 设置确定按钮，因为需要点击之后不消失，所以需要另外写Listener
+                builder.setPositiveButton("确定", null);
 
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
@@ -91,6 +75,27 @@ public class MainActivity extends AppCompatActivity  {
                 AlertDialog alertDialog = builder.create();
 
                 alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = addWindow.findViewById(R.id.title_edit_text);
+                        String title = editText.getText().toString();
+
+                        //判断标题不能为空
+                        if(title.trim().isEmpty()){
+                            Toast.makeText(MainActivity.this,"标题不能为空",Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                        else{
+                            InfoItem newInfoItem = new InfoItem(editText.getText().toString());
+                            db.getInfoItemList().add(newInfoItem);
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+
+
             }
         }
     }
