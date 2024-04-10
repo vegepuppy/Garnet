@@ -22,11 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.w3c.dom.Text;
-
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity  {
+public class InfoListActivity extends AppCompatActivity  {
     private RecyclerView infoItemListRecyclerView;
     private myAdapter myAdapter;
     private static DataBase db = new DataBase();
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity  {
         infoItemListRecyclerView = findViewById(R.id.info_item_recyclerview);
         myAdapter = new myAdapter();
         infoItemListRecyclerView.setAdapter(myAdapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(InfoListActivity.this);
         infoItemListRecyclerView.setLayoutManager(layoutManager);
 
         //FAB部分
@@ -57,14 +53,14 @@ public class MainActivity extends AppCompatActivity  {
     private class MyClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            final View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
+            final View addWindow = InfoListActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
             final int MAX_LENGTH = 20;
             final TextView tv = addWindow.findViewById(R.id.text_count);
             final EditText et = addWindow.findViewById(R.id.title_edit_text);
 
 
             if (v.getId() == R.id.fab_add) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(InfoListActivity.this);
 
                 builder.setTitle("创建");
 
@@ -113,7 +109,7 @@ public class MainActivity extends AppCompatActivity  {
 
                         //判断标题不能为空
                         if(title.trim().isEmpty()){
-                            Toast.makeText(MainActivity.this,"标题不能为空",Toast.LENGTH_SHORT)
+                            Toast.makeText(InfoListActivity.this,"标题不能为空",Toast.LENGTH_SHORT)
                                     .show();
                         }
                         else{
@@ -167,9 +163,9 @@ public class MainActivity extends AppCompatActivity  {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         InfoItem infoItem = db.getInfoItemList().get(position);
-                        Toast toast = Toast.makeText(MainActivity.this, infoItem.getTitle(), Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(InfoListActivity.this, infoItem.getTitle(), Toast.LENGTH_LONG);
                         toast.show();
-                        Intent intent = new Intent(MainActivity.this,InfoLinkActivity.class);
+                        Intent intent = new Intent(InfoListActivity.this,InfoLinkActivity.class);
                         intent.putExtra(InfoLinkActivity.INFO_POS, position);
                         startActivity(intent);
                     }
@@ -188,7 +184,7 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
     private void showPopupMenu(View view, int position){
-        PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+        PopupMenu popupMenu = new PopupMenu(InfoListActivity.this, view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_popupmenu,popupMenu.getMenu());
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -196,14 +192,14 @@ public class MainActivity extends AppCompatActivity  {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.delete) {
-                    Toast.makeText(MainActivity.this, "点击了删除", Toast.LENGTH_LONG).show();
+                    Toast.makeText(InfoListActivity.this, "点击了删除", Toast.LENGTH_LONG).show();
                     db.getInfoItemList().remove(position);
                     myAdapter.notifyItemRemoved(position);
                 } else if (itemId == R.id.modify) {
-                    Toast.makeText(MainActivity.this, "点击了修改", Toast.LENGTH_LONG).show();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    Toast.makeText(InfoListActivity.this, "点击了修改", Toast.LENGTH_LONG).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(InfoListActivity.this);
                     builder.setTitle("修改");
-                    View addWindow = MainActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
+                    View addWindow = InfoListActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
                     builder.setView(addWindow);
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override

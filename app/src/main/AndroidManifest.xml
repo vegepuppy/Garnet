@@ -16,7 +16,7 @@
             android:name=".InfoLinkActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".InfoListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
