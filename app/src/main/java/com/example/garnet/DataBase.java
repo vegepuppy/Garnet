@@ -12,7 +12,6 @@ public class DataBase {
             infoItemList.add(new InfoItem(Integer.toString(i)+" infoitem"));
         }
     }
-
     public static List<InfoItem> getInfoItemList() {
         return infoItemList;
     }

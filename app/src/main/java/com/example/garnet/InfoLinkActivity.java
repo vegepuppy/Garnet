@@ -57,16 +57,9 @@ public class InfoLinkActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
                 builder.setTitle("创建");
                 View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
+
                 builder.setView(addWindow);
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
-//                        toast.show();
-                        EditText editText = addWindow.findViewById(R.id.link_edit_text);
-                        db.getInfoItemList().get(linkPosition).getUrlList().add(editText.getText().toString());
-                    }
-                });
+                builder.setPositiveButton("确定", null);
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -74,7 +67,28 @@ public class InfoLinkActivity extends AppCompatActivity {
                     }
                 });
                 AlertDialog alertDialog = builder.create();
+
                 alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText editText = addWindow.findViewById(R.id.link_edit_text);
+                        String title = editText.getText().toString();
+
+                        //判断标题不能为空
+                        if(title.trim().isEmpty()){
+                            Toast.makeText(InfoLinkActivity.this,"链接不能为空",Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        else{
+                            InfoItem newInfoItem = new InfoItem(editText.getText().toString());
+                            db.getInfoItemList().get(linkPosition).getUrlList().add(title.trim());
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
             }
         }
     }
@@ -119,8 +133,6 @@ public class InfoLinkActivity extends AppCompatActivity {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         InfoItem infoItem = db.getInfoItemList().get(position);
-                        Toast toast = Toast.makeText(InfoLinkActivity.this, "Clicked!!", Toast.LENGTH_LONG);
-                        toast.show();
                         Uri uri = Uri.parse(db.getInfoItemList().get(linkPosition).getUrlList().get(position));
                         Intent intent = new Intent(Intent.ACTION_VIEW,uri);
                         try{
@@ -152,11 +164,9 @@ public class InfoLinkActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.delete) {
-                    Toast.makeText(InfoLinkActivity.this, "点击了删除", Toast.LENGTH_LONG).show();
                     db.getInfoItemList().get(linkPosition).getUrlList().remove(position);
                     myAdapter.notifyItemRemoved(position);
                 } else if (itemId == R.id.modify) {
-                    Toast.makeText(InfoLinkActivity.this, "点击了修改", Toast.LENGTH_LONG).show();
                     AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
                     builder.setTitle("修改");
                     View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
@@ -164,8 +174,6 @@ public class InfoLinkActivity extends AppCompatActivity {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
-//                        toast.show();
                             EditText editText = addWindow.findViewById(R.id.link_edit_text);
                             db.getInfoItemList().get(linkPosition).getUrlList().set(position,editText.getText().toString());
                             myAdapter.notifyItemChanged(position);
@@ -180,7 +188,6 @@ public class InfoLinkActivity extends AppCompatActivity {
                     AlertDialog alertDialog = builder.create();
                     alertDialog.show();
                 }
-                // 杨峻越在这里写了一个没用的注释，用于试验
                 return true;
             }
         });
