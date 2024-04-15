@@ -2,6 +2,9 @@ package com.example.garnet;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class InfoListActivity extends AppCompatActivity  {
     private RecyclerView infoItemListRecyclerView;
     private myAdapter myAdapter;
-    private static DataBase db = new DataBase();
-
-    public DataBase getDb() {
-        return db;
-    }
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class InfoListActivity extends AppCompatActivity  {
         MyClickListener myClickListener = new MyClickListener();
         FloatingActionButton floatingActionButton= findViewById(R.id.fab_add);
         floatingActionButton.setOnClickListener(myClickListener);
+
     }
 
 
@@ -166,6 +168,8 @@ public class InfoListActivity extends AppCompatActivity  {
                         Toast toast = Toast.makeText(InfoListActivity.this, infoItem.getTitle(), Toast.LENGTH_LONG);
                         toast.show();
                         Intent intent = new Intent(InfoListActivity.this,InfoLinkActivity.class);
+
+                        // 生成一个intent
                         intent.putExtra(InfoLinkActivity.INFO_POS, position);
                         startActivity(intent);
                     }

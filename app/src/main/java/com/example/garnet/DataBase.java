@@ -3,6 +3,7 @@ package com.example.garnet;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class DataBase {
     private static List<InfoItem> infoItemList = new ArrayList<>();
     public DataBase() {

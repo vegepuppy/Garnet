@@ -2,16 +2,17 @@ package com.example.garnet;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.Nullable;
-
-public class TitleDatabaseHelper extends SQLiteOpenHelper {
+public class GarnetDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "garnetDatabase";
     private static final int DB_VERSION = 1;
-    public TitleDatabaseHelper(Context context){
+
+    // 构造函数
+    public GarnetDatabaseHelper(Context context){
         super(context,DB_NAME,null,DB_VERSION);
     }
 
@@ -39,11 +40,10 @@ public class TitleDatabaseHelper extends SQLiteOpenHelper {
                 insertTitle(db,"SAMPLE TITLE #"+Integer.toString(i));
             }
             for (int i = 0; i<3; i++){
-                //注意这里是3<5所以可以直接传i进去
+                //注意这里是3 < 5所以可以直接传i进去
                 insertLink(db,"SAMPLE LINK #"+Integer.toString(i),i);
             }
         }
-
     }
 
     private static void insertTitle(SQLiteDatabase db, String title){
@@ -58,4 +58,6 @@ public class TitleDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("BELONG",belong);
         db.insert("LINK",null,contentValues);
     }
+
+    private List<>
 }
