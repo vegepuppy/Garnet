@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class GarnetDatabaseHelper extends SQLiteOpenHelper {
+import java.util.ArrayList;
+import java.util.List;
 
+public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "garnetDatabase";
     private static final int DB_VERSION = 1;
 
@@ -33,7 +35,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     "NAME TEXT);");
             db.execSQL("CREATE TABLE LINK (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "URI TEXT," +
-                    "BELONG INTEGER);");
+                    "BELONG TEXT);");
 
             // 添加示例内容
             for (int i = 0; i<5; i++){
@@ -45,6 +47,9 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    // 上面的是书上的代码修改而成
+
 
     private static void insertTitle(SQLiteDatabase db, String title){
         ContentValues contentValues = new ContentValues();
@@ -59,5 +64,4 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         db.insert("LINK",null,contentValues);
     }
 
-    private List<>
 }
