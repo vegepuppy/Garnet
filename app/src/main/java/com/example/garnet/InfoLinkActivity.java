@@ -31,15 +31,22 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
-    public static final String INFO_LIST = "info_list";
     public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
-    private final String corrTitle = getIntent().getStringExtra(VAR_NAME_IN_INTENT);
+    private String corrTitle ;
     private int linkPosition;//这个变量不要了
     private List<String> uriList = new ArrayList<>();
     private RecyclerView secondRecyclerView;
     private MyAdapter myAdapter;
     private SQLiteDatabase db;
     private Cursor cursor;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        cursor.close();
+        db.close();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +66,9 @@ public class InfoLinkActivity extends AppCompatActivity {
         MyClickListener myClickListener = new MyClickListener();
         FloatingActionButton floatingActionButton= findViewById(R.id.second_fab_add);
         floatingActionButton.setOnClickListener(myClickListener);
+
+        // 获得点击的标题名字
+        corrTitle = this.getIntent().getStringExtra(VAR_NAME_IN_INTENT);
 
         // 数据库部分
         try{

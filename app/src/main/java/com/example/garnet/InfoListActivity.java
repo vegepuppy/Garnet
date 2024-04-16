@@ -38,6 +38,14 @@ public class InfoListActivity extends AppCompatActivity  {
     private List<String> titleList = new ArrayList<>();
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        cursor.close();
+        db.close();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -58,7 +66,7 @@ public class InfoListActivity extends AppCompatActivity  {
         try{
             SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(this);
             db = sqLiteOpenHelper.getWritableDatabase();
-            cursor = db.query("NAME",
+            cursor = db.query("TITLE",
                     new String[]{"_id","NAME"},
                     null,null,null,null,null);
 
@@ -73,6 +81,8 @@ public class InfoListActivity extends AppCompatActivity  {
 
         }catch (SQLException e){
             Toast.makeText(this,"数据库不可用！！！",Toast.LENGTH_SHORT).show();
+            String s = e.getStackTrace().toString();
+            System.out.println(s);
         }
     }
 
