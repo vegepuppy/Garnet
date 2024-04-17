@@ -1,7 +1,7 @@
 package com.example.garnet;
 
 import java.net.URL;
-
+@Deprecated
 public class InfoLink {
     private String title;
 //    private URL url;

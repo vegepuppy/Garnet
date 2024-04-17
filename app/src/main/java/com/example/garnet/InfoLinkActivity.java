@@ -32,7 +32,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
     public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
-    private String corrTitle ;
+    private String corrTitle;
     private int linkPosition;//这个变量不要了
     private List<String> uriList = new ArrayList<>();
     private RecyclerView secondRecyclerView;
@@ -209,7 +209,6 @@ public class InfoLinkActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.delete) {
-                    uriList.remove(position);
 
                     // 在数据库中删除
                     db.execSQL("DELETE FROM LINK WHERE URI = ?",new String[]{uriList.get(position)});
@@ -228,6 +227,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                             EditText editText = addWindow.findViewById(R.id.link_edit_text);
                             String oldUri = uriList.get(position);
                             String newUri = editText.getText().toString();
+
                             db.execSQL("UPDATE TITLE SET NAME = ? WHERE NAME = ?",
                                     new String[]{newUri,oldUri});
                             uriList.set(position, newUri);

@@ -80,7 +80,7 @@ public class InfoListActivity extends AppCompatActivity  {
             }
 
         }catch (SQLException e){
-            Toast.makeText(this,"数据库不可用！！！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"数据库不可用",Toast.LENGTH_SHORT).show();
             String s = e.getStackTrace().toString();
             System.out.println(s);
         }
@@ -105,25 +105,7 @@ public class InfoListActivity extends AppCompatActivity  {
                 builder.setView(addWindow);
 
                 // 创建一个监听器用于显示已输入字数
-                et.addTextChangedListener(new TextWatcher() {
-                    private CharSequence wordNum;//记录输入的字数
-                    private int selectionStart;
-                    private int selectionEnd;
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        wordNum= s;//实时记录输入的字数
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        tv.setText(s.length() + "/" + MAX_LENGTH);
-                    }
-                });
+                et.addTextChangedListener(new TextLengthLimiter(tv));
 
                 // 设置确定按钮，因为需要点击之后不消失，所以需要另外写Listener
                 builder.setPositiveButton("确定", null);
@@ -202,8 +184,7 @@ public class InfoListActivity extends AppCompatActivity  {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         String titleItem = titleList.get(position);
-                        Toast toast = Toast.makeText(InfoListActivity.this, titleItem, Toast.LENGTH_LONG);
-                        toast.show();
+
                         Intent intent = new Intent(InfoListActivity.this,InfoLinkActivity.class);
 
                         // 生成一个intent
@@ -245,12 +226,19 @@ public class InfoListActivity extends AppCompatActivity  {
                     View addWindow = InfoListActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
                     builder.setView(addWindow);
 
+                    EditText editText = addWindow.findViewById(R.id.title_edit_text);
+
+                    String oldTitle = titleList.get(position);
+                    editText.getText().append(oldTitle);
+
+                    int length = oldTitle.length();
+                    editText.addTextChangedListener(new TextLengthLimiter(addWindow.findViewById(R.id.text_count),length));
+
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 //                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
 //                        toast.show();
-                            EditText editText = addWindow.findViewById(R.id.title_edit_text);
                             String oldTitle = titleList.get(position);
                             String newTitle = editText.getText().toString();
                             db.execSQL("UPDATE TITLE SET NAME = ? WHERE NAME = ?",
@@ -283,7 +271,7 @@ public class InfoListActivity extends AppCompatActivity  {
 
     private boolean isNotRepeated(String title){
         if(titleList.contains(title)){
-            Toast.makeText(InfoListActivity.this,"内容不能重复！",Toast.LENGTH_SHORT);
+            Toast.makeText(InfoListActivity.this,"标题不能重复！",Toast.LENGTH_SHORT).show();
             return false;
         }
 

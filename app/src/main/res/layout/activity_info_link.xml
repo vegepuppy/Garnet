@@ -25,6 +25,4 @@
         android:backgroundTint="#0099CC"
         android:layout_margin="20dp"
         android:id="@+id/second_fab_add" />
-
-
 </RelativeLayout>
