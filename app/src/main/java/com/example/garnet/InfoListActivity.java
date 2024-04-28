@@ -8,8 +8,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +30,7 @@ import java.util.List;
 
 public class InfoListActivity extends AppCompatActivity  {
     private RecyclerView infoItemListRecyclerView;
-    private myAdapter myAdapter;
+    private MyAdapter myAdapter;
     private SQLiteDatabase db;
     private Cursor cursor;
     private List<String> titleList = new ArrayList<>();
@@ -52,7 +50,7 @@ public class InfoListActivity extends AppCompatActivity  {
 
         //infoItem部分
         infoItemListRecyclerView = findViewById(R.id.info_item_recyclerview);
-        myAdapter = new myAdapter();
+        myAdapter = new MyAdapter();
         infoItemListRecyclerView.setAdapter(myAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(InfoListActivity.this);
         infoItemListRecyclerView.setLayoutManager(layoutManager);
@@ -146,7 +144,7 @@ public class InfoListActivity extends AppCompatActivity  {
         }
     }
 
-    private class myAdapter extends RecyclerView.Adapter<MyViewHolder> {
+    private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         //此处可能不安全
         private View view;
         @NonNull
