@@ -91,7 +91,6 @@ public class InfoListActivity extends AppCompatActivity  {
         @Override
         public void onClick(View v) {
             final View addWindow = InfoListActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
-            final int MAX_LENGTH = 20;
             final TextView tv = addWindow.findViewById(R.id.text_count);
             final EditText et = addWindow.findViewById(R.id.title_edit_text);
 
