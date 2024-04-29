@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +61,9 @@ public class InfoLinkActivity extends AppCompatActivity {
         secondRecyclerView.setLayoutManager(layoutManager);
 
         //FAB部分
-        MyClickListener myClickListener = new MyClickListener();
+        FABClickListener FABClickListener = new FABClickListener();
         FloatingActionButton floatingActionButton= findViewById(R.id.second_fab_add);
-        floatingActionButton.setOnClickListener(myClickListener);
+        floatingActionButton.setOnClickListener(FABClickListener);
 
         // 获得点击的标题名字
         corrTitle = this.getIntent().getStringExtra(VAR_NAME_IN_INTENT);
@@ -89,7 +89,7 @@ public class InfoLinkActivity extends AppCompatActivity {
         }
     }
 
-    private class MyClickListener implements View.OnClickListener{
+    private class FABClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.second_fab_add) {
