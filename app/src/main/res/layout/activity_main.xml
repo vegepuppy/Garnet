@@ -2,28 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InfoListActivity">
+    tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/info_item_recyclerview"
-        android:paddingTop = "20dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_centerHorizontal="true"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
+        android:id="@+id/content"
+        android:layout_above="@+id/main_bottom_nv"/>
+    
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:id="@+id/main_bottom_nv"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/baseline_add_24"
-        android:backgroundTint="#0099CC"
-        android:layout_margin="20dp"
-        android:id="@+id/fab_add" />
+        android:background="@color/design_default_color_background"
+        app:menu="@menu/navigation"/>
 
 </RelativeLayout>
