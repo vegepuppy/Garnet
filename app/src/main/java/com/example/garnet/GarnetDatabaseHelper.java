@@ -39,11 +39,11 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
 
             // 添加示例内容
             for (int i = 0; i<5; i++){
-                insertTitle(db,"SAMPLE TITLE #"+Integer.toString(i));
+                insertTitle(db,"SAMPLE TITLE #"+i);
             }
             for (int i = 0; i<3; i++){
                 //注意这里是3 < 5所以可以直接传i进去
-                insertLink(db,"SAMPLE LINK #"+Integer.toString(i),i);
+                insertLink(db,"SAMPLE LINK #"+i,"SAMPLE TITLE #"+i);
             }
         }
     }
@@ -57,7 +57,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         db.insert("TITLE",null,contentValues);
     }
 
-    private static void insertLink(SQLiteDatabase db, String uri, int belong){
+    private static void insertLink(SQLiteDatabase db, String uri, String belong){
         ContentValues contentValues = new ContentValues();
         contentValues.put("URI",uri);
         contentValues.put("BELONG",belong);

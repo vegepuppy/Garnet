@@ -52,7 +52,7 @@ public class InfoFragment extends Fragment {
         infoItemListRecyclerView = view.findViewById(R.id.info_item_recyclerview);
         myAdapter = new MyAdapter();
         infoItemListRecyclerView.setAdapter(myAdapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(InfoListActivity.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         infoItemListRecyclerView.setLayoutManager(layoutManager);
 
         //FAB部分
@@ -62,7 +62,7 @@ public class InfoFragment extends Fragment {
 
         ///SQLite数据库部分
         try{
-            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(this);
+            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(getActivity());
             db = sqLiteOpenHelper.getWritableDatabase();
             cursor = db.query("TITLE",
                     new String[]{"_id","NAME"},
@@ -78,7 +78,7 @@ public class InfoFragment extends Fragment {
             }
 
         }catch (SQLException e){
-            Toast.makeText(this,"数据库不可用",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"数据库不可用",Toast.LENGTH_SHORT).show();
             String s = e.getStackTrace().toString();
             System.out.println(s);
         }
@@ -99,13 +99,13 @@ public class InfoFragment extends Fragment {
     private class MyClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            final View addWindow = InfoListActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
+            final View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
             final TextView tv = addWindow.findViewById(R.id.text_count);
             final EditText et = addWindow.findViewById(R.id.title_edit_text);
 
 
             if (v.getId() == R.id.fab_add) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(InfoListActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                 builder.setTitle("创建");
 
@@ -136,7 +136,7 @@ public class InfoFragment extends Fragment {
 
                         //判断标题不能为空
                         if(title.trim().isEmpty()){
-                            Toast.makeText(InfoListActivity.this,"标题不能为空",Toast.LENGTH_SHORT)
+                            Toast.makeText(getActivity(),"标题不能为空",Toast.LENGTH_SHORT)
                                     .show();
                         }
                         else if (isNotRepeated(title)){
@@ -193,7 +193,7 @@ public class InfoFragment extends Fragment {
                     if (position != RecyclerView.NO_POSITION) {
                         String titleItem = titleList.get(position);
 
-                        Intent intent = new Intent(InfoListActivity.this,InfoLinkActivity.class);
+                        Intent intent = new Intent(getActivity(),InfoLinkActivity.class);
 
                         // 生成一个intent
                         intent.putExtra(InfoLinkActivity.VAR_NAME_IN_INTENT, titleItem);
@@ -214,7 +214,7 @@ public class InfoFragment extends Fragment {
         }
     }
     private void showPopupMenu(View view, int position){
-        PopupMenu popupMenu = new PopupMenu(InfoListActivity.this, view);
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_popupmenu,popupMenu.getMenu());
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -222,16 +222,16 @@ public class InfoFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.delete) {
-                    Toast.makeText(InfoListActivity.this, "点击了删除", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "点击了删除", Toast.LENGTH_LONG).show();
 
                     deleteTitleItem(position);
 
                 } else if (itemId == R.id.modify) {
                     //展示一个alertDialog
-                    Toast.makeText(InfoListActivity.this, "点击了修改", Toast.LENGTH_LONG).show();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(InfoListActivity.this);
+                    Toast.makeText(getActivity(), "点击了修改", Toast.LENGTH_LONG).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("修改");
-                    View addWindow = InfoListActivity.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
+                    View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
                     builder.setView(addWindow);
 
                     EditText editText = addWindow.findViewById(R.id.title_edit_text);
@@ -279,7 +279,7 @@ public class InfoFragment extends Fragment {
 
     private boolean isNotRepeated(String title){
         if(titleList.contains(title)){
-            Toast.makeText(InfoListActivity.this,"标题不能重复！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"标题不能重复！",Toast.LENGTH_SHORT).show();
             return false;
         }
 

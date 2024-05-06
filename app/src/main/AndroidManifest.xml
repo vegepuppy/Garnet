@@ -31,8 +31,9 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".InfoListActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:exported="true"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
