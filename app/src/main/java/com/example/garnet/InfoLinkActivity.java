@@ -33,7 +33,6 @@ public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
     public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
     private String corrTitle;
-    private int linkPosition;//这个变量不要了
     private List<String> uriList = new ArrayList<>();
     private RecyclerView secondRecyclerView;
     private MyAdapter myAdapter;
@@ -53,7 +52,6 @@ public class InfoLinkActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_link);
         Intent intent = getIntent();
-        linkPosition = intent.getIntExtra(INFO_POS, -1);
 
         //secondRecyclerView部分
         secondRecyclerView = findViewById(R.id.second_recyclerview);
@@ -122,7 +120,6 @@ public class InfoLinkActivity extends AppCompatActivity {
                             Toast.makeText(InfoLinkActivity.this,"链接不能为空",Toast.LENGTH_SHORT)
                                     .show();
                         }
-
                         else{
                             uriList.add(uriInput.trim());
 

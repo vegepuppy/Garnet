@@ -7,4 +7,6 @@
     <string name="link">链接</string>
     <string name="hint">Enter link</string>
     <string name="enter">OK</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
