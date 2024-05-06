@@ -42,7 +42,6 @@ public class InfoFragment extends Fragment {
     private SQLiteDatabase db;
     private Cursor cursor;
     private List<String> titleList = new ArrayList<>();
-    private Context mContext = getContext();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,14 +93,6 @@ public class InfoFragment extends Fragment {
 
         cursor.close();
         db.close();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_info_list);
-
-
     }
 
 
