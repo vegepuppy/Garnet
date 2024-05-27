@@ -275,7 +275,6 @@ public class InfoFragment extends Fragment {
             Toast.makeText(getActivity(),"标题不能重复！",Toast.LENGTH_SHORT).show();
             return false;
         }
-
         return true;
     }
 }

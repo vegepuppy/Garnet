@@ -34,6 +34,8 @@ public class InfoLinkActivity extends AppCompatActivity {
     public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
     private String corrTitle;
     private List<String> uriList = new ArrayList<>();
+    // TODO: 2024-05-27 这里的link要改成一个类，要包含这个link 对应的名称，而不是显示一个连接
+
     private RecyclerView secondRecyclerView;
     private MyAdapter myAdapter;
     private SQLiteDatabase db;
