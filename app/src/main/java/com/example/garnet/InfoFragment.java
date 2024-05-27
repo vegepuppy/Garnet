@@ -72,9 +72,7 @@ public class InfoFragment extends Fragment {
             }
 
         }catch (SQLException e){
-            Toast.makeText(getActivity(),"数据库不可用11111",Toast.LENGTH_SHORT).show();
-            String s = e.getStackTrace().toString();
-            System.out.println(s);
+            Toast.makeText(getActivity(),"数据库不可用",Toast.LENGTH_SHORT).show();
         }
 
         return view;
