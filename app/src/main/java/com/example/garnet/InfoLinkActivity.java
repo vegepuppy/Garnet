@@ -95,7 +95,7 @@ public class InfoLinkActivity extends AppCompatActivity {
             if (v.getId() == R.id.second_fab_add) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
                 builder.setTitle("创建");
-                View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
+                View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.add_link_alartdialog, null);
 
                 builder.setView(addWindow);
                 builder.setPositiveButton("确定", null);
@@ -216,7 +216,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                 } else if (itemId == R.id.modify) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
                     builder.setTitle("修改");
-                    View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.adding_link_alartdialog, null);
+                    View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.add_link_alartdialog, null);
                     builder.setView(addWindow);
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override

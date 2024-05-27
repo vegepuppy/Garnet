@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         }
         transaction.commit();
     }
+
     private void hideFragment(FragmentTransaction transaction) {
         if(homeFragment != null){
             transaction.hide(homeFragment);

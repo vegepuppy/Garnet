@@ -12,13 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Garnet"
         tools:targetApi="31" >
+
         <activity
             android:name=".MainActivity"
+<<<<<<< HEAD
             android:exported="true" >
 
         </activity>
         <activity
             android:name=".ToDoListActivity"
+=======
+>>>>>>> 9da56d63203ccc732bffbc9ff955fae74d609148
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -27,15 +31,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9da56d63203ccc732bffbc9ff955fae74d609148
         <activity
             android:name=".InfoLinkActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".InfoListActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-        </activity>
+
     </application>
 
 </manifest>

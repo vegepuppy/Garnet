@@ -30,18 +30,22 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
 
     private void updateDatabase(SQLiteDatabase db, int oldVersion, int newVersion){
         //创建两个表
-        if(oldVersion<1){
+        if(oldVersion < 1){
             db.execSQL("CREATE TABLE TITLE (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "NAME TEXT);");
             db.execSQL("CREATE TABLE LINK (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "URI TEXT," +
                     "BELONG TEXT);");
+            db.execSQL("CREATE TABLE TODO(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "TASK TEXT," +
+                    "DUE TEXT," +
+                    "DONE INTEGER);" );
 
             // 添加示例内容
-            for (int i = 0; i<5; i++){
+            for (int i = 0; i < 5; i ++){
                 insertTitle(db,"SAMPLE TITLE #"+i);
             }
-            for (int i = 0; i<3; i++){
+            for (int i = 0; i < 3; i ++){
                 //注意这里是3 < 5所以可以直接传i进去
                 insertLink(db,"SAMPLE LINK #"+i,"SAMPLE TITLE #"+i);
             }

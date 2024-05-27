@@ -1,6 +1,5 @@
 package com.example.garnet;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,11 +14,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -27,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -78,7 +72,7 @@ public class InfoFragment extends Fragment {
             }
 
         }catch (SQLException e){
-            Toast.makeText(getActivity(),"数据库不可用",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"数据库不可用11111",Toast.LENGTH_SHORT).show();
             String s = e.getStackTrace().toString();
             System.out.println(s);
         }
@@ -99,7 +93,7 @@ public class InfoFragment extends Fragment {
     private class MyClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            final View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog,null);
+            final View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.add_info_alartdialog,null);
             final TextView tv = addWindow.findViewById(R.id.text_count);
             final EditText et = addWindow.findViewById(R.id.title_edit_text);
 
@@ -134,7 +128,7 @@ public class InfoFragment extends Fragment {
                     public void onClick(View v) {
                         String title = et.getText().toString();
 
-                        //判断标题不能为空
+                        // 判断标题不能为空
                         if(title.trim().isEmpty()){
                             Toast.makeText(getActivity(),"标题不能为空",Toast.LENGTH_SHORT)
                                     .show();
@@ -232,7 +226,7 @@ public class InfoFragment extends Fragment {
                     Toast.makeText(getActivity(), "点击了修改", Toast.LENGTH_LONG).show();
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("修改");
-                    View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.adding_info_alartdialog, null);
+                    View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.add_info_alartdialog, null);
                     builder.setView(addWindow);
 
                     EditText editText = addWindow.findViewById(R.id.title_edit_text);
