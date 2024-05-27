@@ -1,12 +1,18 @@
 package com.example.garnet;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -32,21 +38,22 @@ public class TodoFragment extends Fragment {
     private MyAdapter myAdapter;
     private Adapter4InnerRv adapter4InnerRv = new Adapter4InnerRv();
     private FloatingActionButton fab;
-    private List<String> taskList = new ArrayList<>();
-    private List<String> dueDateList = new ArrayList<>();// 要把这个list用于排序
+    private SQLiteDatabase db;
+    private Cursor cursor;
+    private List<TodoItem> todoItemList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
 
-        for (int i = 0; i < 5; i++) {
-            taskList.add("SAMPLE TASK #" + Integer.toString(i));
-        }
-
-        for (int i = 0; i < 3; i++) {
-            dueDateList.add("SAMPLE DATE # "+Integer.toString(i));
-        }
+//        for (int i = 0; i < 5; i++) {
+//            taskList.add("SAMPLE TASK #" + Integer.toString(i));
+//        }
+//
+//        for (int i = 0; i < 3; i++) {
+//            dueDateList.add("SAMPLE DATE # "+Integer.toString(i));
+//        }
 
         // item部分
         todoRecyclerview = view.findViewById(R.id.todo_rv);
@@ -61,7 +68,28 @@ public class TodoFragment extends Fragment {
         fab = view.findViewById(R.id.add_todo_fab);
         fab.setOnClickListener(new myClickListener());
 
-        // TODO: 2024-04-28 SQLite部分未完成
+        // TODO: 2024-04-28 SQLite部分
+        try{
+            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(getActivity());
+            db = sqLiteOpenHelper.getWritableDatabase();
+            cursor = db.query("TODO",
+                    new String[] {"_id","TASK","DUE","DONE"},
+                    null,null,null,null,null);
+
+            // 把数据库中的信息全读取到List中去
+            if(cursor.moveToFirst()){
+                do{
+                    String taskFound = cursor.getString(1);
+                    String dueDateFound = cursor.getString(2);
+
+                    todoItemList.add(new TodoItem(taskFound, dueDateFound));
+
+                }while(cursor.moveToNext());
+            }
+
+        }catch (SQLException e){
+            Toast.makeText(getActivity(),"数据库不可用",Toast.LENGTH_SHORT).show();
+        }
 
         return view;
     }
@@ -86,9 +114,19 @@ public class TodoFragment extends Fragment {
                         DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                String date = year + "-" + (month+1) + "-" + dayOfMonth;
                                 // 将Button的显示改为用户选中的日期（格式化为YYYY-MM-DD）
+                                String date = formatDate(year, month, dayOfMonth);
+
                                 dateButton.setText(date);
+                            }
+                            private String formatDate(int year, int month, int dayOfMonth){
+                                String monthStr, dayStr;
+                                if (month +1 < 10)monthStr = "0"+(month+1);
+                                else monthStr = Integer.toString(month+1);
+
+                                if (dayOfMonth < 10)dayStr = "0"+(dayOfMonth);
+                                else dayStr = Integer.toString(dayOfMonth);
+                                return year + "-" + monthStr + "-" + dayStr;
                             }
                         };
 
@@ -136,8 +174,12 @@ public class TodoFragment extends Fragment {
                             Toast.makeText(getActivity(),"事项名不能为空！",Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            taskList.add(task);
-                            adapter4InnerRv.notifyItemChanged(taskList.size());
+                            // 通过一个精妙的方式实现了传参：
+                            // 在AlertDialog内部，将用户选择的的日期设置为dateButton的显示文字
+                            // 读取这个显示文字，获得的就是用户选择的日期
+                            // 余以为妙绝
+                            todoItemList.add(new TodoItem(task,dateButton.getText().toString()));
+                            adapter4InnerRv.notifyItemChanged(todoItemList.size());
                             alertDialog.dismiss();
                         }
                     }
@@ -157,7 +199,7 @@ public class TodoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            holder.dueDateTextView.setText(dueDateList.get(position));
+            holder.dueDateTextView.setText(todoItemList.get(position).getDueDate());
 
             // 为内部的Rv设置adapter和layoutManager
             holder.innerRecyclerView.setAdapter(adapter4InnerRv);
@@ -167,7 +209,7 @@ public class TodoFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return dueDateList.size();
+            return todoItemList.size();
         }
     }
 
@@ -182,6 +224,8 @@ public class TodoFragment extends Fragment {
         }
     }
 
+
+
     private class Adapter4InnerRv extends RecyclerView.Adapter<ViewHolder4InnerRv>{
         @NonNull
         @Override
@@ -192,13 +236,14 @@ public class TodoFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder4InnerRv holder, int position) {
-            String s = taskList.get(position);
+            String s = todoItemList.get(position).getTask();
             holder.checkBox.setText(s);
         }
 
+        // 这里的getItemCount有问题，应该是一个Card内部的元素总数
         @Override
         public int getItemCount() {
-            return taskList.size();
+            return todoItemList.size();
         }
     }
 
