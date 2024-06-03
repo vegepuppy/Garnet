@@ -274,6 +274,7 @@ public class TodoFragment extends Fragment {
             return new MyViewHolder(view);
         }
 
+        // changes to commit
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             DateCardContent currDateCardContent = mainList.get(position);
