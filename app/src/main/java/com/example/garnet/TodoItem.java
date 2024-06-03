@@ -3,13 +3,14 @@ package com.example.garnet;
 public class TodoItem{
     String task;
     String dueDate;
-    int _id;
+    long _id;
     boolean isDone = false;
 
-    public TodoItem(String task, String dueDate) {
+    public TodoItem(String task, String dueDate, long _id, boolean isDone) {
         this.task = task;
         this.dueDate = dueDate;
-        this.isDone = false;
+        this.isDone = isDone;
+        this._id = _id;
     }
 
     public String getTask() {
