@@ -23,6 +23,6 @@
         android:layout_alignParentBottom="true"
         android:src="@drawable/baseline_add_24"
         android:layout_margin="20dp"
-        android:id="@+id/fab_add" />
+        android:id="@+id/fab_add"/>
 
 </RelativeLayout>
