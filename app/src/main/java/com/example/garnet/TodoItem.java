@@ -1,9 +1,9 @@
 package com.example.garnet;
 
 public class TodoItem{
-
     String task;
     String dueDate;
+    int _id;
     boolean isDone = false;
 
     public TodoItem(String task, String dueDate) {
