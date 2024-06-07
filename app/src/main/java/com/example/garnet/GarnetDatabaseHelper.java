@@ -2,12 +2,9 @@ package com.example.garnet;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "garnetDatabase";
@@ -86,6 +83,4 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         c.put("DONE",0);
         db.insert("TODO",null,c);
     }
-
-    // TEST test
 }
