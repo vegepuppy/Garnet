@@ -48,7 +48,7 @@ public class TodoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
 
-        // item部分
+        // item的部分
         todoRecyclerview = view.findViewById(R.id.todo_rv);
         myAdapter = new MyAdapter();
         todoRecyclerview.setAdapter(myAdapter);
