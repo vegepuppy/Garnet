@@ -12,7 +12,6 @@ public class TextLengthLimiter implements TextWatcher {
     private int selectionEnd;
 
     private TextView tv;
-
     private final int MAX_LENGTH = 20;
 
     TextLengthLimiter(TextView tv){
