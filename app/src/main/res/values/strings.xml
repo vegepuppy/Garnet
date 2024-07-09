@@ -9,4 +9,5 @@
     <string name="enter">OK</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="database_unavailable">数据库不可用</string>
 </resources>

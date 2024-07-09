@@ -35,17 +35,19 @@ public class InfoFragment extends Fragment {
     private MyAdapter myAdapter;
     private SQLiteDatabase db;
     private Cursor cursor;
-    private List<String> titleList = new ArrayList<>();
+    private List<String> titleList = new ArrayList<>(); // 所有资料库的标题
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_info, container, false);
+
         //infoItem部分
         infoItemListRecyclerView = view.findViewById(R.id.info_item_recyclerview);
         myAdapter = new MyAdapter();
         infoItemListRecyclerView.setAdapter(myAdapter);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         infoItemListRecyclerView.setLayoutManager(layoutManager);
 
@@ -62,27 +64,25 @@ public class InfoFragment extends Fragment {
                     new String[]{"_id","NAME"},
                     null,null,null,null,null);
 
-            //把数据库中的信息全读取到List中去
+            //把数据库中的信息读取到变量List中去，以通过recyclerView展示
             if(cursor.moveToFirst()){
                 do{
-                    //检查下这里该不该是1
+                    //读入位于第一列的数据
                     String titleFound = cursor.getString(1);
                     titleList.add(titleFound);
                 }while(cursor.moveToNext());
             }
 
         }catch (SQLException e){
-            Toast.makeText(getActivity(),"数据库不可用",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.database_unavailable,Toast.LENGTH_SHORT).show();
         }
-
         return view;
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        //结束fragment时关闭数据库和游标
         cursor.close();
         db.close();
     }
@@ -94,7 +94,6 @@ public class InfoFragment extends Fragment {
             final View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.add_info_alartdialog,null);
             final TextView tv = addWindow.findViewById(R.id.text_count);
             final EditText et = addWindow.findViewById(R.id.title_edit_text);
-
 
             if (v.getId() == R.id.fab_add) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -128,8 +127,7 @@ public class InfoFragment extends Fragment {
 
                         // 判断标题不能为空
                         if(title.trim().isEmpty()){
-                            Toast.makeText(getActivity(),"标题不能为空",Toast.LENGTH_SHORT)
-                                    .show();
+                            Toast.makeText(getActivity(),"标题不能为空",Toast.LENGTH_SHORT).show();
                         }
                         //判断标题不能重复
                         else if (isNotRepeated(title)){
@@ -149,7 +147,6 @@ public class InfoFragment extends Fragment {
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         //此处可能不安全
-        private View view;
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -207,6 +204,7 @@ public class InfoFragment extends Fragment {
         }
     }
     private void showPopupMenu(View view, int position){
+        // 长按弹出菜单
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_popupmenu,popupMenu.getMenu());
         popupMenu.show();
@@ -271,6 +269,7 @@ public class InfoFragment extends Fragment {
     }
 
     private boolean isNotRepeated(String title){
+        // 判断标题是否重复，如果重复就输出提示信息并返回false，不重复返回true
         if(titleList.contains(title)){
             Toast.makeText(getActivity(),"标题不能重复！",Toast.LENGTH_SHORT).show();
             return false;

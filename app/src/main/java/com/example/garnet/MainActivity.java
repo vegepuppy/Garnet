@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+    // 整个应用的主活动，包括导航栏和三个fragment的
     private HomeFragment homeFragment;
     private TodoFragment todoFragment;
     private InfoFragment infoFragment;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         bottom_nv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                // 在导航栏中的控件被用户选中时，执行此方法
                 int id = menuItem.getItemId();
                 if (id == R.id.bottom_home) {
                     selectedFragment(0);
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-        selectedFragment(0);
+        selectedFragment(0);// 默认进入主页
     }
 
     public void selectedFragment (int position){
