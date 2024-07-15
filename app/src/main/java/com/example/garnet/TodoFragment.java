@@ -32,6 +32,8 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+
+@Deprecated
 public class TodoFragment extends Fragment {
 
     private RecyclerView todoRecyclerview;
@@ -219,7 +221,8 @@ public class TodoFragment extends Fragment {
 
                 alertDialog.show();// 大的
 
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(
+                        new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String task = addTaskEt.getText().toString();
