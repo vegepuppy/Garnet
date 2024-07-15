@@ -33,10 +33,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class TodoFragment extends Fragment {
-
-    private RecyclerView todoRecyclerview;
     private MyAdapter myAdapter;
-    private FloatingActionButton fab;
     private SQLiteDatabase db;
     private Cursor cursor;
     // private List<TodoItem> todoItemList = new ArrayList<>();
@@ -49,7 +46,7 @@ public class TodoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
 
         // item的部分
-        todoRecyclerview = view.findViewById(R.id.todo_rv);
+        RecyclerView todoRecyclerview = view.findViewById(R.id.todo_rv);
         myAdapter = new MyAdapter();
         todoRecyclerview.setAdapter(myAdapter);
         LinearLayoutManager lm = new LinearLayoutManager(getActivity());
@@ -58,7 +55,7 @@ public class TodoFragment extends Fragment {
         todoRecyclerview.setLayoutManager(lm);
 
         // FAB部分
-        fab = view.findViewById(R.id.add_todo_fab);
+        FloatingActionButton fab = view.findViewById(R.id.add_todo_fab);
         fab.setOnClickListener(new myClickListener());
 
         // TODO: 2024-04-28 SQLite部分
@@ -97,7 +94,7 @@ public class TodoFragment extends Fragment {
                     long idFound = 0;
                     boolean doneFound = false;
 
-                    // 加入四个表格里面的变量
+                    // 加入四列里面的变量
                     int dueIdx = cursor.getColumnIndex("DUE");
                     if (dueIdx > -1){
                         dateFound = cursor.getString(dueIdx);
@@ -158,7 +155,6 @@ public class TodoFragment extends Fragment {
             addTaskEt = windowView.findViewById(R.id.task_et);
             dateButton = windowView.findViewById(R.id.choose_date_btn);
 
-            if(v.getId() == R.id.add_todo_fab){
                 dateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -255,7 +251,7 @@ public class TodoFragment extends Fragment {
                         }
                     }
                 });
-            }
+
         }
     }
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -266,20 +262,20 @@ public class TodoFragment extends Fragment {
             return new MyViewHolder(view);
         }
 
-
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             DateCardContent currDateCardContent = mainList.get(position);
+
             holder.dueDateTextView.setText(currDateCardContent.getDate());
 
             // 下面为每一个DateCardContent生成adapter
             // 为内部的Rv设置adapter和layoutManager
             Adapter4InnerRv adapter = new Adapter4InnerRv(position);
             // 只是设置里面adapter变量的值
-            currDateCardContent.setAdapter(adapter);
 
-            // 设置（外部）recyclerview 的 Adapter
             holder.innerRecyclerView.setAdapter(adapter);
+
+
             LinearLayoutManager lm = new LinearLayoutManager(getActivity());
             holder.innerRecyclerView.setLayoutManager(lm);
         }
