@@ -7,9 +7,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class TextLengthLimiter implements TextWatcher {
+    // 用于限制输入字符的长度
     private CharSequence wordNum;//记录输入的字数
-    private int selectionStart;
-    private int selectionEnd;
 
     private TextView tv;
     private final int MAX_LENGTH = 20;
@@ -29,7 +28,7 @@ public class TextLengthLimiter implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        wordNum= s;//实时记录输入的字数
+        wordNum = s;//实时记录输入的字数
     }
 
     @Override

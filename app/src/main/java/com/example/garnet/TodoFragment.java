@@ -42,7 +42,7 @@ public class TodoFragment extends Fragment {
     private SQLiteDatabase db;
     private Cursor cursor;
     // private List<TodoItem> todoItemList = new ArrayList<>();
-    // TODO: 2024-06-03 应该改成set而不是list,元素不允许重复（至少日期不能重复）
+    // TODO 应该改成set而不是list,元素不允许重复（至少日期不能重复）
     private List<DateCardContent> mainList = new ArrayList<>();
 
     @Override
@@ -50,12 +50,12 @@ public class TodoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_todo, container, false);
 
-        // item部分
+        // item的部分
         todoRecyclerview = view.findViewById(R.id.todo_rv);
         myAdapter = new MyAdapter();
         todoRecyclerview.setAdapter(myAdapter);
         LinearLayoutManager lm = new LinearLayoutManager(getActivity());
-        // 记住，这里必须直接getActivity()，不能getContext，也不能把getActivity()的结果用一个变量储存起来
+        // 这里必须直接getActivity()，不能getContext，也不能把getActivity()的结果用一个变量储存起来
 
         todoRecyclerview.setLayoutManager(lm);
 
@@ -87,20 +87,19 @@ public class TodoFragment extends Fragment {
                         DateCardContent dt = new DateCardContent(dateFound, new ArrayList<>());
                         mainList.add(dt);
                     } while (cursor1.moveToNext());
-
                     cursor1.close();
                 }
             }
 
             if (cursor.moveToFirst()){
                 do{
+                    // 四个变量用于储存读到的数据
                     String taskFound = null;
                     String dateFound = null;
                     long idFound = 0;
                     boolean doneFound = false;
 
                     // 加入四个表格里面的变量
-
                     int dueIdx = cursor.getColumnIndex("DUE");
                     if (dueIdx > -1){
                         dateFound = cursor.getString(dueIdx);
@@ -128,14 +127,14 @@ public class TodoFragment extends Fragment {
             }
 
         }catch (SQLException e){
-            Toast.makeText(getActivity(),"数据库不可用",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),R.string.database_unavailable,Toast.LENGTH_SHORT).show();
         }
 
         return view;
     }
 
     private int addTodoToMainList(TodoItem t) {
-        // 这个方法将一个找到的一个时间插入到已有的大列表里面， 返回插入的DateCardContent在mainList里面的index
+        // 这个方法将一个找到的时间插入到已有的大列表里面， 返回插入的DateCardContent在mainList里面的index
         // 如果没找到, 返回-1
         for ( int i = 0; i < mainList.size(); i ++ ){
             DateCardContent dateCardContent = mainList.get(i);
@@ -146,11 +145,12 @@ public class TodoFragment extends Fragment {
                 // 由于日期唯一，所以加入了事项以后可以直接return
             }
         }
-        // TODO: 2024-06-03 所添加事项在新日期中时候的逻辑未完成
+        // TODO: 2024-06-03 所添加事项在新日期中时候的逻辑未完成,会直接崩溃
         return -1;
     }
 
     private class myClickListener implements View.OnClickListener{
+        // 用于管理点击“日期选择”按钮时的逻辑
         private EditText addTaskEt;
         private Button dateButton;
 
@@ -171,11 +171,13 @@ public class TodoFragment extends Fragment {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                 // 将Button的显示改为用户选中的日期（格式化为YYYY-MM-DD）
+                                // 这里的传参方式奇怪的很
                                 String date = formatDate(year, month, dayOfMonth);
 
                                 dateButton.setText(date);
                             }
                             private String formatDate(int year, int month, int dayOfMonth){
+                                //将年月日日期改写为相应的字符串
                                 String monthStr, dayStr;
                                 if (month + 1 < 10)monthStr = "0" + (month+1);
                                 else monthStr = Integer.toString(month+1);
@@ -267,18 +269,19 @@ public class TodoFragment extends Fragment {
             return new MyViewHolder(view);
         }
 
-        // changes to commit
+
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             DateCardContent currDateCardContent = mainList.get(position);
             holder.dueDateTextView.setText(currDateCardContent.getDate());
 
+            // 下面为每一个DateCardContent生成adapter
             // 为内部的Rv设置adapter和layoutManager
             Adapter4InnerRv adapter = new Adapter4InnerRv(position);
             // 只是设置里面adapter变量的值
             currDateCardContent.setAdapter(adapter);
 
-            // 真的是设置recyclerview 的 Adapter
+            // 设置（外部）recyclerview 的 Adapter
             holder.innerRecyclerView.setAdapter(adapter);
             LinearLayoutManager lm = new LinearLayoutManager(getActivity());
             holder.innerRecyclerView.setLayoutManager(lm);
@@ -300,8 +303,6 @@ public class TodoFragment extends Fragment {
             this.innerRecyclerView = itemView.findViewById(R.id.tasks_for_a_day_rv);
         }
     }
-
-
 
     public class Adapter4InnerRv extends RecyclerView.Adapter<ViewHolder4InnerRv>{
         int outerPosition;
