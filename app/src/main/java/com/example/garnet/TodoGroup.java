@@ -13,10 +13,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TodoGroup {
-    private List<TodoItem> todoList;
+    private List<TodoItem> todoList = new ArrayList<>();
     private RecyclerView rv;
 
     public String getDate() {
@@ -62,6 +63,10 @@ public class TodoGroup {
 
     public void addToTodoList(TodoItem ti){
         todoList.add(ti);
+    }
+
+    public void setRv(RecyclerView rv){
+        this.rv = rv;
     }
 
 }
