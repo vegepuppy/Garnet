@@ -95,6 +95,7 @@ public class TodoFragment2 extends Fragment {
         }
         public void initItem(TodoGroup todoGroup){
             tv.setText(todoGroup.getDate());
+            todoGroup.setRv(rv);
             todoGroup.initRv(getActivity());
         }
     }
