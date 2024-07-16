@@ -61,8 +61,8 @@ public class TodoGroup {
         }
     }
 
-    public void addToTodoList(TodoItem ti){
-        todoList.add(ti);
+    public void addToTodoList(TodoItem ti)  {
+            todoList.add(ti);
     }
 
     public void setRv(RecyclerView rv){

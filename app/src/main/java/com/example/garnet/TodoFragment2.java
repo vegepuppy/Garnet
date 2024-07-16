@@ -51,12 +51,20 @@ public class TodoFragment2 extends Fragment {
     private class FabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-//            showAlertDialog();
-//            //将改变的数据在数据库中处理
-//            updateData();
+            AddTodoAlertDialogHelper helper = new AddTodoAlertDialogHelper(
+                    getActivity(),
+                    TodoFragment2.this.getLayoutInflater().inflate(R.layout.add_todo_dialog, null));
+
+
+
             // TODO: 2024-07-15 写alertdialog相关内容
         }
     }
+
+    private void showAlertDialog(){
+
+    }
+
 
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -146,6 +154,7 @@ public class TodoFragment2 extends Fragment {
                     updateMainList(ti);
                 }while(cursor.moveToNext());
             }
+            cursor.close();
         }
     }
 
