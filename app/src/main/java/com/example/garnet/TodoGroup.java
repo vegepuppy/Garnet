@@ -19,13 +19,18 @@ import java.util.List;
 public class TodoGroup {
     private List<TodoItem> todoList = new ArrayList<>();
     private RecyclerView rv;
+    private MyAdapter adapter = new MyAdapter();
 
     public String getDate() {
         return todoList.get(0).getDueDate();
     }
     public void initRv(Activity activity) {
-        rv.setAdapter(new MyAdapter());
+        rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(activity));
+    }
+
+    public void notifyDataAdded() {
+        adapter.notifyItemInserted(todoList.size());
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
