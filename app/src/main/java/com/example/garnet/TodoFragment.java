@@ -153,7 +153,8 @@ public class TodoFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            final View windowView = TodoFragment.this.getLayoutInflater().inflate(R.layout.add_todo_dialog, null);
+            final View windowView = TodoFragment.this.getLayoutInflater()
+                    .inflate(R.layout.add_todo_dialog, null);
             addTaskEt = windowView.findViewById(R.id.task_et);
             dateButton = windowView.findViewById(R.id.choose_date_btn);
 
@@ -163,7 +164,8 @@ public class TodoFragment extends Fragment {
                         final Calendar calendar = Calendar.getInstance();
 
                         // 这个OnDateSetListener在下面初始化Dialog时候用了
-                        DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+                        DatePickerDialog.OnDateSetListener onDateSetListener =
+                                new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                 // 将Button的显示改为用户选中的日期（格式化为YYYY-MM-DD）
@@ -186,7 +188,9 @@ public class TodoFragment extends Fragment {
                         };
 
                         // 设置一个用于展示选择日期的Dialog
-                        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),onDateSetListener,
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                                getActivity(),
+                                onDateSetListener,
                                 calendar.get(Calendar.YEAR),
                                 calendar.get(Calendar.MONTH),
                                 calendar.get(Calendar.DAY_OF_MONTH));
