@@ -1,5 +1,6 @@
 package com.example.garnet;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +25,8 @@ import java.util.List;
 
 public class TodoFragment2 extends Fragment {
     private List<TodoGroup> mainList = new ArrayList<>();
+    private SQLiteDatabase db = null ;
+    private MyAdapter adapter = new MyAdapter();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,7 +36,7 @@ public class TodoFragment2 extends Fragment {
 
         // rv的初始化
         RecyclerView rv = view.findViewById(R.id.todo_rv);
-        rv.setAdapter(new MyAdapter());
+        rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // fab初始化
@@ -51,11 +54,23 @@ public class TodoFragment2 extends Fragment {
     private class FabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-//            showAlertDialog();
-//            //将改变的数据在数据库中处理
-//            updateData();
-            // TODO: 2024-07-15 写alertdialog相关内容
+            final AddTodoDialogFragment df = new AddTodoDialogFragment();
+            df.setStateListener(new AddTodoDialogFragment.StateListener(){
+                @Override
+                public TodoItem onConfirmed(String date, String task) {
+                    TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
+                    TodoItem tiWithId = saveToDataBase(ti);
+                    updateMainList(tiWithId);
+                    refreshRv();
+                    return ti;
+                }
+            });
+            df.show(getActivity().getSupportFragmentManager(), "123456");//这里乱取了一个tag，小心！！！
         }
+    }
+
+    private void refreshRv() {
+
     }
 
 
@@ -102,7 +117,6 @@ public class TodoFragment2 extends Fragment {
 
     // 从数据库载入数据
     private void loadData(){
-        SQLiteDatabase db = null;
         try{
             SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(getActivity());
             db = sqLiteOpenHelper.getWritableDatabase();
@@ -146,15 +160,34 @@ public class TodoFragment2 extends Fragment {
                     updateMainList(ti);
                 }while(cursor.moveToNext());
             }
+            cursor.close();
         }
+    }
+
+    //向数据库中加入新待办事项
+    private TodoItem saveToDataBase(TodoItem ti) {
+
+        ContentValues c = new ContentValues();
+        c.put("DUE",ti.getDueDate());
+        c.put("DONE",ti.isDone());
+        c.put("TASK",ti.getTask());
+
+        // insert()方法返回的就是被插入地方的_id
+        long id = db.insert("TODO", null, c);
+
+        ti.setId(id);
+        return ti;
     }
 
     // 将读取到的数据加入到mainlist中
     private void updateMainList(TodoItem ti) {
         boolean isAdded = false;
-        for(TodoGroup todoGroup : mainList){
+        for(int i = 0; i<mainList.size(); i++){
+            TodoGroup todoGroup = mainList.get(i);
             if(ti.getDueDate().equals(todoGroup.getDate())){
                 todoGroup.addToTodoList(ti);
+                todoGroup.notifyDataAdded();
+                adapter.notifyItemChanged(i);
                 isAdded = true;
                 break;
             }
@@ -163,6 +196,7 @@ public class TodoFragment2 extends Fragment {
             TodoGroup todoGroup = new TodoGroup();
             todoGroup.addToTodoList(ti);
             mainList.add(todoGroup);
+            adapter.notifyDataSetChanged();//TODO: 此处有问题，需要改为notifyItemChanged,需要排序之后
         }
 
     }
