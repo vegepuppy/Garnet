@@ -51,20 +51,17 @@ public class TodoFragment2 extends Fragment {
     private class FabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            AddTodoAlertDialogHelper helper = new AddTodoAlertDialogHelper(
-                    getActivity(),
-                    TodoFragment2.this.getLayoutInflater().inflate(R.layout.add_todo_dialog, null));
+            final AddTodoDialogFragment df = new AddTodoDialogFragment();
+            df.setStateListener(new AddTodoDialogFragment.StateListener(){
+                @Override
+                public String onConfirmed() {
+                    return "";
+                }
+            });
 
-
-
-            // TODO: 2024-07-15 写alertdialog相关内容
+            df.show(getActivity().getSupportFragmentManager(), "123456");//这里乱取了一个tag，小心！！！
         }
     }
-
-    private void showAlertDialog(){
-
-    }
-
 
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {

@@ -16,7 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
     // 整个应用的主活动，包括导航栏和三个fragment的
     private HomeFragment homeFragment;
-    private TodoFragment todoFragment;
+    private TodoFragment2 todoFragment;
     private InfoFragment infoFragment;
     private BottomNavigationView bottom_nv;
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (position == 2) {
             if(todoFragment == null){
-                todoFragment = new TodoFragment();
+                todoFragment = new TodoFragment2();
                 transaction.add(R.id.content, todoFragment);
             }else{
                 transaction.show(todoFragment);

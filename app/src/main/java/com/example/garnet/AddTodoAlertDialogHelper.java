@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
-
+@Deprecated
 public class AddTodoAlertDialogHelper {
     private Button dateButton;
     private EditText editText;
@@ -59,5 +59,12 @@ public class AddTodoAlertDialogHelper {
 
     public void show(){
         builder.show();
+    }
+
+    private class DateButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+        }
     }
 }
