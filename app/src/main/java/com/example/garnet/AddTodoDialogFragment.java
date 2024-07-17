@@ -1,7 +1,6 @@
 package com.example.garnet;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class AddTodoDialogFragment extends DialogFragment {
 
@@ -37,7 +37,8 @@ public class AddTodoDialogFragment extends DialogFragment {
     @Override
     public void onStart() {
         //修改样式
-        Window window = getDialog().getWindow();
+        Window window = Objects.requireNonNull(getDialog()).getWindow();
+        assert window != null;
         WindowManager.LayoutParams lp = window.getAttributes();
         lp.gravity = Gravity.CENTER_VERTICAL;
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
@@ -55,6 +56,8 @@ public class AddTodoDialogFragment extends DialogFragment {
         TextView titleTv = v.findViewById(R.id.add_todo_dialog_title);
         et = v.findViewById(R.id.add_todo_dialog_edit);
         TextView limiterTv = v.findViewById(R.id.add_todo_limiter);
+        titleTv.addTextChangedListener(new TextLengthLimiter(limiterTv));
+
         dateButton = v.findViewById(R.id.add_todo_date_button);
         Button confrimButton = v.findViewById(R.id.add_todo_confirm_button);
 

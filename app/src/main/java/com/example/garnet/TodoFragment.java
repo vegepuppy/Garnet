@@ -2,11 +2,6 @@ package com.example.garnet;
 
 import static java.util.Collections.sort;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,21 +9,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoFragment2 extends Fragment {
+public class TodoFragment extends Fragment {
     private final List<TodoGroup> mainList = new ArrayList<>();
-    private SQLiteDatabase db = null ;
+//    private SQLiteDatabase db = null ;
     private final MyAdapter adapter = new MyAdapter();
 
     @Override
@@ -61,13 +54,14 @@ public class TodoFragment2 extends Fragment {
                 @Override
                 public TodoItem onConfirmed(String date, String task) {
                     TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
-                    TodoItem tiWithId = saveToDataBase(ti);
+                    TodoItem tiWithId = DataBaseAction.insertTodo(ti);
                     updateMainList(tiWithId);
                     return ti;
                 }
             });
             // 根据IDE提示将getActivity()改为requireActivity()
-            df.show(requireActivity().getSupportFragmentManager(), "123456");//这里乱取了一个tag，小心！！！
+            // 展示dialogFragment
+            df.show(requireActivity().getSupportFragmentManager(), "TAG");//这里乱取了一个tag，小心！！！
         }
     }
 
@@ -86,8 +80,6 @@ public class TodoFragment2 extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             TodoGroup currentTodoGroup = mainList.get(position);
             holder.initItem(currentTodoGroup); //这个函数需要设置标题（日期），设置内部的adapter，设置内部的layoutManager，初始化内部rv
-
-
         }
 
         @Override
@@ -114,58 +106,17 @@ public class TodoFragment2 extends Fragment {
 
     // 从数据库载入数据
     private void loadData(){
-        try{
-            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(getActivity());
-            db = sqLiteOpenHelper.getWritableDatabase();
-        }catch (SQLException e){
-            Toast.makeText(getActivity(),"数据库打开错误",Toast.LENGTH_SHORT).show();
-        }
-        if(db != null) {
-            Cursor cursor = db.query("TODO",
-                    new String[] {"_id","TASK","DUE","DONE"},
-                    null,null,null,null,null);
-            if(cursor.moveToFirst()){
-                do{
-                    final int idIdx = 0;
-                    final int taskIdx = 1;
-                    final int dueIdx = 2;
-                    final int doneIdx = 3;
-
-                    String dateFound = cursor.getString(dueIdx);
-                    String taskFound = cursor.getString(taskIdx);
-                    boolean doneFound = cursor.getInt(doneIdx) > 0;
-                    long idFound = cursor.getLong(idIdx);
-
-                    TodoItem ti = new TodoItem(taskFound,dateFound,idFound,doneFound);
-
-                    updateMainList(ti);
-                }while(cursor.moveToNext());
-            }
-            cursor.close();
-        }
-    }
-
-    //向数据库中加入新待办事项
-    private TodoItem saveToDataBase(TodoItem ti) {
-
-        ContentValues c = new ContentValues();
-        c.put("DUE",ti.getDueDate());
-        c.put("DONE",ti.isDone());
-        c.put("TASK",ti.getTask());
-
-        // insert()方法返回的就是被插入地方的_id
-        long id = db.insert("TODO", null, c);
-
-        ti.setId(id);
-        return ti;
+        List<TodoItem> todoItemsFound = DataBaseAction.loadTodo();
+        updateMainList(todoItemsFound);
     }
 
     // 某一个TodoItem加入到mainList中，并刷新adapter
     private void updateMainList(TodoItem ti) {
+
         boolean isAdded = false;
-        for(int i = 0; i<mainList.size(); i++){
+        for (int i = 0; i < mainList.size(); i++) {
             TodoGroup todoGroup = mainList.get(i);
-            if(ti.getDueDate().equals(todoGroup.getDate())){
+            if (ti.getDueDate().equals(todoGroup.getDate())) {
                 todoGroup.addTodoItem(ti);
                 todoGroup.notifyDataAdded();
                 adapter.notifyItemChanged(i);
@@ -173,9 +124,8 @@ public class TodoFragment2 extends Fragment {
                 break;
             }
         }
-
         // 插入的元素所属的日期在原列表中没有出现过
-        if(!isAdded){
+        if (!isAdded) {
             TodoGroup todoGroup = new TodoGroup();
             todoGroup.addTodoItem(ti);
             mainList.add(todoGroup);
@@ -184,15 +134,19 @@ public class TodoFragment2 extends Fragment {
 
             int idx = 0; // idx是插入的位置
             for (int i = 0; i < mainList.size(); i++) {
-                if(mainList.get(i).equals(todoGroup)){
+                if (mainList.get(i).equals(todoGroup)) {
                     idx = i;
                     break;
                 }
             }
-//            Log.e("TAG",mainList.get(idx).getDate());
+            //            Log.e("TAG",mainList.get(idx).getDate());
             adapter.notifyItemInserted(idx);//就是notifyDataSetChanged需要排序之后
         }
-
+    }
+    private void updateMainList(List<TodoItem> tiList) {
+        for (TodoItem ti : tiList){
+            updateMainList(ti);
+        }
     }
 
 }

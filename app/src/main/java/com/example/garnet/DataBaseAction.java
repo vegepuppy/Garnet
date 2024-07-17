@@ -1,7 +1,12 @@
 package com.example.garnet;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataBaseAction {
     private DataBaseAction() {}
@@ -31,5 +36,49 @@ public class DataBaseAction {
     public static void closeDataBase(){
         db.close();
     }
+
+    // 将所有读到的TodoItem读入mainList(instanceof = List<TodoGroup>)
+    // 返回所有找到的TodoItem构成的列表
+    public static List<TodoItem> loadTodo() {
+        List<TodoItem> ret = new ArrayList<>();
+        Cursor cursor = db.query("TODO",
+                new String[]{"_id", "TASK", "DUE", "DONE"},
+                null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                final int idIdx = 0;
+                final int taskIdx = 1;
+                final int dueIdx = 2;
+                final int doneIdx = 3;
+
+                String dateFound = cursor.getString(dueIdx);
+                String taskFound = cursor.getString(taskIdx);
+                boolean doneFound = cursor.getInt(doneIdx) > 0;
+                long idFound = cursor.getLong(idIdx);
+
+                TodoItem ti = new TodoItem(taskFound, dateFound, idFound, doneFound);
+
+                ret.add(ti);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return ret;
+    }
+
+    public static TodoItem insertTodo(TodoItem ti){
+        ContentValues c = new ContentValues();
+        c.put("DUE",ti.getDueDate());
+        c.put("DONE",ti.isDone());
+        c.put("TASK",ti.getTask());
+
+        // insert()方法返回的就是被插入地方的_id
+        long id = db.insert("TODO", null, c);
+
+        ti.setId(id);
+
+        return ti;
+    }
+
 }
 

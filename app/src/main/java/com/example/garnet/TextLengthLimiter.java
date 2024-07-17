@@ -10,7 +10,7 @@ public class TextLengthLimiter implements TextWatcher {
     // 用于限制输入字符的长度
     private CharSequence wordNum;//记录输入的字数
 
-    private TextView tv;
+    private final TextView tv;
     private final int MAX_LENGTH = 20;
 
     TextLengthLimiter(TextView tv){
@@ -34,5 +34,5 @@ public class TextLengthLimiter implements TextWatcher {
     @Override
     public void afterTextChanged(Editable s) {
         tv.setText(s.length() + "/" + MAX_LENGTH);
-    }//
+    }
 }
