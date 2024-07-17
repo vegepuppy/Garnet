@@ -63,6 +63,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     }
     // 上面的是书上的代码修改而成
 
+    // 下面这三个private static Void 只用于初始化，有问题
+    // TODO: 2024-07-17 重构
     private static void insertTitle(SQLiteDatabase db, String title){
         ContentValues contentValues = new ContentValues();
         contentValues.put("NAME", title);
@@ -83,4 +85,5 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         c.put("DONE",0);
         db.insert("TODO",null,c);
     }
+
 }

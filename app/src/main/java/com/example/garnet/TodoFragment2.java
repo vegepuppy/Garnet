@@ -1,5 +1,7 @@
 package com.example.garnet;
 
+import static java.util.Collections.sort;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TodoFragment2 extends Fragment {
-    private List<TodoGroup> mainList = new ArrayList<>();
+    private final List<TodoGroup> mainList = new ArrayList<>();
     private SQLiteDatabase db = null ;
-    private MyAdapter adapter = new MyAdapter();
+    private final MyAdapter adapter = new MyAdapter();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +49,6 @@ public class TodoFragment2 extends Fragment {
         // 读取数据库
         loadData();
 
-        // TODO: 2024-07-15 写这些类和函数
         return view;
     }
 
@@ -61,16 +63,12 @@ public class TodoFragment2 extends Fragment {
                     TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
                     TodoItem tiWithId = saveToDataBase(ti);
                     updateMainList(tiWithId);
-                    refreshRv();
                     return ti;
                 }
             });
-            df.show(getActivity().getSupportFragmentManager(), "123456");//这里乱取了一个tag，小心！！！
+            // 根据IDE提示将getActivity()改为requireActivity()
+            df.show(requireActivity().getSupportFragmentManager(), "123456");//这里乱取了一个tag，小心！！！
         }
-    }
-
-    private void refreshRv() {
-
     }
 
 
@@ -87,7 +85,7 @@ public class TodoFragment2 extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             TodoGroup currentTodoGroup = mainList.get(position);
-            holder.initItem(currentTodoGroup); //这个函数需要设置标题（日期），设置内部的adapter，设置内部的layoutmanager，初始化内部rv
+            holder.initItem(currentTodoGroup); //这个函数需要设置标题（日期），设置内部的adapter，设置内部的layoutManager，初始化内部rv
 
 
         }
@@ -98,17 +96,16 @@ public class TodoFragment2 extends Fragment {
         }
     }
 
-
     private class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView tv;
-        private RecyclerView rv;
+        private final TextView tv;
+        private final RecyclerView rv;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tv = itemView.findViewById(R.id.due_date_tv);
             rv = itemView.findViewById(R.id.tasks_for_a_day_rv);
         }
-        public void initItem(TodoGroup todoGroup){
+        public void initItem(@NonNull TodoGroup todoGroup){
             tv.setText(todoGroup.getDate());
             todoGroup.setRv(rv);
             todoGroup.initRv(getActivity());
@@ -129,31 +126,15 @@ public class TodoFragment2 extends Fragment {
                     null,null,null,null,null);
             if(cursor.moveToFirst()){
                 do{
-                    // TODO: 2024-07-15 下面的idx要改成四个常量，注意getString这一类方法要避免-1
-                    String taskFound = null;
-                    String dateFound = null;
-                    long idFound = 0;
-                    boolean doneFound = false;
+                    final int idIdx = 0;
+                    final int taskIdx = 1;
+                    final int dueIdx = 2;
+                    final int doneIdx = 3;
 
-                    int dueIdx = cursor.getColumnIndex("DUE");
-                    if (dueIdx > -1){
-                        dateFound = cursor.getString(dueIdx);
-                    }
-                    int taskIdx = cursor.getColumnIndex("TASK");
-
-                    if (taskIdx > -1){
-                        taskFound = cursor.getString(taskIdx);
-                    }
-
-                    int doneIdx = cursor.getColumnIndex("DONE");
-                    if (doneIdx > -1){
-                        doneFound = cursor.getInt(doneIdx) > 0;
-                    }
-
-                    int idIdx = cursor.getColumnIndex("_id");
-                    if (idIdx > -1){
-                        idFound = cursor.getLong(idIdx);
-                    }
+                    String dateFound = cursor.getString(dueIdx);
+                    String taskFound = cursor.getString(taskIdx);
+                    boolean doneFound = cursor.getInt(doneIdx) > 0;
+                    long idFound = cursor.getLong(idIdx);
 
                     TodoItem ti = new TodoItem(taskFound,dateFound,idFound,doneFound);
 
@@ -179,27 +160,39 @@ public class TodoFragment2 extends Fragment {
         return ti;
     }
 
-    // 将读取到的数据加入到mainlist中
+    // 某一个TodoItem加入到mainList中，并刷新adapter
     private void updateMainList(TodoItem ti) {
         boolean isAdded = false;
         for(int i = 0; i<mainList.size(); i++){
             TodoGroup todoGroup = mainList.get(i);
             if(ti.getDueDate().equals(todoGroup.getDate())){
-                todoGroup.addToTodoList(ti);
+                todoGroup.addTodoItem(ti);
                 todoGroup.notifyDataAdded();
                 adapter.notifyItemChanged(i);
                 isAdded = true;
                 break;
             }
         }
+
+        // 插入的元素所属的日期在原列表中没有出现过
         if(!isAdded){
             TodoGroup todoGroup = new TodoGroup();
-            todoGroup.addToTodoList(ti);
+            todoGroup.addTodoItem(ti);
             mainList.add(todoGroup);
-            adapter.notifyDataSetChanged();//TODO: 此处有问题，需要改为notifyItemChanged,需要排序之后
+
+            sort(mainList);
+
+            int idx = 0; // idx是插入的位置
+            for (int i = 0; i < mainList.size(); i++) {
+                if(mainList.get(i).equals(todoGroup)){
+                    idx = i;
+                    break;
+                }
+            }
+            Log.e("TAG",mainList.get(idx).getDate());
+            adapter.notifyItemInserted(idx);//就是notifyDataSetChanged需要排序之后
         }
 
     }
-
 
 }
