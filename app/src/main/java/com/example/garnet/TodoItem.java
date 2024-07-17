@@ -1,7 +1,9 @@
 package com.example.garnet;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toolbar;
 
 public class TodoItem{
     private String task;
@@ -53,6 +55,9 @@ public class TodoItem{
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                TodoItem.this.isDone = isChecked;
+                DataBaseOperator operator = DataBaseOperator.getInstance();
+                operator.setTodoStatus(TodoItem.this);
             }
         });
     }

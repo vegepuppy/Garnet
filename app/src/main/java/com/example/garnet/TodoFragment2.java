@@ -189,7 +189,7 @@ public class TodoFragment2 extends Fragment {
                     break;
                 }
             }
-            Log.e("TAG",mainList.get(idx).getDate());
+//            Log.e("TAG",mainList.get(idx).getDate());
             adapter.notifyItemInserted(idx);//就是notifyDataSetChanged需要排序之后
         }
 
