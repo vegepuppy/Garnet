@@ -52,11 +52,10 @@ public class TodoFragment extends Fragment {
             final AddTodoDialogFragment df = new AddTodoDialogFragment();
             df.setStateListener(new AddTodoDialogFragment.StateListener(){
                 @Override
-                public TodoItem onConfirmed(String date, String task) {
+                public void onConfirmed(String date, String task) {
                     TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
                     TodoItem tiWithId = DataBaseAction.insertTodo(ti);
                     updateMainList(tiWithId);
-                    return ti;
                 }
             });
             // 根据IDE提示将getActivity()改为requireActivity()

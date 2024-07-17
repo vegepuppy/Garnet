@@ -53,10 +53,10 @@ public class AddTodoDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // 填充布局，获取组件
         View v = getLayoutInflater().inflate(R.layout.dialog_fragment_add_todo, container, false);
-        TextView titleTv = v.findViewById(R.id.add_todo_dialog_title);
+
         et = v.findViewById(R.id.add_todo_dialog_edit);
         TextView limiterTv = v.findViewById(R.id.add_todo_limiter);
-        titleTv.addTextChangedListener(new TextLengthLimiter(limiterTv));
+        TextLengthLimiter.bindTextLimiter(et,limiterTv);
 
         dateButton = v.findViewById(R.id.add_todo_date_button);
         Button confrimButton = v.findViewById(R.id.add_todo_confirm_button);
@@ -105,7 +105,7 @@ public class AddTodoDialogFragment extends DialogFragment {
     }
 
     public interface StateListener{
-        TodoItem onConfirmed(String date, String task);
+        void onConfirmed(String date, String task);
     }
 
 

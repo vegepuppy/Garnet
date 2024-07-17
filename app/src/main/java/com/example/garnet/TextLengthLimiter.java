@@ -2,24 +2,22 @@ package com.example.garnet;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TextLengthLimiter implements TextWatcher {
     // 用于限制输入字符的长度
-    private CharSequence wordNum;//记录输入的字数
 
-    private final TextView tv;
+    private final TextView limiterTextView;
     private final int MAX_LENGTH = 20;
 
-    TextLengthLimiter(TextView tv){
-        this.tv = tv;
+    TextLengthLimiter(TextView limiterTextView){
+        this.limiterTextView = limiterTextView;
     }
 
-    TextLengthLimiter(TextView tv, int length){
-        this.tv = tv;
-        tv.setText(Integer.toString(length)+"/" + MAX_LENGTH);
+    TextLengthLimiter(TextView limiterTextView, int length){
+        this.limiterTextView = limiterTextView;
+        limiterTextView.setText(Integer.toString(length) + "/" + MAX_LENGTH);
     }
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -28,11 +26,14 @@ public class TextLengthLimiter implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        wordNum = s;//实时记录输入的字数
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-        tv.setText(s.length() + "/" + MAX_LENGTH);
+        limiterTextView.setText(s.length() + "/" + MAX_LENGTH);
+    }
+
+    public static void bindTextLimiter(EditText et, TextView limiterTextView){
+        et.addTextChangedListener(new TextLengthLimiter(limiterTextView));
     }
 }

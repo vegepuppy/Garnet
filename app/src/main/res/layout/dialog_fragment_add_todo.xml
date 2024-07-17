@@ -24,6 +24,7 @@
         android:id="@+id/add_todo_dialog_edit"
         android:inputType="text"
         android:hint="请输入待办事项"
+        android:maxLength="20"
         />
 
     <TextView
