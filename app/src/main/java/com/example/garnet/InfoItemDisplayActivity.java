@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,7 @@ import java.util.List;
 public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_NAME = "InfoGroupName";
     private List<InfoItem> mainList;
+    private MyAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,8 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         infoGroupNameTextView.setText(infoGroupName);
 
         RecyclerView rv = findViewById(R.id.info_item_display_rv);
-        rv.setAdapter(new MyAdapter());
+        myAdapter = new MyAdapter();
+        rv.setAdapter(myAdapter);
         rv.setLayoutManager(new LinearLayoutManager(InfoItemDisplayActivity.this));
 
         mainList = DataBaseAction.Load.loadInfo(infoGroupName);
@@ -72,9 +75,21 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     // TODO: 2024-07-18 加上长按或者左滑菜单
     private class MyViewHolder extends RecyclerView.ViewHolder{
         public final TextView infoItemStringTextView;
+        public final CardView infoItemCardView;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             infoItemStringTextView = itemView.findViewById(R.id.info_item_string_tv);
+            infoItemCardView = itemView.findViewById(R.id.info_item_cardview);
+            itemView.setOnLongClickListener(v -> {
+                int position = getAdapterPosition();
+
+                DataBaseAction.Delete.deleteInfo(mainList.get(position));
+                mainList.remove(position);
+                myAdapter.notifyItemChanged(position);
+
+                return true;
+            });
         }
     }
 }

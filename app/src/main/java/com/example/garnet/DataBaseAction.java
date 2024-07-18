@@ -128,13 +128,15 @@ public class DataBaseAction {
     public static class Delete{
         public static void deleteInfo(InfoItem item){
             String idString = String.valueOf(item.getId());
-            db.execSQL("DELETE FROM LINK WHERE _id = ?",new String[]{idString});
+            db.delete("LINK","_id=?",new String[]{idString});
             Log.e("TAG", "Link id "+idString+" delete");
             // TODO: 2024-07-18 不应该execSQL
         }
     }
 
     public static class Update{
+        /**@deprecated 不需要修改uri的功能*/
+        @Deprecated//确定不用修改Uri了
         public static InfoItem updateInfoURI(InfoItem item, String newUri){
             String idString = String.valueOf(item.getId());
             db.execSQL("UPDATE LINK SET URI = ? WHERE _id = ?",

@@ -24,12 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+/**@deprecated replaced with{@link InfoItemDisplayActivity}
+ * */
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
     public static final String INFO_GROUP_NAME = "InfoGroupName";
     private String infoGroupName;
     private List<InfoItem> mainList = new ArrayList<>();
-    // TODO: 2024-05-27 这里的link要改成一个类，要包含这个link 对应的名称，而不是显示一个连接
 
     private RecyclerView secondRecyclerView;
     private MyAdapter myAdapter;
