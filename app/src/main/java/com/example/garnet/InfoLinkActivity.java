@@ -28,7 +28,7 @@ public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
     public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
     private String infoGroupName;
-    private List<LinkInfoItem> mainList = new ArrayList<>();
+    private List<InfoItem> mainList = new ArrayList<>();
     // TODO: 2024-05-27 这里的link要改成一个类，要包含这个link 对应的名称，而不是显示一个连接
 
     private RecyclerView secondRecyclerView;
@@ -97,7 +97,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                                     .show();
                         }
                         else{
-                            LinkInfoItem item = DataBaseAction.Insert.insertInfo(new LinkInfoItem(uriInput.trim(), infoGroupName, LinkInfoItem.LACK_ID));
+                            InfoItem item = DataBaseAction.Insert.insertInfo(new InfoItem(uriInput.trim(), infoGroupName, InfoItem.LACK_ID));
                             mainList.add(item);
 
                             alertDialog.dismiss();
@@ -117,7 +117,7 @@ public class InfoLinkActivity extends AppCompatActivity {
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             //view = View.inflate(MainActivity.this,R.layout.layout_info_list_item,null);
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_info_link_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.info_item_card, parent, false);
             // 我不理解，不要动这里
 
             return new MyViewHolder(view);
@@ -140,7 +140,7 @@ public class InfoLinkActivity extends AppCompatActivity {
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.infoLinkTitleTextView = itemView.findViewById(R.id.info_link_textview);
+            this.infoLinkTitleTextView = itemView.findViewById(R.id.info_item_string_tv);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -179,7 +179,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                 if (itemId == R.id.delete) {
 
                     // 在数据库中删除
-                    LinkInfoItem itemToDelete = mainList.get(position);
+                    InfoItem itemToDelete = mainList.get(position);
                     DataBaseAction.Delete.deleteInfo(itemToDelete);
                     // 在List中删除
                     mainList.remove(position);
@@ -196,7 +196,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                             EditText editText = addWindow.findViewById(R.id.link_edit_text);
 
                             String newUri = editText.getText().toString();
-                            LinkInfoItem updatedItem = DataBaseAction.Update.updateInfoURI(mainList.get(position), newUri);
+                            InfoItem updatedItem = DataBaseAction.Update.updateInfoURI(mainList.get(position), newUri);
                             mainList.set(position, updatedItem);
                             myAdapter.notifyItemChanged(position);
                         }

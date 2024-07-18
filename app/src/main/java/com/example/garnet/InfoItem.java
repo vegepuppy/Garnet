@@ -1,6 +1,6 @@
 package com.example.garnet;
 
-public class LinkInfoItem {
+public class InfoItem {
     private String uri;
     private String belong;
     // 以上两个变量不能是final，用户可能会改，忽视IDE提示
@@ -19,7 +19,7 @@ public class LinkInfoItem {
         return id;
     }
 
-    public LinkInfoItem(String uri, String belong, long id) {
+    public InfoItem(String uri, String belong, long id) {
         this.uri = uri;
         this.belong = belong;
     }

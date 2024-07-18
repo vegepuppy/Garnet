@@ -76,8 +76,8 @@ public class DataBaseAction {
         /** 将所有读到的TodoItem读入mainList(一个List<TodoGroup>类型对象)
          * @param infoGroupName 在这一InfoGroup种进行查找
          * @return 返回所有在数据库中读到的InfoItem构成的列表*/
-        public static List<LinkInfoItem> loadInfo(String infoGroupName){
-            List<LinkInfoItem> ret = new ArrayList<>();
+        public static List<InfoItem> loadInfo(String infoGroupName){
+            List<InfoItem> ret = new ArrayList<>();
 
             Cursor cursor = db.query("LINK",
                     new String[]{"_id","URI","BELONG"},
@@ -89,7 +89,7 @@ public class DataBaseAction {
                     String titleFound = cursor.getString(1);
                     long idFound = cursor.getLong(0);
                     // TODO: 2024-07-18 用常量
-                    ret.add(new LinkInfoItem(titleFound, infoGroupName, idFound));
+                    ret.add(new InfoItem(titleFound, infoGroupName, idFound));
                 }while(cursor.moveToNext());
             }
             cursor.close();
@@ -113,20 +113,20 @@ public class DataBaseAction {
             return new TodoItem(item.getTask(), item.getDueDate(), id, item.isDone());
         }
 
-        /**将一个未知id的{@link LinkInfoItem}写入数据库
-         * @param item 这个未知id的{@link  LinkInfoItem}
-         * @return {@link LinkInfoItem}加上id后的传入参数
+        /**将一个未知id的{@link InfoItem}写入数据库
+         * @param item 这个未知id的{@link  InfoItem}
+         * @return {@link InfoItem}加上id后的传入参数
          * */
-        public static LinkInfoItem insertInfo(LinkInfoItem item){
+        public static InfoItem insertInfo(InfoItem item){
             ContentValues contentValues = new ContentValues();
             contentValues.put("URI",item.getUri());
             contentValues.put("BELONG",item.getBelong());
             long id = db.insert("LINK",null,contentValues);
-            return new LinkInfoItem(item.getUri(),item.getBelong(),id);
+            return new InfoItem(item.getUri(),item.getBelong(),id);
         }
     }
     public static class Delete{
-        public static void deleteInfo(LinkInfoItem item){
+        public static void deleteInfo(InfoItem item){
             String idString = String.valueOf(item.getId());
             db.execSQL("DELETE FROM LINK WHERE _id = ?",new String[]{idString});
             Log.e("TAG", "Link id "+idString+" delete");
@@ -135,12 +135,12 @@ public class DataBaseAction {
     }
 
     public static class Update{
-        public static LinkInfoItem updateInfoURI(LinkInfoItem item, String newUri){
+        public static InfoItem updateInfoURI(InfoItem item, String newUri){
             String idString = String.valueOf(item.getId());
             db.execSQL("UPDATE LINK SET URI = ? WHERE _id = ?",
                     new String[]{newUri,idString});
             Log.e("UPDATING DATABASE", item.getUri()+"   "+newUri);
-            return new LinkInfoItem(newUri, item.getBelong(), item.id);
+            return new InfoItem(newUri, item.getBelong(), item.id);
         }
     }
 }
