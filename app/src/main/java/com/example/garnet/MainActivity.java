@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DataBaseAction.closeDataBase();
+        DataBaseAction.close();
     }
 
     @Override

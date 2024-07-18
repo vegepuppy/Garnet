@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 
 public class GarnetDatabaseHelper extends SQLiteOpenHelper {
-    private static final String DB_NAME = "garnetDatabase";
+    private static final String DB_NAME = "garnetDatabase.db";// 须加上扩展名
     private static final int DB_VERSION = 1;
 
     // 构造函数

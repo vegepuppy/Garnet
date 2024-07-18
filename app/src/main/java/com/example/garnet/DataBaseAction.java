@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class DataBaseAction {
     /**
      * 关闭应用数据库
      */
-    public static void closeDataBase(){
+    public static void close(){
         db.close();
     }
 
@@ -72,9 +73,9 @@ public class DataBaseAction {
 
         /** 将所有读到的TodoItem读入mainList(一个List<TodoGroup>类型对象)
          * @param infoGroupName 在这一InfoGroup种进行查找
-         * @return 返回所有在数据库中读到的的TodoItem构成的列表*/
-        public static List<InfoItem> loadInfo(String infoGroupName){
-            List<InfoItem> ret = new ArrayList<>();
+         * @return 返回所有在数据库中读到的InfoItem构成的列表*/
+        public static List<LinkInfoItem> loadInfo(String infoGroupName){
+            List<LinkInfoItem> ret = new ArrayList<>();
 
             Cursor cursor = db.query("LINK",
                     new String[]{"_id","URI","BELONG"},
@@ -84,7 +85,9 @@ public class DataBaseAction {
                 do{
                     //符合BELONG的话，存进来
                     String titleFound = cursor.getString(1);
-                    ret.add(new InfoItem(titleFound));
+                    long idFound = cursor.getLong(0);
+                    // TODO: 2024-07-18 用常量
+                    ret.add(new LinkInfoItem(titleFound, infoGroupName, idFound));
                 }while(cursor.moveToNext());
             }
             cursor.close();
@@ -94,30 +97,48 @@ public class DataBaseAction {
 
     public static class Insert{
         /**将一个未知id的{@link TodoItem}写入数据库
-         * @param t 这个未知id的{@link  TodoItem}
+         * @param item 这个未知id的{@link  TodoItem}
          * @return {@link TodoItem}加上id后的传入参数
          * */
-        public static TodoItem insertTodo(TodoItem t){
+        public static TodoItem insertTodo(TodoItem item){
             ContentValues c = new ContentValues();
-            c.put("DUE",t.getDueDate());
-            c.put("DONE",t.isDone());
-            c.put("TASK",t.getTask());
+            c.put("DUE",item.getDueDate());
+            c.put("DONE",item.isDone());
+            c.put("TASK",item.getTask());
 
             // insert()方法返回的就是被插入地方的_id
             long id = db.insert("TODO", null, c);
-            t.setId(id);
-            return t;
+            return new TodoItem(item.getTask(), item.getDueDate(), id, item.isDone());
         }
 
-        /**将一个未知id的{@link InfoItem}写入数据库
-         * @param t 这个未知id的{@link  InfoItem}
-         * @return {@link InfoItem}加上id后的传入参数
+        /**将一个未知id的{@link LinkInfoItem}写入数据库
+         * @param item 这个未知id的{@link  LinkInfoItem}
+         * @return {@link LinkInfoItem}加上id后的传入参数
          * */
-        public static InfoItem insertInfo(InfoItem t){
+        public static LinkInfoItem insertInfo(LinkInfoItem item){
             ContentValues contentValues = new ContentValues();
-            contentValues.put("URI",t.uri);
-            contentValues.put("BELONG",t.getBelong());
-            db.insert("LINK",null,contentValues);
+            contentValues.put("URI",item.getUri());
+            contentValues.put("BELONG",item.getBelong());
+            long id = db.insert("LINK",null,contentValues);
+            return new LinkInfoItem(item.getUri(),item.getBelong(),id);
+        }
+    }
+    public static class Delete{
+        public static void deleteInfo(LinkInfoItem item){
+            String idString = String.valueOf(item.getId());
+            db.execSQL("DELETE FROM LINK WHERE _id = ?",new String[]{idString});
+            Log.e("TAG", "Link id "+idString+" delete");
+            // TODO: 2024-07-18 不应该execSQL
+        }
+    }
+
+    public static class Update{
+        public static LinkInfoItem updateInfoURI(LinkInfoItem item, String newUri){
+            String idString = String.valueOf(item.getId());
+            db.execSQL("UPDATE LINK SET URI = ? WHERE _id = ?",
+                    new String[]{newUri,idString});
+            Log.e("UPDATING DATABASE", item.getUri()+"   "+newUri);
+            return new LinkInfoItem(newUri, item.getBelong(), item.id);
         }
     }
 }

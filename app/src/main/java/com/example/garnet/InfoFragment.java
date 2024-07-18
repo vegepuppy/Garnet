@@ -217,7 +217,7 @@ public class InfoFragment extends Fragment {
 
                     deleteTitleItem(position);
 
-                } else if (itemId == R.id.modify) {
+                } else if (itemId == R.id.update) {
                     //展示一个alertDialog
                     Toast.makeText(getActivity(), "点击了修改", Toast.LENGTH_LONG).show();
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
