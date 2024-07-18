@@ -26,7 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
-    public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
+    public static final String INFO_GROUP_NAME = "InfoGroupName";
     private String infoGroupName;
     private List<InfoItem> mainList = new ArrayList<>();
     // TODO: 2024-05-27 这里的link要改成一个类，要包含这个link 对应的名称，而不是显示一个连接
@@ -61,7 +61,7 @@ public class InfoLinkActivity extends AppCompatActivity {
 
         // 获得点击的标题名字
         DataBaseAction.init(InfoLinkActivity.this);
-        infoGroupName = this.getIntent().getStringExtra(VAR_NAME_IN_INTENT);
+        infoGroupName = this.getIntent().getStringExtra(INFO_GROUP_NAME);
         mainList = DataBaseAction.Load.loadInfo(infoGroupName);
     }
 

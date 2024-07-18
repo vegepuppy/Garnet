@@ -8,14 +8,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="InfoItemGroup标题"
-        android:id="@+id/info_item_group_title_tv"/>
+        android:textSize="30sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:id="@+id/info_item_group_name_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/info_item_group_title_tv"
-        android:layout_alignStart="@+id/info_item_group_title_tv"
+        android:layout_below="@+id/info_item_group_name_tv"
+        android:layout_alignStart="@+id/info_item_group_name_tv"
         android:layout_marginTop="20dp"
         android:id="@+id/info_item_display_rv"/>
 

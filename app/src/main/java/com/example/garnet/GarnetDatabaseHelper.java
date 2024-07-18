@@ -52,7 +52,9 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
 
             for (int i = 0; i < 3; i ++){
                 //注意这里是3 < 5所以可以直接传i进去
-                insertLink(db,"SAMPLE LINK #"+i,"SAMPLE TITLE #"+i);
+                insertLink(db,"SAMPLE LINK #"+i*3+1,"SAMPLE TITLE #"+i);
+                insertLink(db,"SAMPLE LINK #"+i*3+2,"SAMPLE TITLE #"+i);
+                insertLink(db,"SAMPLE LINK #"+i*3+3,"SAMPLE TITLE #"+i);
             }
 
             // 示例待办事项

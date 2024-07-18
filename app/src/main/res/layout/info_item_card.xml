@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:drawableStart="@drawable/baseline_123_24"
     app:cardCornerRadius="20dp"
-    android:layout_margin="30dp"
+    android:layout_margin="10dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/info_link_cardview"
     android:layout_marginHorizontal="16dp"
@@ -19,6 +19,6 @@
         android:text="text"
         android:id="@+id/info_item_string_tv"
         android:textSize="20sp" />
-<!--    调整了一下内部，更多留白-->
+<!--    调整了一下内部，更多留白更美观-->
 
 </androidx.cardview.widget.CardView>

@@ -1,54 +1,51 @@
 package com.example.garnet;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-/**
- * 用于展示一系列的InfoItem
- * */
-public class InfoItemDisplayFragment extends Fragment {
+public class InfoItemDisplayActivity extends AppCompatActivity {
+    public static final String INFO_GROUP_NAME = "InfoGroupName";
     private List<InfoItem> mainList;
-    private View rootView;//整个fragment的UI
-    private String infoGroupName = "SAMPLE TITLE #1";// TODO: 2024-07-18 改成与infoFragment通信
-
-    public InfoItemDisplayFragment(String infoGroupName) {
-        this.infoGroupName = infoGroupName;
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.activity_info_item_display, container, false);
-        FloatingActionButton fab = rootView.findViewById(R.id.add_info_item_fab);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_info_item_display);
+
+        Intent intent = getIntent();
+        String infoGroupName = intent.getStringExtra(INFO_GROUP_NAME);
+
+        FloatingActionButton fab = findViewById(R.id.add_info_item_fab);
         fab.setOnClickListener(new AddInfoItemFabOnClickListener());
 
-        RecyclerView rv = rootView.findViewById(R.id.info_item_display_rv);
+        TextView infoGroupNameTextView = findViewById(R.id.info_item_group_name_tv);
+        infoGroupNameTextView.setText(infoGroupName);
+
+        RecyclerView rv = findViewById(R.id.info_item_display_rv);
         rv.setAdapter(new MyAdapter());
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rv.setLayoutManager(new LinearLayoutManager(InfoItemDisplayActivity.this));
 
         mainList = DataBaseAction.Load.loadInfo(infoGroupName);
-        return rootView;
     }
-
     // TODO: 2024-07-18 这个对应的召唤出DialogFragment部分你补充下，谢谢。我估计xml文件也要重写.
     private class AddInfoItemFabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Toast.makeText(requireActivity(), "fab Clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(InfoItemDisplayActivity.this, "fab Clicked", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -56,7 +53,6 @@ public class InfoItemDisplayFragment extends Fragment {
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // TODO: 2024-07-18 检查下这里，我记得用这个方法会导致问题
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.info_item_card, parent, false);
             return new MyViewHolder(itemView);
         }
