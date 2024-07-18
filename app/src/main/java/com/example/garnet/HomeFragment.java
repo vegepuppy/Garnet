@@ -1,7 +1,8 @@
 package com.example.garnet;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import static java.util.Collections.sort;
+
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,73 +14,126 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
-    private MyAdapter myAdapter;
-    private SQLiteDatabase db;
-    private Cursor cursor;
-    private List<HomeGroup> tasklist = new ArrayList<>();
-    private boolean isdone = false;
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+public class HomeFragment extends Fragment{
+    public final List<String> tasklist = new ArrayList<>();
+    private final MyAdapter adapter = new MyAdapter();
+    private TextView tv;
+    private final innerAdapter inneradapter = new innerAdapter();
+    private RecyclerView inner_rv;
+
+    public List<String> getTasklist(int position) {
+        tasklist.add("bilibili.com");
+        tasklist.add("zhihu.com");
+        tasklist.add("mooc.com");
+        return tasklist;
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_home,container,false);
-
-        RecyclerView homeRecyclerview = view.findViewById(R.id.home_rv);
-        myAdapter = new MyAdapter();
-        homeRecyclerview.setAdapter(myAdapter);
-
-        homeRecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        
-
-        //TODO:2024-07-17 数据库的问题还没有解决
-
+        //Textview的初始化
+        tv = view.findViewById(R.id.home_top_tv);
+        tv.setText("2023年7月18日");
+        //home_rv的初始化
+        RecyclerView rv = view.findViewById(R.id.home_rv);
+        rv.setAdapter(adapter);
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
 
-
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
+
+       @NonNull
+       @Override
+       public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+           View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_card,parent,false);
+           return new MyViewHolder(view);
+       }
+
+       @Override
+       public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            holder.initItem(position);
+       }
+
+       @Override
+       public int getItemCount() {
+           return tasklist.size()+1;
+       }
+    }
+
+     private class innerAdapter extends RecyclerView.Adapter<innerViewHolder>{
+
         @NonNull
         @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.home_card,parent,false);
-            return new MyViewHolder(view);
+        public innerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View innerview = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_card,parent,false);
+            return new innerViewHolder(innerview);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            HomeGroup currentHomeGroup = tasklist.get(position);
-            holder.initItem(currentHomeGroup);
+        public void onBindViewHolder(@NonNull innerViewHolder holder, int inner_position) {
+            holder.inner_initItem(inner_position);
         }
 
         @Override
         public int getItemCount() {
             return tasklist.size();
         }
-    }
+     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder{
-        private RecyclerView rv;
-        private CheckBox cb;
-        public MyViewHolder(@NonNull View itemView) {
+       private final CheckBox cb;
+       private final RecyclerView rv;
+       public MyViewHolder(@NonNull View itemView) {
+           super(itemView);
+           cb = itemView.findViewById(R.id.home_cb);
+           rv = itemView.findViewById(R.id.home_task_rv);
+       }
+
+       public void initItem(int position){
+           cb.setText("高等数学");
+           cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+               @Override
+               public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                   if (isChecked) {
+                       // CheckBox 被选中
+                       Toast.makeText(getActivity(), "Task is finished", Toast.LENGTH_SHORT).show();
+                   } else {
+                       // CheckBox 被取消选中
+                       Toast.makeText(getActivity(), "Task is undone", Toast.LENGTH_SHORT).show();
+                   }
+               }
+           });
+           setRv(rv);
+           initRV(getActivity());
+       }
+    }
+
+    private class innerViewHolder extends RecyclerView.ViewHolder{
+        private final TextView task_view;
+        public innerViewHolder(@NonNull View itemView) {
             super(itemView);
-            rv = itemView.findViewById(R.id.home_task_rv);
-            cb = itemView.findViewById(R.id.home_cb);
+            task_view = itemView.findViewById(R.id.home_lk);
         }
-        public void initItem(HomeGroup homeGroup){
-            homeGroup.setRv(rv);
-            cb.setText("高等数学");
-            isdone = cb.isChecked();
-            cb.setChecked(isdone);
-            homeGroup.initRv(getActivity());
+        public void inner_initItem(int position){
+            String item = getTasklist(position).toString();
+            task_view.append(item);
         }
     }
+
+    public void initRV(Activity activity){
+        inner_rv.setAdapter(inneradapter);
+        inner_rv.setLayoutManager(new LinearLayoutManager(activity));
+    }
+
+    public void setRv(RecyclerView rv){
+        this.inner_rv = rv;
+    }
+   
 }
