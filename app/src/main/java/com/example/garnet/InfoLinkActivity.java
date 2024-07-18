@@ -1,12 +1,9 @@
 package com.example.garnet;
 
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,7 +30,7 @@ public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
     public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
     private String corrTitle;
-    private List<String> uriList = new ArrayList<>();
+    private List<InfoItem> mainList = new ArrayList<>();
     // TODO: 2024-05-27 这里的link要改成一个类，要包含这个link 对应的名称，而不是显示一个连接
 
     private RecyclerView secondRecyclerView;
@@ -44,7 +41,6 @@ public class InfoLinkActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         cursor.close();
         db.close();
     }
@@ -70,25 +66,7 @@ public class InfoLinkActivity extends AppCompatActivity {
         // 获得点击的标题名字
         corrTitle = this.getIntent().getStringExtra(VAR_NAME_IN_INTENT);
 
-        // 数据库部分
-        try{
-            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(this);
-            db = sqLiteOpenHelper.getWritableDatabase();
-            cursor = db.query("LINK",
-                    new String[]{"_id","URI","BELONG"},
-                    "BELONG = ?",new String[]{corrTitle},null,null,null);
-
-            //把数据库中的信息全读取到List中去
-            if(cursor.moveToFirst()){
-                do{
-                    //符合BELONG的话，存进来
-                    String titleFound = cursor.getString(1);
-                    uriList.add(titleFound);
-                }while(cursor.moveToNext());
-            }
-        }catch(SQLException e){
-            Toast.makeText(InfoLinkActivity.this, "数据库不可用",Toast.LENGTH_SHORT);
-        }
+        mainList = DataBaseAction.Load.loadInfo(corrTitle);
     }
 
     private class FABClickListener implements View.OnClickListener{
@@ -123,12 +101,9 @@ public class InfoLinkActivity extends AppCompatActivity {
                                     .show();
                         }
                         else{
-                            uriList.add(uriInput.trim());
+                            mainList.add(new InfoItem(uriInput.trim()));
 
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put("URI",uriInput);
-                            contentValues.put("BELONG",corrTitle);
-                            db.insert("LINK",null,contentValues);
+
 
                             alertDialog.dismiss();
                         }
@@ -156,13 +131,13 @@ public class InfoLinkActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            String url = uriList.get(position);
+            String url = mainList.get(position);
             holder.infoLinkTitleTextView.setText(url);
         }
 
         @Override
         public int getItemCount() {
-            return uriList.size();
+            return mainList.size();
         }
     }
 
@@ -177,7 +152,7 @@ public class InfoLinkActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        Uri uri = Uri.parse(uriList.get(position));
+                        Uri uri = Uri.parse(mainList.get(position));
                         Intent intent = new Intent(Intent.ACTION_VIEW,uri);
                         try{
                             startActivity(intent);
@@ -210,9 +185,9 @@ public class InfoLinkActivity extends AppCompatActivity {
                 if (itemId == R.id.delete) {
 
                     // 在数据库中删除
-                    db.execSQL("DELETE FROM LINK WHERE URI = ?",new String[]{uriList.get(position)});
+                    db.execSQL("DELETE FROM LINK WHERE URI = ?",new String[]{mainList.get(position)});
                     // 在List中删除
-                    uriList.remove(position);
+                    mainList.remove(position);
 
                     myAdapter.notifyItemRemoved(position);
                 } else if (itemId == R.id.modify) {
@@ -224,12 +199,12 @@ public class InfoLinkActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             EditText editText = addWindow.findViewById(R.id.link_edit_text);
-                            String oldUri = uriList.get(position);
+                            String oldUri = mainList.get(position);
                             String newUri = editText.getText().toString();
 
                             db.execSQL("UPDATE TITLE SET NAME = ? WHERE NAME = ?",
                                     new String[]{newUri,oldUri});
-                            uriList.set(position, newUri);
+                            mainList.set(position, newUri);
                             myAdapter.notifyItemChanged(position);
                         }
                     });
