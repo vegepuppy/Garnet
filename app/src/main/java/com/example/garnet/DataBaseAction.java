@@ -17,8 +17,10 @@ public class DataBaseAction {
 
     // 在MainActivity中调用这方法进行初始化，利用SQLiteOpenHelper构造单例
     public static void init(Context context) {
-        GarnetDatabaseHelper dbHelper = new GarnetDatabaseHelper(context);
-        db = dbHelper.getWritableDatabase();
+        if (db == null) {
+            GarnetDatabaseHelper dbHelper = new GarnetDatabaseHelper(context);
+            db = dbHelper.getWritableDatabase();
+        }
     }
 
     public void insertTodoItem(TodoItem ti) {
