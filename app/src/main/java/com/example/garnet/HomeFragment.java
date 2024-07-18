@@ -22,17 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment{
-    public final List<String> tasklist = new ArrayList<>();
+    public final List<String> infoItemList = new ArrayList<>();//看你添加的东西，应该叫infoItemList更合适吧，我直接改了
     private final MyAdapter adapter = new MyAdapter();
     private TextView tv;
     private final innerAdapter inneradapter = new innerAdapter();
-    private RecyclerView inner_rv;
+    private RecyclerView inner_rv;//看上去这个变量没有任何作用呀
 
+    // getXXX这种方法一般是用来获取的，不要在里面写添加的逻辑
     public List<String> getTasklist(int position) {
-        tasklist.add("bilibili.com");
-        tasklist.add("zhihu.com");
-        tasklist.add("mooc.com");
-        return tasklist;
+        infoItemList.add("bilibili.com");
+        infoItemList.add("zhihu.com");
+        infoItemList.add("mooc.com");
+        return infoItemList;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -63,7 +64,7 @@ public class HomeFragment extends Fragment{
 
        @Override
        public int getItemCount() {
-           return tasklist.size()+1;
+           return infoItemList.size()+1;//为啥+1？
        }
     }
 
@@ -83,7 +84,7 @@ public class HomeFragment extends Fragment{
 
         @Override
         public int getItemCount() {
-            return tasklist.size();
+            return infoItemList.size();
         }
      }
 
@@ -96,6 +97,10 @@ public class HomeFragment extends Fragment{
            rv = itemView.findViewById(R.id.home_task_rv);
        }
 
+       /* 最主要的问题出在这个方法里面，其他的可能也有问题，但是我就没细看了，你自己检查下
+       我们设计initItem的初衷是在这个方法里完成内部元素的所有初始化，包括设置显示的内容，为内部的RecyclerView设置Adapter等
+       你这个没有给内部的RecyclerView设置，当然不会显示了
+        */
        public void initItem(int position){
            cb.setText("高等数学");
            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -110,8 +115,8 @@ public class HomeFragment extends Fragment{
                    }
                }
            });
-           setRv(rv);
-           initRV(getActivity());
+           setRv(rv);//这行没有任何作用，rv这个变量也没有任何作用
+           initRV(getActivity());//也没有任何作用，你在initRV()这个方法里面是对inner_rv进行的adapter设置，inner_rv这个变量看上去也没有作用
        }
     }
 
@@ -123,7 +128,7 @@ public class HomeFragment extends Fragment{
         }
         public void inner_initItem(int position){
             String item = getTasklist(position).toString();
-            task_view.append(item);
+            task_view.append(item);//错了
         }
     }
 
@@ -132,6 +137,7 @@ public class HomeFragment extends Fragment{
         inner_rv.setLayoutManager(new LinearLayoutManager(activity));
     }
 
+    // 就一行，也没有复用，没必要弄成函数
     public void setRv(RecyclerView rv){
         this.inner_rv = rv;
     }

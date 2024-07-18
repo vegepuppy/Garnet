@@ -41,7 +41,6 @@ public class TodoFragment extends Fragment {
 
         // 读取数据库
         loadData();
-
         return view;
     }
 
