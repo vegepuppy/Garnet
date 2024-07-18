@@ -47,7 +47,7 @@ public class HomeFragment extends Fragment{
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
-
+    //第一层RecyclerView的Adapter
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
 
        @NonNull
@@ -67,7 +67,7 @@ public class HomeFragment extends Fragment{
            return infoItemList.size()+1;//为啥+1？
        }
     }
-
+    //第二层RecyclerView的Adapter
      private class innerAdapter extends RecyclerView.Adapter<innerViewHolder>{
 
         @NonNull
@@ -87,7 +87,7 @@ public class HomeFragment extends Fragment{
             return infoItemList.size();
         }
      }
-
+    //第一层RecyclerView的ViewHolder
     private class MyViewHolder extends RecyclerView.ViewHolder{
        private final CheckBox cb;
        private final RecyclerView rv;
@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment{
            initRV(getActivity());//也没有任何作用，你在initRV()这个方法里面是对inner_rv进行的adapter设置，inner_rv这个变量看上去也没有作用
        }
     }
-
+    //第二层RecyclerView的ViewHolder
     private class innerViewHolder extends RecyclerView.ViewHolder{
         private final TextView task_view;
         public innerViewHolder(@NonNull View itemView) {
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment{
             task_view.append(item);//错了
         }
     }
-
+    //下面两个函数初始化第二层的RecyclerView
     public void initRV(Activity activity){
         inner_rv.setAdapter(inneradapter);
         inner_rv.setLayoutManager(new LinearLayoutManager(activity));
