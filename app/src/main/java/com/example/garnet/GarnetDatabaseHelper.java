@@ -42,28 +42,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     "TASK TEXT," +
                     "DUE TEXT," +
                     "DONE INTEGER);" );
-
-            // 添加示例内容
-
-            // 示例链接标题和链接内容
-            for (int i = 0; i < 5; i ++){
-                insertTitle(db,"SAMPLE TITLE #"+i);
-            }
-
-            for (int i = 0; i < 3; i ++){
-                //注意这里是3 < 5所以可以直接传i进去
-                insertLink(db,"SAMPLE LINK #"+i*3+1,"SAMPLE TITLE #"+i);
-                insertLink(db,"SAMPLE LINK #"+i*3+2,"SAMPLE TITLE #"+i);
-                insertLink(db,"SAMPLE LINK #"+i*3+3,"SAMPLE TITLE #"+i);
-            }
-
-            // 示例待办事项
-            for (int i = 0; i < 3; i++){
-                insertTodo(db,"SAMPLE TODO #"+i,"2024-05-0"+(i+2));
-            }
         }
     }
     // 上面的是书上的代码修改而成
+    // 以前加入示例数据的代码放在这里的
 
     // 下面这三个private static Void 只用于初始化，有问题
     // TODO: 2024-07-17 重构

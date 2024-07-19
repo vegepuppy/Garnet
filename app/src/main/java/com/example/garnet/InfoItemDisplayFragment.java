@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * 用于展示一系列的InfoItem
  * */
+@Deprecated
 public class InfoItemDisplayFragment extends Fragment {
     private List<InfoItem> mainList;
     private View rootView;//整个fragment的UI

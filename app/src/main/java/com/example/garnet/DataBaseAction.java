@@ -12,14 +12,21 @@ import java.util.List;
 public class DataBaseAction {
     private DataBaseAction() {}
 
+    private static final String TABLE_TITLE = "TITLE";
+
     //私有构造函数避免外部创建实例
     private static SQLiteDatabase db = null; // 数据库
+    private static boolean sampleInserted = false;
 
     // 在MainActivity中调用这方法进行初始化，利用SQLiteOpenHelper构造单例
     public static void init(Context context) {
         if (db == null) {
             GarnetDatabaseHelper dbHelper = new GarnetDatabaseHelper(context);
             db = dbHelper.getWritableDatabase();
+            if(!sampleInserted){
+                DataBaseAction.Insert.insertSample();
+                sampleInserted = true;
+            }
         }
     }
 
@@ -98,6 +105,37 @@ public class DataBaseAction {
     }
 
     public static class Insert{
+
+        /*向数据库中加入示例数据**/
+        public static void insertSample(){
+            DataBaseAction.Insert.insertTodo(new TodoItem("学习高数","2024-7-19",TodoItem.LACK_ID,false));
+            DataBaseAction.Insert.insertTodo(new TodoItem("练习吉他","2024-7-23",TodoItem.LACK_ID,false));
+            DataBaseAction.Insert.insertTodo(new TodoItem("复习英语","2024-8-25",TodoItem.LACK_ID,false));
+
+            DataBaseAction.Insert.insertInfoGroup(new InfoGroup("高等数学",InfoGroup.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("高数链接1", "高等数学",InfoItem.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("高数链接2", "高等数学",InfoItem.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("高数链接3", "高等数学",InfoItem.LACK_ID));
+
+            DataBaseAction.Insert.insertInfoGroup(new InfoGroup("Android开发",InfoGroup.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("RecyclerView", "Android开发",InfoItem.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("CheckBox", "Android开发",InfoItem.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("TextView", "Android开发",InfoItem.LACK_ID));
+
+            DataBaseAction.Insert.insertInfoGroup(new InfoGroup("程序设计",InfoGroup.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("C语言", "程序设计",InfoItem.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("Python", "程序设计",InfoItem.LACK_ID));
+            DataBaseAction.Insert.insertInfo(new InfoItem("Java", "程序设计",InfoItem.LACK_ID));
+
+        }
+
+        private static InfoGroup insertInfoGroup(InfoGroup infoGroup) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("NAME", infoGroup.getName());
+            long id = db.insert(TABLE_TITLE,null,contentValues);// TODO: 2024-07-19 这些应该都改成常量，表的名字可能会改的
+            return new InfoGroup(infoGroup.getName(), id);
+        }
+
         /**将一个未知id的{@link TodoItem}写入数据库
          * @param item 这个未知id的{@link  TodoItem}
          * @return {@link TodoItem}加上id后的传入参数
