@@ -1,5 +1,7 @@
 package com.example.garnet;
 
+import static com.example.garnet.InfoGroup.LACK_ID;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -33,9 +35,8 @@ import java.util.List;
 public class InfoFragment extends Fragment {
     private RecyclerView infoItemListRecyclerView;
     private MyAdapter myAdapter;
-    private SQLiteDatabase db;
     private Cursor cursor;
-    private List<String> titleList = new ArrayList<>(); // 所有资料库的标题
+    private List<InfoGroup> mainList = new ArrayList<>(); // 所有资料库的标题
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,38 +58,14 @@ public class InfoFragment extends Fragment {
         floatingActionButton.setOnClickListener(myClickListener);
 
         ///SQLite数据库部分
-        try{
-            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(getActivity());
-            db = sqLiteOpenHelper.getWritableDatabase();
-            cursor = db.query("TITLE",
-                    new String[]{"_id","NAME"},
-                    null,null,null,null,null);
+        mainList = DataBaseAction.Load.loadInfoGroup();
 
-            //把数据库中的信息读取到变量List中去，以通过recyclerView展示
-            if(cursor.moveToFirst()){
-                do{
-                    //读入位于第一列的数据
-                    String titleFound = cursor.getString(1);
-                    titleList.add(titleFound);
-                }while(cursor.moveToNext());
-            }
-
-        }catch (SQLException e){
-            Toast.makeText(getActivity(), R.string.database_unavailable,Toast.LENGTH_SHORT).show();
-        }
         return view;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //结束fragment时关闭数据库和游标
-        cursor.close();
-        db.close();
     }
 
 
     private class MyClickListener implements View.OnClickListener{
+
         @Override
         public void onClick(View v) {
             final View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.add_info_alartdialog,null);
@@ -131,11 +108,10 @@ public class InfoFragment extends Fragment {
                         }
                         //判断标题不能重复
                         else if (isNotRepeated(title)){
-                            titleList.add(title);
 
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put("NAME",title);
-                            db.insert("TITLE",null,contentValues);
+
+                            InfoGroup groupWithId =  DataBaseAction.Insert.insertInfoGroup(new InfoGroup(title,LACK_ID));
+                            mainList.add(groupWithId);
 
                             alertDialog.dismiss();
                         }
@@ -144,8 +120,8 @@ public class InfoFragment extends Fragment {
             }
         }
     }
-
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+
         //此处可能不安全
         @NonNull
         @Override
@@ -157,22 +133,22 @@ public class InfoFragment extends Fragment {
             MyViewHolder myViewHolder = new MyViewHolder(view);
             return myViewHolder;
         }
-
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            String titleItem = titleList.get(position);
-            holder.infoListTitleTextView.setText(titleItem);
+            InfoGroup infoGroup = mainList.get(position);
+            String title = infoGroup.getName(); // TODO: 2024-07-19 这里发现之前用的title，现在用的name，得规范一下
+            holder.infoListTitleTextView.setText(title);
         }
 
         @Override
         public int getItemCount() {
-            return titleList.size();
+            return mainList.size();
         }
+
     }
-
     private class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView infoListTitleTextView;
 
+        TextView infoListTitleTextView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             this.infoListTitleTextView = itemView.findViewById(R.id.text_in_card);
@@ -181,11 +157,12 @@ public class InfoFragment extends Fragment {
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        String itemTitle = titleList.get(position);
+                        InfoGroup infoGroup = mainList.get(position);
+                        String title = infoGroup.getName();
 
                         Intent intent = new Intent();
                         intent.setClass(requireActivity(), InfoItemDisplayActivity.class);
-                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, itemTitle);
+                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, title);
                         startActivity(intent);
                     }
                 }
@@ -201,6 +178,8 @@ public class InfoFragment extends Fragment {
                 }
             });
         }
+
+
     }
     private void showPopupMenu(View view, int position){
         // 长按弹出菜单
@@ -226,7 +205,8 @@ public class InfoFragment extends Fragment {
 
                     EditText editText = addWindow.findViewById(R.id.title_edit_text);
 
-                    String oldTitle = titleList.get(position);
+                    InfoGroup infoGroup = mainList.get(position);
+                    String oldTitle = infoGroup.getName();
                     editText.getText().append(oldTitle);
 
                     int length = oldTitle.length();
@@ -237,12 +217,11 @@ public class InfoFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
 //                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
 //                        toast.show();
-                            String oldTitle = titleList.get(position);
+                            InfoGroup infoGroup = mainList.get(position);
                             String newTitle = editText.getText().toString();
-                            db.execSQL("UPDATE TITLE SET NAME = ? WHERE NAME = ?",
-                                    new String[]{newTitle,oldTitle});
-                           titleList.set(position, newTitle);
-                           myAdapter.notifyItemChanged(position);
+                            InfoGroup groupModified = DataBaseAction.Update.updateInfoTitle(infoGroup,newTitle);
+                            mainList.set(position, groupModified);
+                            myAdapter.notifyItemChanged(position);
                         }
                     });
                     builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -258,21 +237,33 @@ public class InfoFragment extends Fragment {
             }
         });
     }
-
     private void deleteTitleItem(int position) {
         // 在数据库中删除
-        db.execSQL("DELETE FROM TITLE WHERE NAME = ?",new String[]{titleList.get(position)});
+        InfoGroup infoGroup = mainList.get(position);
+        DataBaseAction.Delete.deleteInfoGroup(infoGroup);
         // 在List中删除
-        titleList.remove(position);
+        mainList.remove(position);
         myAdapter.notifyItemRemoved(position);
     }
 
     private boolean isNotRepeated(String title){
         // 判断标题是否重复，如果重复就输出提示信息并返回false，不重复返回true
+        List<String> titleList = new ArrayList<String>(){{
+            for(InfoGroup infoGroup:mainList){
+                add(infoGroup.getName());
+            }
+        }}; // TODO: 2024-07-19 为了实现判重，这里用了很愚蠢的方法，得改
+
         if(titleList.contains(title)){
             Toast.makeText(getActivity(),"标题不能重复！",Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //由于不用关闭数据库，所以不需要再onDestroy中做任何事情
     }
 }

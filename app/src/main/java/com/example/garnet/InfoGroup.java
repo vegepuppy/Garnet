@@ -17,4 +17,6 @@ public class InfoGroup {
     public long getId() {
         return id;
     }
+
+
 }

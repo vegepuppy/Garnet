@@ -46,6 +46,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         DataBaseAction.init(InfoItemDisplayActivity.this);
         mainList = DataBaseAction.Load.loadInfo(infoGroupName);
     }
+
     // TODO: 2024-07-18 这个对应的召唤出DialogFragment部分你补充下，谢谢。我估计xml文件也要重写.
     private class AddInfoItemFabOnClickListener implements View.OnClickListener {
         @Override
