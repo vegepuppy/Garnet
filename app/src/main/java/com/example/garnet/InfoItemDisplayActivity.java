@@ -22,6 +22,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_NAME = "InfoGroupName";
     private List<InfoItem> mainList;
     private MyAdapter myAdapter;
+    private String infoGroupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info_item_display);
 
         Intent intent = getIntent();
-        String infoGroupName = intent.getStringExtra(INFO_GROUP_NAME);
+        this.infoGroupName = intent.getStringExtra(INFO_GROUP_NAME);
 
         FloatingActionButton fab = findViewById(R.id.add_info_item_fab);
         fab.setOnClickListener(new AddInfoItemFabOnClickListener());
@@ -50,6 +51,9 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Toast.makeText(InfoItemDisplayActivity.this, "fab Clicked", Toast.LENGTH_SHORT).show();
+            InfoItem infoItemAdded = DataBaseAction.Insert.insertInfo(new InfoItem("insertedURI",infoGroupName,InfoItem.LACK_ID));
+            mainList.add(infoItemAdded);
+            myAdapter.notifyItemInserted(mainList.size()-1);
         }
     }
 
