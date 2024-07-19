@@ -98,4 +98,10 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataBaseAction.close();
+    }
 }
