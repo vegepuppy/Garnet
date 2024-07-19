@@ -1,12 +1,7 @@
 package com.example.garnet;
 
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -29,31 +24,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+/**@deprecated replaced with{@link InfoItemDisplayActivity}
+ * */
 public class InfoLinkActivity extends AppCompatActivity {
     public static final String INFO_POS = "info_pos";
-    public static final String VAR_NAME_IN_INTENT = "CORR_TITLE";
-    private String corrTitle;
-    private List<String> uriList = new ArrayList<>();
-    // TODO: 2024-05-27 这里的link要改成一个类，要包含这个link 对应的名称，而不是显示一个连接
+    public static final String INFO_GROUP_NAME = "InfoGroupName";
+    private String infoGroupName;
+    private List<InfoItem> mainList = new ArrayList<>();
 
     private RecyclerView secondRecyclerView;
     private MyAdapter myAdapter;
-    private SQLiteDatabase db;
-    private Cursor cursor;
+//    private SQLiteDatabase db;
+//    private Cursor cursor;
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        cursor.close();
-        db.close();
+        DataBaseAction.close();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_link);
-        Intent intent = getIntent();
 
         //secondRecyclerView部分
         secondRecyclerView = findViewById(R.id.second_recyclerview);
@@ -68,27 +61,9 @@ public class InfoLinkActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(FABClickListener);
 
         // 获得点击的标题名字
-        corrTitle = this.getIntent().getStringExtra(VAR_NAME_IN_INTENT);
-
-        // 数据库部分
-        try{
-            SQLiteOpenHelper sqLiteOpenHelper = new GarnetDatabaseHelper(this);
-            db = sqLiteOpenHelper.getWritableDatabase();
-            cursor = db.query("LINK",
-                    new String[]{"_id","URI","BELONG"},
-                    "BELONG = ?",new String[]{corrTitle},null,null,null);
-
-            //把数据库中的信息全读取到List中去
-            if(cursor.moveToFirst()){
-                do{
-                    //符合BELONG的话，存进来
-                    String titleFound = cursor.getString(1);
-                    uriList.add(titleFound);
-                }while(cursor.moveToNext());
-            }
-        }catch(SQLException e){
-            Toast.makeText(InfoLinkActivity.this, "数据库不可用",Toast.LENGTH_SHORT);
-        }
+        DataBaseAction.init(InfoLinkActivity.this);
+        infoGroupName = this.getIntent().getStringExtra(INFO_GROUP_NAME);
+        mainList = DataBaseAction.Load.loadInfo(infoGroupName);
     }
 
     private class FABClickListener implements View.OnClickListener{
@@ -123,12 +98,8 @@ public class InfoLinkActivity extends AppCompatActivity {
                                     .show();
                         }
                         else{
-                            uriList.add(uriInput.trim());
-
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put("URI",uriInput);
-                            contentValues.put("BELONG",corrTitle);
-                            db.insert("LINK",null,contentValues);
+                            InfoItem item = DataBaseAction.Insert.insertInfo(new InfoItem(uriInput.trim(), infoGroupName, InfoItem.LACK_ID));
+                            mainList.add(item);
 
                             alertDialog.dismiss();
                         }
@@ -147,22 +118,21 @@ public class InfoLinkActivity extends AppCompatActivity {
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             //view = View.inflate(MainActivity.this,R.layout.layout_info_list_item,null);
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_info_link_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.info_item_card, parent, false);
             // 我不理解，不要动这里
 
-            MyViewHolder myViewHolder = new MyViewHolder(view);
-            return myViewHolder;
+            return new MyViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            String url = uriList.get(position);
+            String url = mainList.get(position).getUri();
             holder.infoLinkTitleTextView.setText(url);
         }
 
         @Override
         public int getItemCount() {
-            return uriList.size();
+            return mainList.size();
         }
     }
 
@@ -171,13 +141,13 @@ public class InfoLinkActivity extends AppCompatActivity {
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.infoLinkTitleTextView = itemView.findViewById(R.id.info_link_textview);
+            this.infoLinkTitleTextView = itemView.findViewById(R.id.info_item_string_tv);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        Uri uri = Uri.parse(uriList.get(position));
+                        Uri uri = Uri.parse(mainList.get(position).getUri());
                         Intent intent = new Intent(Intent.ACTION_VIEW,uri);
                         try{
                             startActivity(intent);
@@ -210,12 +180,13 @@ public class InfoLinkActivity extends AppCompatActivity {
                 if (itemId == R.id.delete) {
 
                     // 在数据库中删除
-                    db.execSQL("DELETE FROM LINK WHERE URI = ?",new String[]{uriList.get(position)});
+                    InfoItem itemToDelete = mainList.get(position);
+                    DataBaseAction.Delete.deleteInfo(itemToDelete);
                     // 在List中删除
-                    uriList.remove(position);
+                    mainList.remove(position);
 
                     myAdapter.notifyItemRemoved(position);
-                } else if (itemId == R.id.modify) {
+                } else if (itemId == R.id.update) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(InfoLinkActivity.this);
                     builder.setTitle("修改");
                     View addWindow = InfoLinkActivity.this.getLayoutInflater().inflate(R.layout.add_link_alartdialog, null);
@@ -224,12 +195,10 @@ public class InfoLinkActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             EditText editText = addWindow.findViewById(R.id.link_edit_text);
-                            String oldUri = uriList.get(position);
-                            String newUri = editText.getText().toString();
 
-                            db.execSQL("UPDATE TITLE SET NAME = ? WHERE NAME = ?",
-                                    new String[]{newUri,oldUri});
-                            uriList.set(position, newUri);
+                            String newUri = editText.getText().toString();
+                            InfoItem updatedItem = DataBaseAction.Update.updateInfoURI(mainList.get(position), newUri);
+                            mainList.set(position, updatedItem);
                             myAdapter.notifyItemChanged(position);
                         }
                     });
@@ -246,6 +215,4 @@ public class InfoLinkActivity extends AppCompatActivity {
             }
         });
     }
-
-    // THIS IS A TEST COMMENT
 }

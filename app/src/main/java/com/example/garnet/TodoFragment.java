@@ -54,7 +54,7 @@ public class TodoFragment extends Fragment {
                 @Override
                 public void onConfirmed(String date, String task) {
                     TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
-                    TodoItem tiWithId = DataBaseAction.insertTodo(ti);
+                    TodoItem tiWithId = DataBaseAction.Insert.insertTodo(ti);
                     updateMainList(tiWithId);
                 }
             });
@@ -105,7 +105,7 @@ public class TodoFragment extends Fragment {
 
     // 从数据库载入数据
     private void loadData(){
-        List<TodoItem> todoItemsFound = DataBaseAction.loadTodo();
+        List<TodoItem> todoItemsFound = DataBaseAction.Load.loadTodo();
         updateMainList(todoItemsFound);
     }
 

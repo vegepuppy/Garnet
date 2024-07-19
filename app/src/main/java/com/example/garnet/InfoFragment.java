@@ -181,12 +181,11 @@ public class InfoFragment extends Fragment {
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
-                        String titleItem = titleList.get(position);
+                        String itemTitle = titleList.get(position);
 
-                        Intent intent = new Intent(getActivity(),InfoLinkActivity.class);
-
-                        // 生成一个intent
-                        intent.putExtra(InfoLinkActivity.VAR_NAME_IN_INTENT, titleItem);
+                        Intent intent = new Intent();
+                        intent.setClass(requireActivity(), InfoItemDisplayActivity.class);
+                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, itemTitle);
                         startActivity(intent);
                     }
                 }
@@ -217,7 +216,7 @@ public class InfoFragment extends Fragment {
 
                     deleteTitleItem(position);
 
-                } else if (itemId == R.id.modify) {
+                } else if (itemId == R.id.update) {
                     //展示一个alertDialog
                     Toast.makeText(getActivity(), "点击了修改", Toast.LENGTH_LONG).show();
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

@@ -11,9 +11,13 @@ public class TodoItem{
 
     private CheckBox checkBox;
 
-    public static final long LACK_ID = -1;
+    public static final long LACK_ID = -1;//设置为-1，这样通过id查找时会报错
     public static final String LACK_DATE = "无日期";
 
+    /**构造TodoItem
+     * @param id 如果没有就LACK_ID
+     * @param dueDate 如果没有就LACK_DATE*/
+    // 不要重载这个类。不能设计没有id和没有dueDate的TodoItem，而是用LACK_ID, LACK_Date替代
     public TodoItem(String task, String dueDate, long id, boolean isDone) {
         this.task = task;
         this.dueDate = dueDate;
@@ -35,10 +39,6 @@ public class TodoItem{
 
     public long getId(){
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public boolean isDone() {
