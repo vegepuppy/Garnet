@@ -67,8 +67,6 @@ public class AddTodoDialogFragment extends DialogFragment {
         //给confirm设置listener
         confrimButton.setOnClickListener(new ConfirmedListener());
         return v;
-
-
     }
 
     public void setStateListener(StateListener stateListener) {
