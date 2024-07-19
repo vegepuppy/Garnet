@@ -22,5 +22,6 @@ public class InfoItem {
     public InfoItem(String uri, String belong, long id) {
         this.uri = uri;
         this.belong = belong;
+        this.id = id;
     }
 }

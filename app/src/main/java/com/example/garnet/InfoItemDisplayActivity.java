@@ -85,9 +85,9 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
 
-                DataBaseAction.Delete.deleteInfo(mainList.get(position));
-                mainList.remove(position);
-                myAdapter.notifyItemRemoved(position);
+                DataBaseAction.Delete.deleteInfo(mainList.get(position));//这个函数有问题
+                mainList.remove(position);//没问题
+                myAdapter.notifyItemRemoved(position);//没问题
 
                 return true;
             });
