@@ -54,7 +54,7 @@ public class TodoItem{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 TodoItem.this.isDone = isChecked;
-                DataBaseAction.setTodoStatus(TodoItem.this);
+                DataBaseAction.Update.updateTodoStatus(TodoItem.this);
             }
         });
     }
