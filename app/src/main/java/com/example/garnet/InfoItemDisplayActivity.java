@@ -51,11 +51,22 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     private class AddInfoItemFabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Toast.makeText(InfoItemDisplayActivity.this, "fab Clicked", Toast.LENGTH_SHORT).show();
-            InfoItem infoItemAdded = DataBaseAction.Insert.insertInfo(new InfoItem("insertedURI",infoGroupName,InfoItem.LACK_ID));
-            mainList.add(infoItemAdded);
-            myAdapter.notifyItemInserted(mainList.size()-1);
+            final AddInfoDialogFragment df = new AddInfoDialogFragment();
+            df.setStateListener(new AddInfoDialogFragment.StateListener() {
+                @Override
+                public void onConfirmed(String uri) {
+                    InfoItem infoItem = new InfoItem(uri,infoGroupName,InfoItem.LACK_ID);
+                    InfoItem itemWithId = DataBaseAction.Insert.insertInfo(infoItem);
+                    updateMainList(itemWithId);
+                }
+            });
+            df.show(InfoItemDisplayActivity.this.getSupportFragmentManager(), "TAG"); //这个tag也是乱取的，小心
         }
+    }
+
+    private void updateMainList(InfoItem infoItem){
+        mainList.add(infoItem);
+        myAdapter.notifyItemInserted(mainList.size()-1); //这里是照搬原来的通知方法，不知道为什么要减一
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
