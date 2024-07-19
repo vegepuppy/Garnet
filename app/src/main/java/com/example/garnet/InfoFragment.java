@@ -1,6 +1,7 @@
 package com.example.garnet;
 
 import static com.example.garnet.InfoGroup.LACK_ID;
+import static com.example.garnet.InfoItemDisplayActivity.INFO_GROUP_NAME;
 
 import android.os.Bundle;
 
@@ -158,10 +159,12 @@ public class InfoFragment extends Fragment {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         InfoGroup infoGroup = mainList.get(position);
-                        String title = infoGroup.getName();
+                        long id = infoGroup.getId();
+                        String title= infoGroup.getName();
 
                         Intent intent = new Intent();
                         intent.setClass(requireActivity(), InfoItemDisplayActivity.class);
+                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_ID, id);
                         intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, title);
                         startActivity(intent);
                     }

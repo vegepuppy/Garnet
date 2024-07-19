@@ -41,7 +41,7 @@ public class InfoItemDisplayFragment extends Fragment {
         rv.setAdapter(new MyAdapter());
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mainList = DataBaseAction.Load.loadInfo(infoGroupName);
+//        mainList = DataBaseAction.Load.loadInfo(infoGroupName);
         return rootView;
     }
 

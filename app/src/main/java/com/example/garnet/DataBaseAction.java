@@ -68,14 +68,14 @@ public class DataBaseAction {
 
         // TODO: 2024-07-19  这个document中提到，mainList是List<TodoGroup>类型对象，但实际上似乎不是
         /** 将所有读到的TodoItem读入mainList(一个List<TodoGroup>类型对象)
-         * @param infoGroupName 在这一InfoGroup种进行查找
+         * @param infoGroupId 在这一InfoGroup中进行查找
          * @return 返回所有在数据库中读到的InfoItem构成的列表*/
-        public static List<InfoItem> loadInfo(String infoGroupName){
+        public static List<InfoItem> loadInfo(long infoGroupId){
             List<InfoItem> ret = new ArrayList<>();
-
+            String infoGroupIdString = String.valueOf(infoGroupId);
             Cursor cursor = db.query("LINK",
                     new String[]{"_id","URI","BELONG"},
-                    "BELONG = ?",new String[]{infoGroupName},null,null,null);
+                    "BELONG = ?",new String[]{infoGroupIdString},null,null,null);
 
             if(cursor.moveToFirst()){
                 do{
@@ -83,7 +83,7 @@ public class DataBaseAction {
                     String titleFound = cursor.getString(1); // TODO: 2024-07-19 这里是Info的内容，真的叫Title吗
                     long idFound = cursor.getLong(0);
 
-                    ret.add(new InfoItem(titleFound, infoGroupName, idFound));
+                    ret.add(new InfoItem(titleFound, infoGroupId, idFound));
                 }while(cursor.moveToNext());
             }
             cursor.close();

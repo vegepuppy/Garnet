@@ -63,7 +63,7 @@ public class InfoLinkActivity extends AppCompatActivity {
         // 获得点击的标题名字
         DataBaseAction.init(InfoLinkActivity.this);
         infoGroupName = this.getIntent().getStringExtra(INFO_GROUP_NAME);
-        mainList = DataBaseAction.Load.loadInfo(infoGroupName);
+//        mainList = DataBaseAction.Load.loadInfo(infoGroupName);
     }
 
     private class FABClickListener implements View.OnClickListener{
@@ -98,8 +98,8 @@ public class InfoLinkActivity extends AppCompatActivity {
                                     .show();
                         }
                         else{
-                            InfoItem item = DataBaseAction.Insert.insertInfo(new InfoItem(uriInput.trim(), infoGroupName, InfoItem.LACK_ID));
-                            mainList.add(item);
+//                            InfoItem item = DataBaseAction.Insert.insertInfo(new InfoItem(uriInput.trim(), infoGroupName, InfoItem.LACK_ID));
+//                            mainList.add(item);
 
                             alertDialog.dismiss();
                         }

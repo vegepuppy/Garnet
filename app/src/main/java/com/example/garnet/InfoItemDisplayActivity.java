@@ -20,9 +20,11 @@ import java.util.List;
 
 public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_NAME = "InfoGroupName";
+    public static final String INFO_GROUP_ID = "InfoGroupId";
     private List<InfoItem> mainList;
     private MyAdapter myAdapter;
     private String infoGroupName;
+    private long infoGroupId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.infoGroupName = intent.getStringExtra(INFO_GROUP_NAME);
+        this.infoGroupId = intent.getLongExtra(INFO_GROUP_ID,-1);
+        //这里需要一个defaultValue，故设置为-1
 
         FloatingActionButton fab = findViewById(R.id.add_info_item_fab);
         fab.setOnClickListener(new AddInfoItemFabOnClickListener());
@@ -44,7 +48,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(InfoItemDisplayActivity.this));
 
         DataBaseAction.init(InfoItemDisplayActivity.this);
-        mainList = DataBaseAction.Load.loadInfo(infoGroupName);
+        mainList = DataBaseAction.Load.loadInfo(infoGroupId);
     }
 
     // TODO: 2024-07-18 这个对应的召唤出DialogFragment部分你补充下，谢谢。我估计xml文件也要重写.
@@ -55,7 +59,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             df.setStateListener(new AddInfoDialogFragment.StateListener() {
                 @Override
                 public void onConfirmed(String uri) {
-                    InfoItem infoItem = new InfoItem(uri,infoGroupName,InfoItem.LACK_ID);
+                    InfoItem infoItem = new InfoItem(uri,infoGroupId,InfoItem.LACK_ID);
                     InfoItem itemWithId = DataBaseAction.Insert.insertInfo(infoItem);
                     updateMainList(itemWithId);
                 }
@@ -113,6 +117,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DataBaseAction.close();
+//        DataBaseAction.close(); 不应该关闭数据库，否则会出错
+
     }
 }
