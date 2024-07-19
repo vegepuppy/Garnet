@@ -27,14 +27,7 @@ public class DataBaseAction {
     }
 
 
-    // 设置TodoItem是否完成了，并存储到数据库里
-    public static void setTodoStatus(TodoItem ti) {
-        long id = ti.getId();
-        String newIsCheckedString = ti.getCheckBox().isChecked() ? "1" : "0";
-        String idString = String.valueOf(id);
-        db.execSQL("UPDATE TODO SET DONE = ? WHERE _id = ?",
-                new String[]{newIsCheckedString, idString});
-    }
+
 
     /**
      * 关闭应用数据库
@@ -194,10 +187,21 @@ public class DataBaseAction {
          */
         public static InfoGroup updateInfoTitle(InfoGroup group, String newTitle){
             String idString = String.valueOf(group.getId());
-            db.execSQL("UPDATE TITLE SET NAME = ? WHERE _id = ?",
-                                    new String[]{newTitle, idString});
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("NAME", newTitle);
+            db.update("TITLE",contentValues,"id = ?", new String[]{idString});
             Log.e("UPDATING DATABASE", group.getName()+"   "+newTitle);
             return new InfoGroup(newTitle, group.getId());
+        }
+
+        // 设置TodoItem是否完成了，并存储到数据库里
+        public static void updateTodoStatus(TodoItem ti) {
+            long id = ti.getId();
+            String newIsCheckedString = ti.getCheckBox().isChecked() ? "1" : "0";
+            String idString = String.valueOf(id);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("DONE", newIsCheckedString);
+            db.update("TODO",contentValues,"id = ?", new String[]{idString});
         }
     }
 }
