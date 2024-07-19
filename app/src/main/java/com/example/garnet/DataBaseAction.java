@@ -12,7 +12,7 @@ import java.util.List;
 public class DataBaseAction {
     private DataBaseAction() {}
 
-    private static final String TABLE_TITLE = "TITLE";
+    private static final String TABLE_TITLE = "TITLE"; // TODO: 2024-07-19 只有这一个表用了常量，其他的需要弄吗
 
     //私有构造函数避免外部创建实例
     private static SQLiteDatabase db = null; // 数据库
@@ -73,6 +73,7 @@ public class DataBaseAction {
             return ret;
         }
 
+        // TODO: 2024-07-19  这个document中提到，mainList是List<TodoGroup>类型对象，但实际上似乎不是
         /** 将所有读到的TodoItem读入mainList(一个List<TodoGroup>类型对象)
          * @param infoGroupName 在这一InfoGroup种进行查找
          * @return 返回所有在数据库中读到的InfoItem构成的列表*/
@@ -86,7 +87,7 @@ public class DataBaseAction {
             if(cursor.moveToFirst()){
                 do{
                     //符合BELONG的话，存进来
-                    String titleFound = cursor.getString(1);
+                    String titleFound = cursor.getString(1); // TODO: 2024-07-19 这里是Info的内容，真的叫Title吗
                     long idFound = cursor.getLong(0);
 
                     ret.add(new InfoItem(titleFound, infoGroupName, idFound));
@@ -95,11 +96,37 @@ public class DataBaseAction {
             cursor.close();
             return ret;
         }
+
+        /**
+         * 将所有的Title读入InfoFragment的mainList
+         * @return 返回所以在数据库中读到的Title构成的InfoGroup列表
+         */
+        public static List<InfoGroup> loadInfoGroup(){
+            List<InfoGroup> ret = new ArrayList<>();
+            Cursor cursor = db.query(TABLE_TITLE,
+                    new String[]{"_id","NAME"},
+                    null,null,null,null,null);
+
+            if(cursor.moveToFirst()){
+                do{
+                    final int idIdx = 0;
+                    final int titleIdx = 1;
+
+                    long idFound = cursor.getLong(idIdx);
+                    String titleFound = cursor.getString(titleIdx);
+
+                    InfoGroup infoGroup = new InfoGroup(titleFound,idFound);
+
+                    ret.add(infoGroup);
+                }while ((cursor.moveToNext()));
+            }
+            return ret;
+        }
     }
 
     public static class Insert{
 
-        private static InfoGroup insertInfoGroup(InfoGroup infoGroup) {
+        public static InfoGroup insertInfoGroup(InfoGroup infoGroup) {
             ContentValues contentValues = new ContentValues();
             contentValues.put("NAME", infoGroup.getName());
             long id = db.insert(TABLE_TITLE,null,contentValues);// TODO: 2024-07-19 这些应该都改成常量，表的名字可能会改的
@@ -140,6 +167,12 @@ public class DataBaseAction {
             Log.e("TAG", "Link id "+idString+" delete");
             // TODO: 2024-07-18 不应该execSQL
         }
+
+        public static void deleteInfoGroup(InfoGroup group){
+            String idString = String.valueOf(group.getId());
+            db.delete("TITLE","_id=?",new String[]{idString});
+            Log.e("TAG", "Title id "+idString+" delete");
+        }
     }
 
     public static class Update{
@@ -150,7 +183,21 @@ public class DataBaseAction {
             db.execSQL("UPDATE LINK SET URI = ? WHERE _id = ?",
                     new String[]{newUri,idString});
             Log.e("UPDATING DATABASE", item.getUri()+"   "+newUri);
-            return new InfoItem(newUri, item.getBelong(), item.id);
+            return new InfoItem(newUri, item.getBelong(), item.id); // TODO: 2024-07-19 这里直接访问了id？是否需要private
+        }
+
+        /**
+         * 对指定的InfoGroup，修改其在数据库中的title
+         * @param group 传入要修改的InfoGroup
+         * @param newTitle 传入修改目标值
+         * @return 返回修改好的InfoGroup
+         */
+        public static InfoGroup updateInfoTitle(InfoGroup group, String newTitle){
+            String idString = String.valueOf(group.getId());
+            db.execSQL("UPDATE TITLE SET NAME = ? WHERE _id = ?",
+                                    new String[]{newTitle, idString});
+            Log.e("UPDATING DATABASE", group.getName()+"   "+newTitle);
+            return new InfoGroup(newTitle, group.getId());
         }
     }
 }
