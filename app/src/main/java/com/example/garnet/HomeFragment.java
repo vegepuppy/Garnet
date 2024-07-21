@@ -2,7 +2,6 @@ package com.example.garnet;
 
 import static java.util.Collections.sort;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,12 +22,15 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
     public List<String> infoItemList = new ArrayList<>();
+    public List<String> homeItemList = new ArrayList<>();
     private final MyAdapter adapter = new MyAdapter();
     private TextView tv;
     private final innerAdapter inneradapter = new innerAdapter();
-    public List<String> getTasklist(int position) {
+    public List<String> getinfolist(int position) {
         return infoItemList;
     }
+    public List<String> getHomeItemList() {return homeItemList;}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -43,6 +45,9 @@ public class HomeFragment extends Fragment {
         infoItemList.add("bilibili.com");
         infoItemList.add("zhihu.com");
         infoItemList.add("mooc.com");
+        homeItemList.add("高等数学");
+        homeItemList.add("大学物理");
+        homeItemList.add("离散数学");
         return view;
     }
 
@@ -83,7 +88,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return infoItemList.size();
+            return 1;
         }
     }
     //第一层RecyclerView的ViewHolder
@@ -123,9 +128,10 @@ public class HomeFragment extends Fragment {
             task_view = itemView.findViewById(R.id.home_lk);
         }
         public void inner_initItem(int position){
-            for(int i=0; i<getTasklist(position).size(); i++){
-                String item = getTasklist(position).get(i).toString();
+            for(int i = 0; i< getinfolist(position).size(); i++){
+                String item = getinfolist(position).get(i).toString();
                 task_view.append(item);
+                task_view.append("\n");
             }
         }
     }
