@@ -1,7 +1,6 @@
 package com.example.garnet;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -118,7 +117,13 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                             switch (msg.what){
                                 case 1:
                                     String response = (String)msg.obj;
-                                    infoItemStringTextView.setText(response);
+                                    // 改成在这里Toast就可以了
+                                    if (response.equals("找不到网页") || response.equals("获取网页信息失败")) {
+                                        Toast.makeText(InfoItemDisplayActivity.this,response,Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        infoItemStringTextView.setText(response);
+                                    }
                             }
                         }
                     };
@@ -126,9 +131,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            String titleFound = LinkTitleFetcher.biliTitleFetcher(uriString,
-                                    InfoItemDisplayActivity.this);
-                            
+                            String titleFound = LinkTitleFetcher.fetchBiliTitle(uriString);
                             Message msg = new Message();
                             msg.what = 1;  // TODO: 2024-07-21 因为这里只有一个thread，所以设为1无妨，正常应该是常量 
                             msg.obj = titleFound;
@@ -151,9 +154,9 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
 
-                mDatabaseHelper.deleteInfo(mainList.get(position));//这个函数有问题
-                mainList.remove(position);//没问题
-                myAdapter.notifyItemRemoved(position);//没问题
+                mDatabaseHelper.deleteInfo(mainList.get(position));
+                mainList.remove(position);
+                myAdapter.notifyItemRemoved(position);
 
                 return true;
             });
