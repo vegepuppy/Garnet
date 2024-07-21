@@ -3,6 +3,9 @@ package com.example.garnet;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,14 +111,40 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     InfoItem infoItem = mainList.get(position);
-                    Uri webpage = Uri.parse(infoItem.getUri());
+                    String uriString = infoItem.getUri();
+                    // TODO: 2024-07-21 这里用了多线程打开，是否需要封装
+                    Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
+                        public void handleMessage(Message msg){
+                            switch (msg.what){
+                                case 1:
+                                    String response = (String)msg.obj;
+                                    infoItemStringTextView.setText(response);
+                            }
+                        }
+                    };
+                    
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String titleFound = LinkTitleFetcher.biliTitleFetcher(uriString,
+                                    InfoItemDisplayActivity.this);
+                            
+                            Message msg = new Message();
+                            msg.what = 1;  // TODO: 2024-07-21 因为这里只有一个thread，所以设为1无妨，正常应该是常量 
+                            msg.obj = titleFound;
+                            titleFetchHandler.sendMessage(msg);
+                        }
+                    }).start();
+                    
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                    try {
-                        startActivity(intent);
-                    }catch (android.content.ActivityNotFoundException e){
-                        Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
-                    }
+//                    Uri webpage = Uri.parse(uriString);
+//
+//                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+//                    try {
+//                        startActivity(intent);
+//                    }catch (android.content.ActivityNotFoundException e){
+//                        Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
+//                    }
 
                 }
             });
