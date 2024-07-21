@@ -1,11 +1,13 @@
 package com.example.garnet;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -100,6 +102,23 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             super(itemView);
             infoItemStringTextView = itemView.findViewById(R.id.info_item_string_tv);
             infoItemCardView = itemView.findViewById(R.id.info_item_cardview);
+            //设置短按跳转连接
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    InfoItem infoItem = mainList.get(position);
+                    Uri webpage = Uri.parse(infoItem.getUri());
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                    try {
+                        startActivity(intent);
+                    }catch (android.content.ActivityNotFoundException e){
+                        Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
 
