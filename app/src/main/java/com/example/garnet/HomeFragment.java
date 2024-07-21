@@ -63,12 +63,12 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            holder.initItem();
+            holder.initItem(position);
         }
 
         @Override
         public int getItemCount() {
-            return 1;
+            return homeItemList.size();
         }
     }
     //第二层RecyclerView的Adapter
@@ -102,8 +102,8 @@ public class HomeFragment extends Fragment {
         }
 
 
-        public void initItem(){
-            cb.setText("高等数学");
+        public void initItem(int position){
+            cb.setText(homeItemList.get(position).toString());
             cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
