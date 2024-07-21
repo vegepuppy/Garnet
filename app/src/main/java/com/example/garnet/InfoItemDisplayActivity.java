@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,16 +22,18 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_ID = "InfoGroupId";
     private List<InfoItem> mainList;
     private MyAdapter myAdapter;
-    private String infoGroupName;
     private long infoGroupId;
+    private GarnetDatabaseHelper mDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_item_display);
 
+        mDatabaseHelper = new GarnetDatabaseHelper(InfoItemDisplayActivity.this);
+
         Intent intent = getIntent();
-        this.infoGroupName = intent.getStringExtra(INFO_GROUP_NAME);
+        String infoGroupName = intent.getStringExtra(INFO_GROUP_NAME);
         this.infoGroupId = intent.getLongExtra(INFO_GROUP_ID,-1);
         //这里需要一个defaultValue，故设置为-1
 
@@ -47,11 +48,9 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         rv.setAdapter(myAdapter);
         rv.setLayoutManager(new LinearLayoutManager(InfoItemDisplayActivity.this));
 
-        DataBaseAction.init(InfoItemDisplayActivity.this);
-        mainList = DataBaseAction.Load.loadInfo(infoGroupId);
+        mainList = mDatabaseHelper.loadInfo(infoGroupId);
     }
 
-    // TODO: 2024-07-18 这个对应的召唤出DialogFragment部分你补充下，谢谢。我估计xml文件也要重写.
     private class AddInfoItemFabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -60,11 +59,11 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 @Override
                 public void onConfirmed(String uri) {
                     InfoItem infoItem = new InfoItem(uri,infoGroupId,InfoItem.LACK_ID);
-                    InfoItem itemWithId = DataBaseAction.Insert.insertInfo(infoItem);
+                    InfoItem itemWithId = mDatabaseHelper.insertInfo(infoItem);
                     updateMainList(itemWithId);
                 }
             });
-            df.show(InfoItemDisplayActivity.this.getSupportFragmentManager(), "TAG"); //这个tag也是乱取的，小心
+            df.show(InfoItemDisplayActivity.this.getSupportFragmentManager(), "TAG"); //这个tag是乱取的，小心
         }
     }
 
@@ -93,7 +92,6 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: 2024-07-18 加上长按或者左滑菜单
     private class MyViewHolder extends RecyclerView.ViewHolder{
         public final TextView infoItemStringTextView;
         public final CardView infoItemCardView;
@@ -105,7 +103,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
 
-                DataBaseAction.Delete.deleteInfo(mainList.get(position));//这个函数有问题
+                mDatabaseHelper.deleteInfo(mainList.get(position));//这个函数有问题
                 mainList.remove(position);//没问题
                 myAdapter.notifyItemRemoved(position);//没问题
 
@@ -117,7 +115,5 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        DataBaseAction.close(); 不应该关闭数据库，否则会出错
-
     }
 }

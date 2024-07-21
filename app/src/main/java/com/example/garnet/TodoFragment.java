@@ -21,14 +21,15 @@ import java.util.List;
 
 public class TodoFragment extends Fragment {
     private final List<TodoGroup> mainList = new ArrayList<>();
-//    private SQLiteDatabase db = null ;
     private final MyAdapter adapter = new MyAdapter();
+    private GarnetDatabaseHelper mDatabaseHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_todo,container,false);
+
+        mDatabaseHelper = new GarnetDatabaseHelper(getActivity());
 
         // rv的初始化
         RecyclerView rv = view.findViewById(R.id.todo_rv);
@@ -54,7 +55,7 @@ public class TodoFragment extends Fragment {
                 @Override
                 public void onConfirmed(String date, String task) {
                     TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
-                    TodoItem tiWithId = DataBaseAction.Insert.insertTodo(ti);
+                    TodoItem tiWithId = mDatabaseHelper.insertTodo(ti);
                     updateMainList(tiWithId);
                 }
             });
@@ -105,7 +106,7 @@ public class TodoFragment extends Fragment {
 
     // 从数据库载入数据
     private void loadData(){
-        List<TodoItem> todoItemsFound = DataBaseAction.Load.loadTodo();
+        List<TodoItem> todoItemsFound = mDatabaseHelper.loadTodo();
         updateMainList(todoItemsFound);
     }
 
@@ -125,7 +126,7 @@ public class TodoFragment extends Fragment {
         }
         // 插入的元素所属的日期在原列表中没有出现过
         if (!isAdded) {
-            TodoGroup todoGroup = new TodoGroup();
+            TodoGroup todoGroup = new TodoGroup(mDatabaseHelper);
             todoGroup.addTodoItem(ti);
             mainList.add(todoGroup);
 
@@ -138,7 +139,6 @@ public class TodoFragment extends Fragment {
                     break;
                 }
             }
-            //            Log.e("TAG",mainList.get(idx).getDate());
             adapter.notifyItemInserted(idx);//就是notifyDataSetChanged需要排序之后
         }
     }

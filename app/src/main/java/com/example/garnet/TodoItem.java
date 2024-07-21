@@ -9,8 +9,6 @@ public class TodoItem{
     private long id;
     private boolean isDone = false;
 
-    private CheckBox checkBox;
-
     public static final long LACK_ID = -1;//设置为-1，这样通过id查找时会报错
     public static final String LACK_DATE = "无日期";
 
@@ -33,10 +31,6 @@ public class TodoItem{
         return dueDate;
     }
 
-    public CheckBox getCheckBox() {
-        return checkBox;
-    }
-
     public long getId(){
         return id;
     }
@@ -45,17 +39,7 @@ public class TodoItem{
         return isDone;
     }
 
-    public void setCheckBox(CheckBox cb) {
-        // 设置cb为这个TodoItem的勾选框，并根据ti的状态设置CheckBox的文字及状态
-        checkBox = cb;
-        cb.setText(task);
-        cb.setChecked(isDone);
-        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                TodoItem.this.isDone = isChecked;
-                DataBaseAction.Update.updateTodoStatus(TodoItem.this);
-            }
-        });
+    public void setDone(boolean done) {
+        isDone = done;
     }
 }
