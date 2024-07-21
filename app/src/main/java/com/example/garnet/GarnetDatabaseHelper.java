@@ -43,7 +43,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             // 信息条目的链接
             db.execSQL("CREATE TABLE LINK (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "URI TEXT," +
-                    "BELONG TEXT);");
+                    "BELONG INT);");
 
             // 待办事项的相关信息：名称、日期、是否已经完成（0或1）
             db.execSQL("CREATE TABLE TODO(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -59,19 +59,19 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             insertSampleTodo(db,"英语听说", "2024-09-16");
 
             insertSampleInfoGroup(db,"高等数学");
-            insertSampleInfo(db,"高数链接1", "高等数学");
-            insertSampleInfo(db,"高数链接2", "高等数学");
-            insertSampleInfo(db,"高数链接3", "高等数学");
+            insertSampleInfo(db,"高数链接1", 1);
+            insertSampleInfo(db,"高数链接2", 1);
+            insertSampleInfo(db,"高数链接3", 1);
 
             insertSampleInfoGroup(db,"Android开发");
-            insertSampleInfo(db,"RecyclerView", "Android开发");
-            insertSampleInfo(db,"CheckBox", "Android开发");
-            insertSampleInfo(db,"TextView", "Android开发");
+            insertSampleInfo(db,"RecyclerView", 2);
+            insertSampleInfo(db,"CheckBox", 2);
+            insertSampleInfo(db,"TextView", 2);
 
             insertSampleInfoGroup(db,"程序设计");
-            insertSampleInfo(db,"C语言", "程序设计");
-            insertSampleInfo(db,"Python", "程序设计");
-            insertSampleInfo(db,"Java", "程序设计");
+            insertSampleInfo(db,"C语言", 3);
+            insertSampleInfo(db,"Python", 3);
+            insertSampleInfo(db,"Java", 3);
         }
     }
 
@@ -106,20 +106,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void insertSampleInfo(SQLiteDatabase db, String uri, String belong){
-        Cursor cursor = db.query(TABLE_TITLE, new String[]{"_id"},
-                "NAME=?",
-                new String[]{belong},
-                null, null, null);
-        long belongId = -1;
-        if (cursor.moveToFirst()) {
-            belongId = cursor.getLong(0);
-        }
-        cursor.close();
-
+    private void insertSampleInfo(SQLiteDatabase db, String uri, long belong){
         ContentValues contentValues = new ContentValues();
         contentValues.put("URI",uri);
-        contentValues.put("BELONG",belongId);
+        contentValues.put("BELONG",belong);
         db.insert(TABLE_LINK,null,contentValues);
     }
 
