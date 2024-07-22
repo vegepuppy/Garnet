@@ -65,7 +65,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 @Override
                 public void onConfirmed(String uri) {
                     InfoItem infoItem = new InfoItem(uri,infoGroupId,InfoItem.LACK_ID);
-
+                    // TODO: 2024-07-22 handler可能要封装 
                     Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
                         @Override
                         public void handleMessage(Message msg){
