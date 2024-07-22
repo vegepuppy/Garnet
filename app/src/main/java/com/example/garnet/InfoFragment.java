@@ -125,7 +125,7 @@ public class InfoFragment extends Fragment {
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             //view = View.inflate(MainActivity.this,R.layout.layout_info_list_item,null);
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_info_list_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_info_list_item, parent, false);//生成实例
             // 我不理解，不要动这里
 
             MyViewHolder myViewHolder = new MyViewHolder(view);
@@ -145,6 +145,7 @@ public class InfoFragment extends Fragment {
         }
 
     }
+
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
 
