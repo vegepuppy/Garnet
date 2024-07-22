@@ -43,7 +43,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             // 信息条目的链接
             db.execSQL("CREATE TABLE LINK (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "URI TEXT," +
-                    "BELONG INT);");
+                    "BELONG INT," +
+                    "DISPLAY TEXT);");
 
             // 待办事项的相关信息：名称、日期、是否已经完成（0或1）
             db.execSQL("CREATE TABLE TODO(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -101,8 +102,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             ContentValues contentValues = new ContentValues();
             contentValues.put("URI", item.getUri());
             contentValues.put("BELONG", item.getBelong());
+            contentValues.put("DISPLAY",item.getDisplayString());
             long id = db.insert(TABLE_LINK, null, contentValues);
-            return new InfoItem(item.getUri(), item.getBelong(), id);
+            item.setId(id);
+            return item;
         }
     }
 
@@ -110,6 +113,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("URI",uri);
         contentValues.put("BELONG",belong);
+        contentValues.put("DISPLAY",uri);//样例数据直接把uri设置成展示字符串，反正给的也是无效链接
         db.insert(TABLE_LINK,null,contentValues);
     }
 
@@ -161,7 +165,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         String infoGroupIdString = String.valueOf(infoGroupId);
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             Cursor cursor = db.query("LINK",
-                    new String[]{"_id", "URI", "BELONG"},
+                    new String[]{"_id", "URI", "BELONG","DISPLAY"},
                     "BELONG = ?", new String[]{infoGroupIdString}, null, null, null);
 
             if (cursor.moveToFirst()) {
@@ -169,8 +173,9 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     //符合BELONG的话，存进来
                     String titleFound = cursor.getString(1); // TODO: 2024-07-19 这里是Info的内容，真的叫Title吗
                     long idFound = cursor.getLong(0);
+                    String displayFound = cursor.getString(3);
 
-                    ret.add(new InfoItem(titleFound, infoGroupId, idFound));
+                    ret.add(new InfoItem(titleFound, infoGroupId, idFound,displayFound));
                 } while (cursor.moveToNext());
             }
             cursor.close();

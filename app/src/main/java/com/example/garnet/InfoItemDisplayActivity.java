@@ -1,10 +1,12 @@
 package com.example.garnet;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.util.List;
 
 public class InfoItemDisplayActivity extends AppCompatActivity {
@@ -63,8 +70,30 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 @Override
                 public void onConfirmed(String uri) {
                     InfoItem infoItem = new InfoItem(uri,infoGroupId,InfoItem.LACK_ID);
-                    InfoItem itemWithId = mDatabaseHelper.insertInfo(infoItem);
-                    updateMainList(itemWithId);
+
+                    Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
+                        @Override
+                        public void handleMessage(Message msg){
+                            if (msg.what == 1) {//用if替换掉原来的switch减少一个warning，兼顾安全性
+                                FetchLinkMessageObject response = (FetchLinkMessageObject) msg.obj;
+                                Log.d("TAG","handleMessage...");
+                                // 改成在这里Toast就可以了
+                                if (!response.isValid) {
+                                    Toast.makeText(InfoItemDisplayActivity.this, "无效链接！", Toast.LENGTH_SHORT).show();
+                                } else if (!response.isSuccess) {
+                                    Toast.makeText(InfoItemDisplayActivity.this, "获取网页信息失败！", Toast.LENGTH_SHORT).show();
+                                    infoItem.setDisplayString(uri);// TODO: 2024-07-22 如果链接有效但是没连上网就暂时设置成链接，但是什么时候重试呢？
+                                } else {
+                                    infoItem.setDisplayString(response.linkTitle);
+                                    Log.d("TAG","infoItem displayString set");
+                                }
+                                InfoItem itemWithId = mDatabaseHelper.insertInfo(infoItem);
+                                updateMainList(itemWithId);
+                            }
+                        }
+                    };
+                    new Thread(new FetchLinkRunnable(titleFetchHandler,uri)).start();
+
                 }
             });
             df.show(InfoItemDisplayActivity.this.getSupportFragmentManager(), "TAG"); //这个tag是乱取的，小心
@@ -87,7 +116,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             InfoItem infoItem = mainList.get(position);
-            holder.infoItemStringTextView.setText(infoItem.getUri());
+            holder.infoItemStringTextView.setText(infoItem.getDisplayString());
         }
 
         @Override
@@ -111,43 +140,15 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                     int position = getAdapterPosition();
                     InfoItem infoItem = mainList.get(position);
                     String uriString = infoItem.getUri();
-                    // TODO: 2024-07-21 这里用了多线程打开，是否需要封装
-                    Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
-                        public void handleMessage(Message msg){
-                            switch (msg.what){
-                                case 1:
-                                    String response = (String)msg.obj;
-                                    // 改成在这里Toast就可以了
-                                    if (response.equals("找不到网页") || response.equals("获取网页信息失败")) {
-                                        Toast.makeText(InfoItemDisplayActivity.this,response,Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        infoItemStringTextView.setText(response);
-                                    }
-                            }
-                        }
-                    };
-                    
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String titleFound = LinkTitleFetcher.fetchBiliTitle(uriString);
-                            Message msg = new Message();
-                            msg.what = 1;  // TODO: 2024-07-21 因为这里只有一个thread，所以设为1无妨，正常应该是常量 
-                            msg.obj = titleFound;
-                            titleFetchHandler.sendMessage(msg);
-                        }
-                    }).start();
-                    
 
-//                    Uri webpage = Uri.parse(uriString);
-//
-//                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-//                    try {
-//                        startActivity(intent);
-//                    }catch (android.content.ActivityNotFoundException e){
-//                        Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
-//                    }
+                    Uri webpage = Uri.parse(uriString);
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                    try {
+                        startActivity(intent);
+                    }catch (android.content.ActivityNotFoundException e){
+                        Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });
