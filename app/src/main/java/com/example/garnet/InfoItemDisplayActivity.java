@@ -21,11 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 import java.util.List;
 
 public class InfoItemDisplayActivity extends AppCompatActivity {
@@ -134,23 +129,20 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             infoItemStringTextView = itemView.findViewById(R.id.info_item_string_tv);
             infoItemCardView = itemView.findViewById(R.id.info_item_cardview);
             //设置短按跳转连接
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    InfoItem infoItem = mainList.get(position);
-                    String uriString = infoItem.getUri();
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                InfoItem infoItem = mainList.get(position);
+                String uriString = infoItem.getUri();
 
-                    Uri webpage = Uri.parse(uriString);
+                Uri webpage = Uri.parse(uriString);
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                    try {
-                        startActivity(intent);
-                    }catch (android.content.ActivityNotFoundException e){
-                        Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
-                    }
-
+                Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+                try {
+                    startActivity(intent);
+                }catch (android.content.ActivityNotFoundException e){
+                    Toast.makeText(InfoItemDisplayActivity.this, "找不到网页", Toast.LENGTH_SHORT).show();
                 }
+
             });
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
@@ -162,10 +154,5 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 return true;
             });
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

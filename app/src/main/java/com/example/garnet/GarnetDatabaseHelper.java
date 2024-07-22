@@ -17,6 +17,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_TITLE = "TITLE";
     private static final String TABLE_LINK = "LINK";
     private static final String TABLE_TODO = "TODO";
+    private static final String TABLE_TODO_LINK = "TODO_LINK";
 
     // 构造函数
     public GarnetDatabaseHelper(Context context) {
@@ -43,7 +44,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             // 信息条目的链接
             db.execSQL("CREATE TABLE LINK (_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "URI TEXT," +
-                    "BELONG INT," +
+                    "BELONG INTEGER," +
                     "DISPLAY TEXT);");
 
             // 待办事项的相关信息：名称、日期、是否已经完成（0或1）
@@ -51,6 +52,12 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     "TASK TEXT," +
                     "DUE TEXT," +
                     "DONE INTEGER);");
+
+            // 关联的表
+            db.execSQL("CREATE TABLE TODO_LINK(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "TODO INTEGER," +
+                    "LINK INTEGER," +
+                    "UNIQUE(TODO, LINK))");
             /* 加入示例数据，注意这里不能使用与在MainActivity中一样，通过mDataBaseHelper添加示例
             * 原因是此时的GarnetDatabaseHelper尚未完成初始化（没有Context）
             * 只能通过使用OnUpgrade()方法中传入的db变量进行数据库操作*/
@@ -131,6 +138,19 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("NAME", infoGroupName);
         db.insert(TABLE_TITLE,null,contentValues);
     }
+/**将资料-待办关联添加到表中。如果所要插入的值已经存在就跳过
+ * @param todoId 对应的{@link TodoItem}的id
+ * @param infoItemIdList 所要与之关联的所有{@link InfoItem}的id
+ * */
+    public void updateAttachment(long todoId, List<Long> infoItemIdList) {
+        try (SQLiteDatabase db = this.getWritableDatabase()){
+            db.execSQL("DELETE FROM "+ TABLE_TODO_LINK);// TODO: 2024-07-22 我目前做的是全删了然后写入新数据的方式。以后再优化
+            for (long infoItemId : infoItemIdList){
+                db.execSQL("INSERT OR IGNORE INTO " + TABLE_TODO_LINK + "(TODO, LINK)" + " VALUES " +
+                        "(" + todoId+","+infoItemId+")");//要求不能重复
+            }
+        }
+    }
 
     public List<TodoItem> loadTodo() {
         List<TodoItem> ret = new ArrayList<>();
@@ -171,11 +191,33 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     //符合BELONG的话，存进来
-                    String titleFound = cursor.getString(1); // TODO: 2024-07-19 这里是Info的内容，真的叫Title吗
+                    String uriFound = cursor.getString(1);
                     long idFound = cursor.getLong(0);
                     String displayFound = cursor.getString(3);
 
-                    ret.add(new InfoItem(titleFound, infoGroupId, idFound,displayFound));
+                    ret.add(new InfoItem(uriFound, infoGroupId, idFound,displayFound));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            return ret;
+        }
+    }
+/**读取所有的info*/
+    public List<InfoItem> loadInfo() {
+        List<InfoItem> ret = new ArrayList<>();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            Cursor cursor = db.query("LINK",
+                    new String[]{"_id", "URI", "BELONG", "DISPLAY"},
+                    null, null, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String uriFound = cursor.getString(1);
+                    long idFound = cursor.getLong(0);
+                    String displayFound = cursor.getString(3);
+                    long belongIdFound = cursor.getLong(2);
+
+                    ret.add(new InfoItem(uriFound, belongIdFound, idFound, displayFound));
                 } while (cursor.moveToNext());
             }
             cursor.close();

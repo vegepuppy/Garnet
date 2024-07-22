@@ -2,6 +2,7 @@ package com.example.garnet;
 
 import static java.util.Collections.sort;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,6 +102,22 @@ public class TodoFragment extends Fragment {
             tv.setText(todoGroup.getDate());
             todoGroup.setRv(rv);
             todoGroup.initRv(getActivity());
+            todoGroup.setStateListener(new TodoGroup.StateListener() {
+                @Override
+                public void StartViewActivity(long itemId) {
+                    Log.d("TAG","StartViewActivity");
+                }
+
+                @Override
+                public void StartAddActivity(long itemId) {
+                    Log.d("TAG","StartAddActivity");
+                    Intent intent = new Intent();
+                    intent.setClass(requireActivity(),InfoItemSelectActivity.class);
+                    intent.putExtra(InfoItemSelectActivity.TODO_ITEM_ID, itemId);
+                    Log.d("TAG","preparing to start activity");
+                    startActivity(intent);
+                }
+            });
         }
     }
 

@@ -13,13 +13,14 @@
         android:layout_margin="10dp"
         android:textSize="20sp"
         android:text="创建待办"
+        android:textStyle="bold"
         />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:textSize="20sp"
         android:id="@+id/add_todo_dialog_edit"
         android:inputType="text"
@@ -31,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/add_todo_dialog_edit"
+        android:layout_marginTop="5dp"
         android:layout_alignStart="@+id/add_todo_dialog_edit"
         android:id="@+id/add_todo_limiter"
         android:text="0/20"
@@ -49,9 +51,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/add_todo_date_button"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/add_todo_date_button"
+        android:layout_margin="10dp"
+        android:text="关联资料"
+        android:id="@+id/attach_info_button"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/attach_info_button"
         android:id="@+id/add_todo_confirm_button"
+        android:layout_margin="10dp"
         android:text="确定"
         />
 
