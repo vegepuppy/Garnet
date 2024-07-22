@@ -68,7 +68,7 @@ public class AddInfoDialogFragment extends DialogFragment {
         public void onClick(View v) {
             String uri = et.getText().toString();
             if(uri.trim().isEmpty()){
-                Toast.makeText(requireActivity(),"事项不能为空!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(),"链接不能为空!",Toast.LENGTH_SHORT).show();
                 et.getText().clear();
             }else {
                 stateListener.onConfirmed(uri);
