@@ -241,5 +241,14 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             db.update(TABLE_TITLE, contentValues, "_id = ?", new String[]{idString});
             return new InfoGroup(newTitle, group.getId());
         }
+    }
+
+    public void updateInfoItem(InfoItem infoItem, String newDisplayString){
+        try (SQLiteDatabase db = this.getWritableDatabase()){
+            String idString = String.valueOf(infoItem.getId());
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("DISPLAY",newDisplayString);
+            db.update(TABLE_LINK, contentValues, "_id = ?", new String[]{idString});
         }
+    }
 }
