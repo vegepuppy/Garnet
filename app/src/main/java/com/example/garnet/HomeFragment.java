@@ -17,6 +17,9 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,15 +32,17 @@ public class HomeFragment extends Fragment {
     public List<String> getinfolist(int position) {
         return infoItemList;
     }
-    public List<String> getHomeItemList() {return homeItemList;}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         //Textview的初始化
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
+        String formattedDate = formatter.format(calendar.getTime());
         tv = view.findViewById(R.id.home_top_tv);
-        tv.setText("2023年7月18日");
+        tv.setText(formattedDate);
         //home_rv的初始化
         RecyclerView rv = view.findViewById(R.id.home_rv);
         rv.setAdapter(adapter);
@@ -110,9 +115,6 @@ public class HomeFragment extends Fragment {
                     if (isChecked) {
                         // CheckBox 被选中
                         Toast.makeText(getActivity(), "Task is finished", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // CheckBox 被取消选中
-                        Toast.makeText(getActivity(), "Task is undone", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
