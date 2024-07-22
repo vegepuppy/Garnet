@@ -14,12 +14,10 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private TodoFragment todoFragment;
     private InfoFragment infoFragment;
-    private BottomNavigationView bottom_nv;
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DataBaseAction.closeDataBase();
     }
 
     @Override
@@ -27,9 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DataBaseAction.init(MainActivity.this);
-
-        bottom_nv = findViewById(R.id.main_bottom_nv);
+        BottomNavigationView bottom_nv = findViewById(R.id.main_bottom_nv);
         bottom_nv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {

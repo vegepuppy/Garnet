@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,7 +17,11 @@ public class TodoGroup implements Comparable<TodoGroup>{
     private final List<TodoItem> todoList = new ArrayList<>();
     private RecyclerView rv;
     private final MyAdapter adapter = new MyAdapter();
-    private StateListener stateListener;
+    private final GarnetDatabaseHelper mDatabaseHelper;
+
+    public TodoGroup(GarnetDatabaseHelper mDatabaseHelper) {
+        this.mDatabaseHelper = mDatabaseHelper;
+    }
 
     // 为内部的rv设置adapter
     public void initRv(Activity activity) {
@@ -67,9 +70,13 @@ public class TodoGroup implements Comparable<TodoGroup>{
 
         public void initItem(int position) {
             // 设置每一个CheckBox的状态
-            TodoItem ti = todoList.get(position);
-            ti.setCheckBox(cb);// 设置cb为这个TodoItem的勾选框，并根据ti的状态设置CheckBox的文字及状态
-
+            TodoItem todoItem = todoList.get(position);
+            cb.setChecked(todoItem.isDone());
+            cb.setText(todoItem.getTask());
+            cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                todoItem.setDone(isChecked);
+                mDatabaseHelper.updateTodoStatus(todoItem, cb);
+            });
         }
     }
 
@@ -85,8 +92,4 @@ public class TodoGroup implements Comparable<TodoGroup>{
         return todoList.get(0).getDueDate();
     }
 
-
-    public interface StateListener{
-        void onCheckChange();
-    }
 }
