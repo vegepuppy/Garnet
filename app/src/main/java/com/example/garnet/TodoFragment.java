@@ -104,17 +104,11 @@ public class TodoFragment extends Fragment {
             todoGroup.initRv(getActivity());
             todoGroup.setStateListener(new TodoGroup.StateListener() {
                 @Override
-                public void StartViewActivity(long itemId) {
+                public void startAttachActivity(long itemId) {
                     Log.d("TAG","StartViewActivity");
-                }
-
-                @Override
-                public void StartAddActivity(long itemId) {
-                    Log.d("TAG","StartAddActivity");
                     Intent intent = new Intent();
-                    intent.setClass(requireActivity(),InfoItemSelectActivity.class);
-                    intent.putExtra(InfoItemSelectActivity.TODO_ITEM_ID, itemId);
-                    Log.d("TAG","preparing to start activity");
+                    intent.setClass(requireActivity(), AttachActivity.class);
+                    intent.putExtra(AttachActivity.TODO_ITEM_ID, itemId);
                     startActivity(intent);
                 }
             });

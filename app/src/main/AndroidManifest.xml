@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Garnet"
         tools:targetApi="31">
         <activity
-            android:name=".InfoItemSelectActivity"
+            android:name=".AttachActivity"
             android:exported="false" />
         <activity
             android:name=".InfoItemDisplayActivity"

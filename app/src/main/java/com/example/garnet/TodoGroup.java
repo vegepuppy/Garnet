@@ -65,12 +65,10 @@ public class TodoGroup implements Comparable<TodoGroup>{
 
     private class MyViewHolder extends RecyclerView.ViewHolder{
         private final CheckBox cb;
-        private final Button viewAttachButton;
         private final Button addAttachButton;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             cb = itemView.findViewById(R.id.todo_display_cb);
-            viewAttachButton = itemView.findViewById(R.id.todo_display_view_attach_button);
             addAttachButton = itemView.findViewById(R.id.todo_display_attach_button);
         }
 
@@ -84,10 +82,9 @@ public class TodoGroup implements Comparable<TodoGroup>{
                 mDatabaseHelper.updateTodoStatus(todoItem, cb);
             });
 
-            // 设置两个Button对应的Listener
+            // 设置Button对应的Listener
             long itemId = todoList.get(position).getId();
-            viewAttachButton.setOnClickListener(v -> mStateListener.StartViewActivity(itemId));
-            addAttachButton.setOnClickListener(v -> mStateListener.StartAddActivity(itemId));
+            addAttachButton.setOnClickListener(v -> mStateListener.startAttachActivity(itemId));
         }
     }
 
@@ -104,8 +101,7 @@ public class TodoGroup implements Comparable<TodoGroup>{
     }
 
     public interface StateListener{
-        void StartViewActivity(long itemId);
-        void StartAddActivity(long itemId);
+        void startAttachActivity(long itemId);
     }
 
     public void setStateListener(StateListener s){

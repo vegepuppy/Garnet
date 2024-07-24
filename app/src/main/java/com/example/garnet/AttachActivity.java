@@ -18,8 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class InfoItemSelectActivity extends AppCompatActivity {
+public class AttachActivity extends AppCompatActivity {
     private List<InfoItem> mainList;
+    private List<Boolean> isAttachedList;
     private GarnetDatabaseHelper mDatabaseHelper;
     public static final String TODO_ITEM_ID = "TodoItemId";
     private long mTodoItemId;
@@ -30,18 +31,19 @@ public class InfoItemSelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_item_select);
 
-        mDatabaseHelper = new GarnetDatabaseHelper(InfoItemSelectActivity.this);
+        mDatabaseHelper = new GarnetDatabaseHelper(AttachActivity.this);
 
         FloatingActionButton fab = findViewById(R.id.confirm_item_select_fab);
         fab.setOnClickListener(new ConfirmListener());
 
         rv = findViewById(R.id.select_info_item_rv);
         rv.setAdapter(new MyAdapter());
-        rv.setLayoutManager(new LinearLayoutManager(InfoItemSelectActivity.this));
+        rv.setLayoutManager(new LinearLayoutManager(AttachActivity.this));
 
         mTodoItemId = getIntent().getLongExtra(TODO_ITEM_ID,-1);
 
-        mainList = mDatabaseHelper.loadInfo();
+        mainList = mDatabaseHelper.loadInfo();//读取所有的InfoItem，所有的InfoItem都显示出来
+        isAttachedList = mDatabaseHelper.checkAttached(mTodoItemId, mainList);//读取所有和这个TodoItem相关的
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -56,6 +58,7 @@ public class InfoItemSelectActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             InfoItem infoItem = mainList.get(position);
             holder.checkBox.setText(infoItem.getDisplayString());
+            holder.checkBox.setChecked(isAttachedList.get(position));
         }
 
         @Override
@@ -65,7 +68,7 @@ public class InfoItemSelectActivity extends AppCompatActivity {
     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder{
-        public final CheckBox checkBox;
+        private final CheckBox checkBox;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -81,10 +84,8 @@ public class InfoItemSelectActivity extends AppCompatActivity {
                 CheckBox itemCheckbox = (CheckBox) rv.getChildAt(i);
                 if (itemCheckbox.isChecked()){
                     selectedItemIdList.add(mainList.get(i).getId());
-                    Log.d("TAG",mainList.get(i).getDisplayString()+" selected by user.");
                 }
             }
-            Log.d("TAG","preparing to save the above to database");
             mDatabaseHelper.updateAttachment(mTodoItemId, selectedItemIdList);
         }
     }
