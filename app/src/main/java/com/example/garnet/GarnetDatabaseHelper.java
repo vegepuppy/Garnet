@@ -290,6 +290,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             return new InfoGroup(newTitle, group.getId());
         }
     }
+
     /**
      * 查看传入列表里的{@link InfoItem}是否与相应的{@link TodoItem}相关
      */
@@ -306,11 +307,13 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             }
         }
         return ret;
-    public void updateInfoItem(InfoItem infoItem, String newDisplayString){
-        try (SQLiteDatabase db = this.getWritableDatabase()){
+    }
+
+    public void updateInfoItem(InfoItem infoItem, String newDisplayString) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
             String idString = String.valueOf(infoItem.getId());
             ContentValues contentValues = new ContentValues();
-            contentValues.put("DISPLAY",newDisplayString);
+            contentValues.put("DISPLAY", newDisplayString);
             db.update(TABLE_LINK, contentValues, "_id = ?", new String[]{idString});
         }
     }
