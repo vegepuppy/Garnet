@@ -11,7 +11,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_margin="10dp"
-        android:text="创建信息"
+        android:textStyle="bold"
+        android:text="创建资料"
         android:textSize="20sp"/>
 
     <EditText

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ public class TodoGroup implements Comparable<TodoGroup>{
     private RecyclerView rv;
     private final MyAdapter adapter = new MyAdapter();
     private final GarnetDatabaseHelper mDatabaseHelper;
+    private StateListener mStateListener;
 
     public TodoGroup(GarnetDatabaseHelper mDatabaseHelper) {
         this.mDatabaseHelper = mDatabaseHelper;
@@ -51,7 +53,7 @@ public class TodoGroup implements Comparable<TodoGroup>{
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_checkbox,parent,false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.todo_item_display,parent,false);
             return new MyViewHolder(view);
         }
 
@@ -63,9 +65,11 @@ public class TodoGroup implements Comparable<TodoGroup>{
 
     private class MyViewHolder extends RecyclerView.ViewHolder{
         private final CheckBox cb;
+        private final Button addAttachButton;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            cb = itemView.findViewById(R.id.todo_cb);
+            cb = itemView.findViewById(R.id.todo_display_cb);
+            addAttachButton = itemView.findViewById(R.id.todo_display_attach_button);
         }
 
         public void initItem(int position) {
@@ -77,6 +81,10 @@ public class TodoGroup implements Comparable<TodoGroup>{
                 todoItem.setDone(isChecked);
                 mDatabaseHelper.updateTodoStatus(todoItem, cb);
             });
+
+            // 设置Button对应的Listener
+            long itemId = todoList.get(position).getId();
+            addAttachButton.setOnClickListener(v -> mStateListener.startAttachActivity(itemId));
         }
     }
 
@@ -92,4 +100,11 @@ public class TodoGroup implements Comparable<TodoGroup>{
         return todoList.get(0).getDueDate();
     }
 
+    public interface StateListener{
+        void startAttachActivity(long itemId);
+    }
+
+    public void setStateListener(StateListener s){
+        this.mStateListener = s;
+    }
 }

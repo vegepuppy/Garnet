@@ -59,13 +59,15 @@ public class AddTodoDialogFragment extends DialogFragment {
         TextLengthLimiter.bindTextLimiter(et,limiterTv);
 
         dateButton = v.findViewById(R.id.add_todo_date_button);
-        Button confrimButton = v.findViewById(R.id.add_todo_confirm_button);
 
         // 给日期按钮设置listener
         dateButton.setOnClickListener(new DateButtonListener());
 
-        //给confirm设置listener
+        Button confrimButton = v.findViewById(R.id.add_todo_confirm_button);
         confrimButton.setOnClickListener(new ConfirmedListener());
+
+        Button attachInfoButton = v.findViewById(R.id.attach_info_button);
+        attachInfoButton.setOnClickListener(new AttachInfoListener());
         return v;
     }
 
@@ -112,6 +114,14 @@ public class AddTodoDialogFragment extends DialogFragment {
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
             dateSelected = DateFormatter.formatDate(year,month,dayOfMonth);
             dateButton.setText(dateSelected);
+        }
+    }
+
+    private class AttachInfoListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            // TODO: 2024-07-22 还没写，主要问题是写的传入TodoItem的数据库操作方法不合适，因为TodoItem还没创建出来
+            // 因为我写的方法要求提前知道todoItem的id，但是此时todoItem还没创建出来，不知道id
         }
     }
 }
