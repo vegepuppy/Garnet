@@ -15,7 +15,10 @@
         android:theme="@style/Theme.Garnet"
         tools:targetApi="31">
         <activity
-            android:name=".AttachActivity"
+            android:name=".AttachInfoGroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AttachInfoItemActivity"
             android:exported="false" />
         <activity
             android:name=".InfoItemDisplayActivity"

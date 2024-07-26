@@ -1,11 +1,11 @@
 package com.example.garnet;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AttachActivity extends AppCompatActivity {
+public class AttachInfoItemActivity extends AppCompatActivity {
     private List<InfoItem> mainList;
     private List<Boolean> isAttachedList;
     private GarnetDatabaseHelper mDatabaseHelper;
-    public static final String TODO_ITEM_ID = "TodoItemId";
-    private long mTodoItemId;
+    public static final String TODO_ITEM = "TodoItem";
+    public static final String INFO_GROUP = "InfoGroup";
+    private TodoItem mTodoItem;
+    private InfoGroup mInfoGroup;
     private RecyclerView rv;
 
     @Override
@@ -32,19 +34,23 @@ public class AttachActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_item_select);
 
-        mDatabaseHelper = new GarnetDatabaseHelper(AttachActivity.this);
+        mDatabaseHelper = new GarnetDatabaseHelper(AttachInfoItemActivity.this);
 
         FloatingActionButton fab = findViewById(R.id.confirm_item_select_fab);
         fab.setOnClickListener(new ConfirmListener());
 
         rv = findViewById(R.id.select_info_item_rv);
         rv.setAdapter(new MyAdapter());
-        rv.setLayoutManager(new LinearLayoutManager(AttachActivity.this));
+        rv.setLayoutManager(new LinearLayoutManager(AttachInfoItemActivity.this));
 
-        mTodoItemId = getIntent().getLongExtra(TODO_ITEM_ID,-1);
+        mTodoItem = (TodoItem) getIntent().getSerializableExtra(TODO_ITEM);
+        mInfoGroup = (InfoGroup) getIntent().getSerializableExtra(INFO_GROUP);
 
-        mainList = mDatabaseHelper.loadInfo();//读取所有的InfoItem，所有的InfoItem都显示出来
-        isAttachedList = mDatabaseHelper.checkAttached(mTodoItemId, mainList);//读取所有和这个TodoItem相关的
+        mainList = mDatabaseHelper.loadInfo(mInfoGroup.getId());//读取所有的InfoItem，所有的InfoItem都显示出来
+        isAttachedList = mDatabaseHelper.checkAttached(mTodoItem.getId(), mainList);//读取所有和这个TodoItem相关的
+
+        TextView textView = findViewById(R.id.select_info_item_title_tv);
+        textView.setText(mTodoItem.getTask());
     }
 
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -87,8 +93,10 @@ public class AttachActivity extends AppCompatActivity {
                     selectedItemIdList.add(mainList.get(i).getId());
                 }
             }
-            mDatabaseHelper.updateAttachment(mTodoItemId, selectedItemIdList);
-            Toast.makeText(AttachActivity.this, "选择已保存！", Toast.LENGTH_SHORT).show();
+            List<Long> allItemIdList = new ArrayList<>();
+            mainList.forEach(infoItem -> allItemIdList.add(infoItem.getId()));
+            mDatabaseHelper.updateAttachment(mTodoItem.getId(),allItemIdList,selectedItemIdList);
+            Toast.makeText(AttachInfoItemActivity.this, "选择已保存！", Toast.LENGTH_SHORT).show();
             finish();
         }
     }

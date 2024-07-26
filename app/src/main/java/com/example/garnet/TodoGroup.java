@@ -11,10 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoGroup implements Comparable<TodoGroup>{
+public class TodoGroup implements Comparable<TodoGroup>, Serializable {
     private final List<TodoItem> todoList = new ArrayList<>();
     private RecyclerView rv;
     private final MyAdapter adapter = new MyAdapter();
@@ -83,8 +84,8 @@ public class TodoGroup implements Comparable<TodoGroup>{
             });
 
             // 设置Button对应的Listener
-            long itemId = todoList.get(position).getId();
-            addAttachButton.setOnClickListener(v -> mStateListener.startAttachActivity(itemId));
+            addAttachButton.setOnClickListener(v -> mStateListener
+                    .startAttachActivity(todoList.get(position)));
         }
     }
 
@@ -101,7 +102,7 @@ public class TodoGroup implements Comparable<TodoGroup>{
     }
 
     public interface StateListener{
-        void startAttachActivity(long itemId);
+        void startAttachActivity(TodoItem todoItem);
     }
 
     public void setStateListener(StateListener s){

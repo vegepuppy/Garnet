@@ -3,7 +3,9 @@ package com.example.garnet;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-public class TodoItem{
+import java.io.Serializable;
+
+public class TodoItem implements Serializable {
     private String task;
     private String dueDate;
     private long id;

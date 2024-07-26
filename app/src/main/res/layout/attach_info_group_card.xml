@@ -2,7 +2,15 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="15dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    android:layout_centerHorizontal="true"
+    android:id="@+id/info_list_cardview"
     android:foreground="?android:attr/selectableItemBackground">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -11,11 +19,11 @@
         <CheckBox
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:id="@+id/todo_display_cb"
+            android:id="@+id/attach_info_group_cb"
             android:layout_width="0dp"/>
 
         <Button
-            android:id="@+id/todo_display_attach_button"
+            android:id="@+id/attach_info_group_btn_view"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/todo_btn_view_24"

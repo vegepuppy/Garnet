@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AttachInfoItemActivity">
+    tools:context=".AttachInfoGroupActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -13,13 +13,13 @@
         android:textStyle="bold"
         android:text="选择资料"
         android:textSize="40sp"
-        android:id="@+id/select_info_item_title_tv"/>
+        android:id="@+id/attach_info_group_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/select_info_item_title_tv"
-        android:id="@+id/select_info_item_rv"
+        android:layout_below="@+id/attach_info_group_tv"
+        android:id="@+id/attach_info_group_rv"
         android:layout_centerHorizontal="true"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -28,7 +28,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
-        android:id="@+id/confirm_item_select_fab"
+        android:id="@+id/attach_info_group_confirm"
         android:src="@drawable/baseline_done_24"/>
 
 </RelativeLayout>
