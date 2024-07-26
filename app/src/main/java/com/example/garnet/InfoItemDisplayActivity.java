@@ -20,8 +20,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_NAME = "InfoGroupName";
@@ -180,11 +183,29 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             });
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
+                InfoItem infoItem = mainList.get(position);
 
-                mDatabaseHelper.deleteInfo(mainList.get(position));
                 mainList.remove(position);
                 myAdapter.notifyItemRemoved(position);
 
+                Snackbar snackbar = Snackbar.make(getWindow().getDecorView(), "已删除："+infoItem.getDisplayString(),Snackbar.LENGTH_LONG);
+
+                snackbar.setAction("撤销", v1 -> {
+                    mainList.add(position, infoItem);
+                    myAdapter.notifyItemInserted(position);
+                });
+
+                snackbar.addCallback(new Snackbar.Callback(){
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int event) {
+                        super.onDismissed(transientBottomBar, event);
+
+                        if (event != DISMISS_EVENT_ACTION){//只要不是点击了撤销
+                            mDatabaseHelper.deleteInfo(infoItem);
+                        }
+                    }
+                });
+                snackbar.show();
                 return true;
             });
         }
