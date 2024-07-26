@@ -101,7 +101,6 @@ public class TodoFragment extends Fragment {
         public void initItem(@NonNull TodoGroup todoGroup){
             tv.setText(todoGroup.getDate());
             todoGroup.setRv(rv);
-            todoGroup.initRv(getActivity());
             todoGroup.setStateListener(new TodoGroup.StateListener() {
                 @Override
                 public void startAttachActivity(long itemId) {
@@ -112,6 +111,8 @@ public class TodoFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+            todoGroup.initRv(getActivity());
+
         }
     }
 
@@ -158,5 +159,4 @@ public class TodoFragment extends Fragment {
             updateMainList(ti);
         }
     }
-
 }
