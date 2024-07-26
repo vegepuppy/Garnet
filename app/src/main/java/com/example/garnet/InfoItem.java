@@ -10,6 +10,7 @@ public class InfoItem {
     private String uri;
     private long belong;
     private String displayString;
+    private boolean isLinkFetched;
     // 以上两个变量不能是final，用户可能会改，忽视IDE提示
 
     public static final long LACK_ID = -1;
@@ -48,5 +49,13 @@ public class InfoItem {
         this.belong = belong;
         this.id = id;
         this.displayString = display;
+    }
+
+    public boolean isLinkFetched() {
+        return isLinkFetched;
+    }
+
+    public void setLinkFetched(boolean linkFetched) {
+        isLinkFetched = linkFetched;
     }
 }

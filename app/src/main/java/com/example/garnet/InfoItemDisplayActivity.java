@@ -61,7 +61,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     private void reFetchLinkTitle(){
         for(InfoItem infoItem: mainList){
             //如果url和display相等，那么就再获取一次
-            if(infoItem.getDisplayString().equals(infoItem.getUri())){
+            if(!infoItem.isLinkFetched()){
                 Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
                     public void handleMessage(Message msg){
                         if (msg.what == 1) {//用if替换掉原来的switch减少一个warning，兼顾安全性
@@ -69,12 +69,17 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                             Log.d("TAG", "handleMessage...");
                             // 改成在这里Toast就可以了
                             if (!response.isValid) {
-                                Toast.makeText(InfoItemDisplayActivity.this,
-                                        infoItem.getUri()+":无效链接！", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(InfoItemDisplayActivity.this,
+//                                        infoItem.getUri()+":无效链接！", Toast.LENGTH_SHORT).show();
+                                infoItem.setDisplayString("无效链接:" + infoItem.getUri());
+                                mDatabaseHelper.updateInfoItem(infoItem, "无效链接:" + infoItem.getUri());
+                                myAdapter.notifyItemChanged(mainList.indexOf(infoItem));
+                                infoItem.setLinkFetched(true);
                             } else if (!response.isSuccess) {
                                 Toast.makeText(InfoItemDisplayActivity.this,
                                         infoItem.getUri()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
                                 infoItem.setDisplayString(infoItem.getUri());
+                                infoItem.setLinkFetched(false);
                             } else {
                                 mDatabaseHelper.updateInfoItem(infoItem, response.linkTitle);
                                 infoItem.setDisplayString(response.linkTitle);
@@ -107,7 +112,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                                 // 改成在这里Toast就可以了
                                 if (!response.isValid) {
                                     Toast.makeText(InfoItemDisplayActivity.this, "无效链接！", Toast.LENGTH_SHORT).show();
-                                    infoItem.setDisplayString("无效链接"+infoItem.getUri());
+                                    infoItem.setDisplayString("无效链接:"+infoItem.getUri());
                                 } else if (!response.isSuccess) {
                                     Toast.makeText(InfoItemDisplayActivity.this, "获取网页超时信息失败！", Toast.LENGTH_SHORT).show();
                                     infoItem.setDisplayString(uri);// TODO: 2024-07-22 如果链接有效但是没连上网就暂时设置成链接，但是什么时候重试呢？
