@@ -160,13 +160,11 @@ public class InfoFragment extends Fragment {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION) {
                         InfoGroup infoGroup = mainList.get(position);
-                        long id = infoGroup.getId();
-                        String title = infoGroup.getName();
 
                         Intent intent = new Intent();
                         intent.setClass(requireActivity(), InfoItemDisplayActivity.class);
-                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_ID, id);
-                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, title);
+                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_ID, infoGroup.getId());
+                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, infoGroup.getName());
                         startActivity(intent);
                     }
                 }

@@ -127,7 +127,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     public InfoGroup insertInfoGroup(InfoGroup infoGroup) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             ContentValues contentValues = new ContentValues();
-            contentValues.put(TABLE_TITLE, infoGroup.getName());
+            contentValues.put("NAME", infoGroup.getName());
             long id = db.insert(TABLE_TITLE, null, contentValues);
             return new InfoGroup(infoGroup.getName(), id);
         }
@@ -259,14 +259,26 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     public void deleteInfoGroup(InfoGroup infoGroup) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             String idString = String.valueOf(infoGroup.getId());
+            // 删除InfoGroup
             db.delete(TABLE_TITLE, "_id=?", new String[]{idString});
+
+            // 删除InfoGroup下的所有链接（这方法里包含了删除链接和待办事项的关联
+            List<InfoItem> infoItemsToDelete = loadInfo(infoGroup.getId());
+            deleteInfo(infoItemsToDelete);
+        }
+    }
+
+    public void deleteInfo(List<InfoItem> infoItemList){
+        for (InfoItem item : infoItemList){
+            deleteInfo(item);
         }
     }
 
     public void deleteInfo(InfoItem item) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             String idString = String.valueOf(item.getId());
-            db.delete("LINK", "_id=?", new String[]{idString});
+            db.delete(TABLE_LINK, "_id=?", new String[]{idString});
+            db.delete(TABLE_TODO_LINK,"LINK=?", new String[]{idString});
         }
     }
 
