@@ -20,11 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_NAME = "InfoGroupName";
