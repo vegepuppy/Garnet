@@ -194,13 +194,14 @@ public class InfoFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
                 if (itemId == R.id.delete) {
-                    Toast.makeText(getActivity(), "点击了删除", Toast.LENGTH_LONG).show();
-
-                    deleteTitleItem(position);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+                    builder.setTitle("确定删除吗？");
+                    builder.setPositiveButton("确定", (dialog, which) -> deleteInfoGroup(position));
+                    builder.setNegativeButton("取消",null);
+                    builder.show();
 
                 } else if (itemId == R.id.update) {
                     //展示一个alertDialog
-                    Toast.makeText(getActivity(), "点击了修改", Toast.LENGTH_LONG).show();
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("修改");
                     View addWindow = InfoFragment.this.getLayoutInflater().inflate(R.layout.add_info_alartdialog, null);
@@ -241,7 +242,7 @@ public class InfoFragment extends Fragment {
         });
     }
 
-    private void deleteTitleItem(int position) {
+    private void deleteInfoGroup(int position) {
         // 在数据库中删除
         InfoGroup infoGroup = mainList.get(position);
         mDatabaseHelper.deleteInfoGroup(infoGroup);
