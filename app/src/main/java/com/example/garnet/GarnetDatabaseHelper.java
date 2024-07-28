@@ -145,10 +145,13 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
      * @param todoId         对应的{@link TodoItem}的id
      * @param infoItemIdList 所要与之关联的所有{@link InfoItem}的id
      */
-    public void updateAttachment(long todoId, List<Long> infoItemIdList) {
+    public void updateAttachment(long todoId, List<Long> infoItemIdList, List<Long> attachedIdList) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.execSQL("DELETE FROM " + TABLE_TODO_LINK + " WHERE TODO =" + todoId);// TODO: 2024-07-22 我目前做的是全删了然后写入新数据的方式。以后再优化
-            for (long infoItemId : infoItemIdList) {
+            for(long infoItemId : infoItemIdList) {
+                db.delete(TABLE_TODO_LINK,"TODO = ? AND LINK = ?"
+                        ,new String[]{String.valueOf(todoId), String.valueOf(infoItemId)});
+            }// TODO: 2024-07-26 改了一下，是info和todo双检索
+            for (long infoItemId : attachedIdList) {
                 db.execSQL("INSERT OR IGNORE INTO " + TABLE_TODO_LINK + "(TODO, LINK)" + " VALUES " +
                         "(" + todoId + "," + infoItemId + ")");//要求不能重复
             }
@@ -320,6 +323,20 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
         return ret;
     }
+
+    /**
+     * 查看传入的InfoGroup中，是否存在InfoItem与传入的TodoItem关联
+     * @param todoItemId
+     * @param infoGroup
+     * @return 如果关联，则返回true
+     */
+    public boolean checkAttached(long todoItemId, InfoGroup infoGroup){
+        List<Boolean> list = checkAttached(todoItemId, loadInfo(infoGroup.getId()));
+        boolean isAllAttached = list.stream().anyMatch(b -> b);
+        return isAllAttached;
+    }
+
+
 
     public void updateInfoItem(InfoItem infoItem, String newDisplayString) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
