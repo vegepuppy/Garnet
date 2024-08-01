@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private TodoFragment todoFragment;
     private InfoFragment infoFragment;
+    private SettingFragment settingFragment;
 
     @Override
     protected void onDestroy() {
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment(1);
                 } else if (id == R.id.bottom_todo) {
                     selectedFragment(2);
+                } else if (id == R.id.bottom_settings) {
+                    selectedFragment(3);
                 }
                 return true;
             }
@@ -44,43 +47,50 @@ public class MainActivity extends AppCompatActivity {
         selectedFragment(0);// 默认进入主页
     }
 
-    public void selectedFragment (int position){
+    public void selectedFragment(int position) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         hideFragment(transaction);
 
-        if(position == 0){
-            if(homeFragment == null){
+        if (position == 0) {
+            if (homeFragment == null) {
                 homeFragment = new HomeFragment();
                 transaction.add(R.id.content, homeFragment);
-            }else{
+            } else {
                 transaction.show(homeFragment);
             }
         } else if (position == 1) {
-            if(infoFragment == null){
+            if (infoFragment == null) {
                 infoFragment = new InfoFragment();
                 transaction.add(R.id.content, infoFragment);
-            }else{
+            } else {
                 transaction.show(infoFragment);
             }
         } else if (position == 2) {
-            if(todoFragment == null){
+            if (todoFragment == null) {
                 todoFragment = new TodoFragment();
                 transaction.add(R.id.content, todoFragment);
-            }else{
+            } else {
                 transaction.show(todoFragment);
+            }
+        } else if (position == 3) {
+            if (settingFragment == null) {
+                settingFragment = new SettingFragment();
+                transaction.add(R.id.content, settingFragment);
+            } else {
+                transaction.show(settingFragment);
             }
         }
         transaction.commit();
     }
 
     private void hideFragment(FragmentTransaction transaction) {
-        if(homeFragment != null){
+        if (homeFragment != null) {
             transaction.hide(homeFragment);
         }
-        if(infoFragment != null){
+        if (infoFragment != null) {
             transaction.hide(infoFragment);
         }
-        if(todoFragment != null){
+        if (todoFragment != null) {
             transaction.hide(todoFragment);
         }
     }
