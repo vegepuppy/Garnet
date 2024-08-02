@@ -186,6 +186,25 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public String loadTodayTodoString(final String dateString) {
+        // TODO: 2024-08-02 获得当日待办构成的字符串
+        List<String> taskFoundList = new ArrayList<>(5);
+        try (SQLiteDatabase db = this.getWritableDatabase()){
+            Cursor cursor = db.query(TABLE_TODO, new String[]{"TASK","DONE"}, "DUE = ?", new String[]{dateString},null, null, null);
+            if (cursor.moveToFirst()){
+                do {
+                    String taskFound = cursor.getString(0);
+                    taskFoundList.add(taskFound);
+                }while(cursor.moveToNext());
+            }
+            if (taskFoundList.isEmpty())return null;
+            else {
+                return String.join("\n", taskFoundList);
+            }
+        }
+    }
+
+
     public List<InfoItem> loadInfo(long infoGroupId) {
         List<InfoItem> ret = new ArrayList<>();
         String infoGroupIdString = String.valueOf(infoGroupId);
@@ -346,4 +365,5 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             db.update(TABLE_LINK, contentValues, "_id = ?", new String[]{idString});
         }
     }
+
 }

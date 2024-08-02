@@ -50,9 +50,9 @@ public class SettingFragment extends Fragment {
     private void createNotificationChannel() {
         // Create a notification channel for devices running
         // Android Oreo (API level 26) and above
-        String name = "Notify Channel";
-        String desc = "A Description of the Channel";
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        String name = "每日通知";
+        String desc = "提醒当日的待办事项";
+        int importance = NotificationManager.IMPORTANCE_HIGH;
 
         NotificationChannel channel = new NotificationChannel(Notifier.CHANNEL_ID, name, importance);
         channel.setDescription(desc);
@@ -91,11 +91,10 @@ public class SettingFragment extends Fragment {
         Intent intent = new Intent(requireActivity(), Notifier.class);
 
         // Extract title and message from user input
-        String title = "待办提示";
-        String message = "做题";
+        String message = getTodoMessageString();// 获得当日的待办事项
+        Log.d("TAG", "TODO for today:\n" + message);
 
         // Add title and message as extras to the intent
-        intent.putExtra(Notifier.TITLE_EXTRA, title);
         intent.putExtra(Notifier.MESSAGE_EXTRA, message);
 
         // Create a PendingIntent for the broadcast
@@ -103,7 +102,7 @@ public class SettingFragment extends Fragment {
                 requireActivity(),
                 Notifier.NOTIFICATION_ID,
                 intent,
-                PendingIntent.FLAG_IMMUTABLE + PendingIntent.FLAG_UPDATE_CURRENT // kotlin 'or' 转写为|
+                PendingIntent.FLAG_IMMUTABLE
         );
 
         // Get the AlarmManager service
@@ -113,16 +112,28 @@ public class SettingFragment extends Fragment {
         long time = getTime();
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 time,
-                5000, // 每天重复
+                AlarmManager.INTERVAL_DAY, // 每天重复
                 pendingIntent);
 
         Log.d("TAG", "done setting notification");
     }
 
-    //获取当前时间的下一分钟，用于调试
+    private String getTodoMessageString() {
+        GarnetDatabaseHelper mDatabaseHelper = new GarnetDatabaseHelper(requireActivity());
+        // TODO: 2024-08-02 使用当日的YYYY-MM-DD字符串
+        return mDatabaseHelper.loadTodayTodoString("2024-08-02");
+    }
+
+    //第一次发送通知的时间
     private long getTime() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2024,Calendar.AUGUST,1,8,0);
+        calendar.set(2024,Calendar.AUGUST,2,8,0,0);
+
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()){// 如果今天已经过了8.00，就明天发通知
+            Log.d("TAG","will trigger next day");
+            calendar.add(Calendar.DATE, 1);
+        }
+
         return calendar.getTimeInMillis();
     }
 }
