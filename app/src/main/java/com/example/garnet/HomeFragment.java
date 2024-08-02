@@ -24,19 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
-    public List<String> infoItemList = new ArrayList<>();
     public List<String> homeItemList = new ArrayList<>();
+    private List<HomeItem> homeItems = new ArrayList<>();
     private final MyAdapter adapter = new MyAdapter();
     private TextView tv;
     private final innerAdapter inneradapter = new innerAdapter();
     public List<String> getinfolist(int position) {
-        return infoItemList;
+        return homeItems.get(position).getLinkList();
     }
+    private GarnetDatabaseHelper homeHelper;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
+        homeHelper = new GarnetDatabaseHelper(getActivity());
         //Textview的初始化
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
@@ -47,12 +50,7 @@ public class HomeFragment extends Fragment {
         RecyclerView rv = view.findViewById(R.id.home_rv);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        infoItemList.add("bilibili.com");
-        infoItemList.add("zhihu.com");
-        infoItemList.add("mooc.com");
-        homeItemList.add("高等数学");
-        homeItemList.add("大学物理");
-        homeItemList.add("离散数学");
+        loadData();
         return view;
     }
 
@@ -130,11 +128,21 @@ public class HomeFragment extends Fragment {
             task_view = itemView.findViewById(R.id.home_lk);
         }
         public void inner_initItem(int position){
-            for(int i = 0; i< getinfolist(position).size(); i++){
-                String item = getinfolist(position).get(i).toString();
-                task_view.append(item);
-                task_view.append("\n");
+            if (getinfolist(position).isEmpty()){task_view.append(null);}
+            else {
+                for (int i = 0; i < getinfolist(position).size(); i++) {
+                    String item = getinfolist(position).get(i).toString();
+                    task_view.append(item);
+                    task_view.append("\n");
+                }
             }
+        }
+    }
+
+    private void loadData(){
+        homeItems = homeHelper.loadHome();
+        for (int i=0; i<homeItems.size(); i++){
+            homeItemList.add(homeItems.get(i).getHomeTask());
         }
     }
 }

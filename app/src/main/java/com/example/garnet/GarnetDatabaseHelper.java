@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.CheckBox;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -18,6 +20,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_LINK = "LINK";
     private static final String TABLE_TODO = "TODO";
     private static final String TABLE_TODO_LINK = "TODO_LINK";
+
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    String formattedDate = formatter.format(calendar.getTime());
 
     // 构造函数
     public GarnetDatabaseHelper(Context context) {
@@ -184,6 +190,76 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             return ret;
         }
+    }
+
+    public List<HomeItem> loadHome(){
+        List<HomeItem> homelist = new ArrayList<>();
+        String taskFound;
+        long idFound;
+        String uriFound;
+        int uriId;
+        List<String> tasklist = new ArrayList<>();
+        List<Long> idlist = new ArrayList<>();
+        List<List<Integer>> todo_link = new ArrayList<>();
+        //读TODO表
+        try (SQLiteDatabase db1 = this.getWritableDatabase()){
+            Cursor cursor = db1.query("TODO",
+                    new String[]{"_id","TASK"},
+                    "DUE = ?",new String[]{"2024-09-16"},null,null,null);
+            if(cursor.moveToFirst()){
+                do{
+                    final int idIdx = 0;
+                    final int taskIdx = 1;
+
+                    taskFound = cursor.getString(taskIdx);
+                    idFound = cursor.getLong(idIdx);
+                    tasklist.add(taskFound);
+                    idlist.add(idFound);
+                }while(cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        //读TODO_LINK表
+       for (int i=0; i<idlist.size(); i++){
+           List<Integer> row = new ArrayList<>();
+           try(SQLiteDatabase db2 = this.getWritableDatabase()){
+               Cursor cursor = db2.query("TODO_LINK",
+                       new String[]{"LINK"},
+                       "TODO = ?",new String[]{Long.toString(idlist.get(i))},null,null,null);
+               if(cursor.moveToFirst()){
+                   do{
+                        uriId= cursor.getInt(2);
+                        row.add(uriId);
+                   }while(cursor.moveToNext());
+               }
+               todo_link.add(row);
+               cursor.close();
+           }
+       }
+       //读LINK表
+       for(int i=0; i<idlist.size(); i++){
+           List<String> link = new ArrayList<>();
+           List<Integer> linkId;
+           linkId =todo_link.get(i);
+           if (linkId.isEmpty()){
+               HomeItem hi = new HomeItem(tasklist.get(i),null);
+               homelist.add(hi);
+           }
+           else {
+               for (int cnt = 0; cnt < linkId.size(); cnt++) {
+                   try (SQLiteDatabase db3 = this.getWritableDatabase()) {
+                       Cursor cursor = db3.query("LINK",
+                               new String[]{"URI"}, "_id = ?", new String[]{Integer.toString(linkId.get(cnt))}, null, null, null);
+                       uriFound = cursor.getString(1);
+                       link.add(uriFound);
+                       cursor.close();
+                   }
+               }
+               HomeItem hi = new HomeItem(tasklist.get(i), link);
+               homelist.add(hi);
+           }
+       }
+       return homelist;
     }
 
     public List<InfoItem> loadInfo(long infoGroupId) {
