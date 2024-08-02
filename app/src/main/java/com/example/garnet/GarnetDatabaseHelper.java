@@ -200,6 +200,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         int uriId;
         List<String> tasklist = new ArrayList<>();
         List<Long> idlist = new ArrayList<>();
+        //用来存todo的task对应的link的id值
         List<List<Integer>> todo_link = new ArrayList<>();
         //读TODO表
         try (SQLiteDatabase db1 = this.getWritableDatabase()){
@@ -219,7 +220,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             }
             cursor.close();
         }
-        //读TODO_LINK表
+        //读TODO_LINK表，填写todo_link二维列表
        for (int i=0; i<idlist.size(); i++){
            List<Integer> row = new ArrayList<>();
            try(SQLiteDatabase db2 = this.getWritableDatabase()){
@@ -236,11 +237,12 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                cursor.close();
            }
        }
-       //读LINK表
+       //读LINK表，通过todo_link表得到的id值来获取link表中的uri
        for(int i=0; i<idlist.size(); i++){
            List<String> link = new ArrayList<>();
            List<Integer> linkId;
            linkId =todo_link.get(i);
+           //todo:这里有问题
            if (linkId.isEmpty()){
                HomeItem hi = new HomeItem(tasklist.get(i),null);
                homelist.add(hi);
