@@ -1,9 +1,7 @@
 package com.example.garnet;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,22 +25,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottom_nv = findViewById(R.id.main_bottom_nv);
-        bottom_nv.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                // 在导航栏中的控件被用户选中时，执行此方法
-                int id = menuItem.getItemId();
-                if (id == R.id.bottom_home) {
-                    selectedFragment(0);
-                } else if (id == R.id.bottom_info) {
-                    selectedFragment(1);
-                } else if (id == R.id.bottom_todo) {
-                    selectedFragment(2);
-                } else if (id == R.id.bottom_settings) {
-                    selectedFragment(3);
-                }
-                return true;
+        bottom_nv.setOnItemSelectedListener(menuItem -> {
+            // 在导航栏中的控件被用户选中时，执行此方法
+            int id = menuItem.getItemId();
+            if (id == R.id.bottom_home) {
+                selectedFragment(0);
+            } else if (id == R.id.bottom_info) {
+                selectedFragment(1);
+            } else if (id == R.id.bottom_todo) {
+                selectedFragment(2);
+            } else if (id == R.id.bottom_settings) {
+                selectedFragment(3);
             }
+            return true;
         });
         selectedFragment(0);// 默认进入主页
     }
@@ -92,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (todoFragment != null) {
             transaction.hide(todoFragment);
+        }
+        if (settingFragment != null){
+            transaction.hide(settingFragment);
         }
     }
 }

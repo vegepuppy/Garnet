@@ -5,10 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.CheckBox;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class GarnetDatabaseHelper extends SQLiteOpenHelper {
@@ -185,11 +189,16 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             return ret;
         }
     }
-/**获得以YYYY-MM-DD格式指定字符串对应日期的所有待办构成的字符串，以'\n'分隔*/
-    public String loadTodayTodoString(final String dateString) {
-        List<String> taskFoundList = new ArrayList<>(5);
+/**获得以YYYY-MM-DD格式指定字符串对应日期中，所有未完成待办构成的字符串，以'\n'分隔*/
+    public String loadTodoString(final Date date) {
+        List<String> taskFoundList = new ArrayList<>(5);//预计5个差不多，一天不会有那么多待办
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date);
+        Log.d("NOTI", "Loading todo at date:" + dateString);
         try (SQLiteDatabase db = this.getWritableDatabase()){
-            Cursor cursor = db.query(TABLE_TODO, new String[]{"TASK","DONE"}, "DUE = ?", new String[]{dateString},null, null, null);
+            Cursor cursor = db.query(TABLE_TODO,
+                    new String[]{"TASK","DONE"},
+                    "DUE = ? AND DONE = ?",
+                    new String[]{dateString, "0"},null, null, null);
             if (cursor.moveToFirst()){
                 do {
                     String taskFound = cursor.getString(0);
