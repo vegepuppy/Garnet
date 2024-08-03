@@ -20,7 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class SettingFragment extends Fragment {
 
@@ -120,8 +123,12 @@ public class SettingFragment extends Fragment {
 
     private String getTodoMessageString() {
         GarnetDatabaseHelper mDatabaseHelper = new GarnetDatabaseHelper(requireActivity());
-        // TODO: 2024-08-02 使用当日的YYYY-MM-DD字符串
-        return mDatabaseHelper.loadTodayTodoString("2024-08-02");
+        Date c = Calendar.getInstance().getTime();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String formattedDate = df.format(c);
+        Log.d("TAG", "Today is:" + formattedDate);
+        return mDatabaseHelper.loadTodayTodoString(formattedDate);
     }
 
     //第一次发送通知的时间

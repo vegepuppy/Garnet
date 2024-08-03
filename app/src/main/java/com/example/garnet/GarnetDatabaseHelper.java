@@ -185,9 +185,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             return ret;
         }
     }
-
+/**获得以YYYY-MM-DD格式指定字符串对应日期的所有待办构成的字符串，以'\n'分隔*/
     public String loadTodayTodoString(final String dateString) {
-        // TODO: 2024-08-02 获得当日待办构成的字符串
         List<String> taskFoundList = new ArrayList<>(5);
         try (SQLiteDatabase db = this.getWritableDatabase()){
             Cursor cursor = db.query(TABLE_TODO, new String[]{"TASK","DONE"}, "DUE = ?", new String[]{dateString},null, null, null);
