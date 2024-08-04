@@ -27,22 +27,25 @@ public class HomeFragment extends Fragment {
     public List<String> homeItemList = new ArrayList<>();
     private List<HomeItem> homeItems = new ArrayList<>();
     private final MyAdapter adapter = new MyAdapter();
+    private List<String> link = new ArrayList<>();
     private TextView tv;
     private final innerAdapter inneradapter = new innerAdapter();
     public List<String> getinfolist(int position) {
         return homeItems.get(position).getLinkList();
     }
     private GarnetDatabaseHelper homeHelper;
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home,container,false);
         homeHelper = new GarnetDatabaseHelper(getActivity());
+        homeItems = homeHelper.loadHome();
+        for (int i=0; i<homeItems.size(); i++){
+            homeItemList.add(homeItems.get(i).getHomeTask());
+        }
+        View view = inflater.inflate(R.layout.fragment_home,container,false);
         //Textview的初始化
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY年MM月dd日");
         String formattedDate = formatter.format(calendar.getTime());
         tv = view.findViewById(R.id.home_top_tv);
         tv.setText(formattedDate);
@@ -50,7 +53,6 @@ public class HomeFragment extends Fragment {
         RecyclerView rv = view.findViewById(R.id.home_rv);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        loadData();
         return view;
     }
 
@@ -85,8 +87,8 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull innerViewHolder holder, int inner_position) {
-            holder.inner_initItem(inner_position);
+        public void onBindViewHolder(@NonNull innerViewHolder holder, int position) {
+            holder.inner_initItem();
         }
 
         @Override
@@ -116,8 +118,9 @@ public class HomeFragment extends Fragment {
                     }
                 }
             });
+            link = getinfolist(position);
             rv.setAdapter(inneradapter);
-            rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            rv.setLayoutManager(new LinearLayoutManager(getContext()));
         }
     }
     //第二层RecyclerView的ViewHolder
@@ -127,22 +130,12 @@ public class HomeFragment extends Fragment {
             super(itemView);
             task_view = itemView.findViewById(R.id.home_lk);
         }
-        public void inner_initItem(int position){
-            if (getinfolist(position).isEmpty()){task_view.append(null);}
-            else {
-                for (int i = 0; i < getinfolist(position).size(); i++) {
-                    String item = getinfolist(position).get(i).toString();
-                    task_view.append(item);
-                    task_view.append("\n");
-                }
+        public void inner_initItem(){
+            for (int i = 0; i < link.size(); i++) {
+                String item = link.get(i).toString();
+                task_view.append(item);
+                task_view.append("\n");
             }
-        }
-    }
-
-    private void loadData(){
-        homeItems = homeHelper.loadHome();
-        for (int i=0; i<homeItems.size(); i++){
-            homeItemList.add(homeItems.get(i).getHomeTask());
         }
     }
 }
