@@ -43,13 +43,13 @@ public class SettingFragment extends Fragment {
                     intent,
                     PendingIntent.FLAG_IMMUTABLE
             );
-            if(isChecked){
-                Log.d("NOTI","turned on notification");
-                if (checkNotificationPermissions(requireActivity())){
+            if (isChecked) {
+                Log.d("NOTI", "turned on notification");
+                if (checkNotificationPermissions(requireActivity())) {
                     scheduleNotification(pendingIntent);
                 }
-            }else {
-                Log.d("NOTI","turned off notification");
+            } else {
+                Log.d("NOTI", "turned off notification");
                 AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                 alarmManager.cancel(pendingIntent);
             }
@@ -91,8 +91,11 @@ public class SettingFragment extends Fragment {
         AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
         long time = getSendTimeInMillis();//以毫秒计，发送通知的时间
 
+        Log.d("NOTI", "time: " + time);
+        Log.d("NOTI", "Calendar.getInstance().getTimeInMillis(): " + Calendar.getInstance().getTimeInMillis());
+
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                Calendar.getInstance().getTimeInMillis(),//必须改成这样才行，但是实际上应该传入time变量的:(
+                time,
                 AlarmManager.INTERVAL_DAY, // 每天重复
                 pendingIntent);
         Log.d("NOTI", "alarm set at: " + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(time));
@@ -100,7 +103,9 @@ public class SettingFragment extends Fragment {
         Log.d("NOTI", "done setting pending intent");
     }
 
-    /**获取第一次发送通知的时间，如果今天没到8.00am就是今天8.00am，如果今天过了8.00am就是明天的8.00am*/
+    /**
+     * 获取第一次发送通知的时间，如果今天没到8.00am就是今天8.00am，如果今天过了8.00am就是明天的8.00am
+     */
     @SuppressLint("SimpleDateFormat")//用于打log，忽视这warning
     private long getSendTimeInMillis() {
         Calendar calendar = Calendar.getInstance();
@@ -109,11 +114,11 @@ public class SettingFragment extends Fragment {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
 
-        if (calendar.getTimeInMillis() < System.currentTimeMillis()){// 如果今天已经过了8.00，就明天发通知
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {// 如果今天已经过了8.00，就明天发通知
             Log.d("NOTI", "8:00AM today has passed");
             calendar.add(Calendar.DATE, 1);
         }
-        Log.d("NOTI","will trigger on: " +
+        Log.d("NOTI", "will trigger on: " +
                 new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(calendar.getTime()));//打Log不需要在意warning
         //HH24小时制，hh12小时制
         return calendar.getTimeInMillis();
