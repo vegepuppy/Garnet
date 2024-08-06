@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,6 +23,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_LINK = "LINK";
     private static final String TABLE_TODO = "TODO";
     private static final String TABLE_TODO_LINK = "TODO_LINK";
+
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
+    private final String formattedDate = formatter.format(calendar.getTime());
 
     // 构造函数
     public GarnetDatabaseHelper(Context context) {
@@ -212,6 +217,94 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+
+    public List<HomeItem> loadHome(){
+        List<HomeItem> homelist = new ArrayList<>();
+        String taskFound;
+        long idFound;
+        String uriFound;
+        int uriId;
+        List<String> tasklist = new ArrayList<>();
+        List<Long> idlist = new ArrayList<>();
+        //用来存todo的task对应的link的id值
+        List<List<Integer>> todo_link = new ArrayList<>();
+        //读TODO表
+        try (SQLiteDatabase db1 = this.getWritableDatabase()){
+            Cursor cursor = db1.query("TODO",
+                    new String[]{"_id","TASK"},
+                    "DUE = ?",new String[]{formattedDate},null,null,null);
+            if(cursor.moveToFirst()){
+                do{
+                    final int idIdx = 0;
+                    final int taskIdx = 1;
+
+                    taskFound = cursor.getString(taskIdx);
+                    idFound = cursor.getLong(idIdx);
+                    tasklist.add(taskFound);
+                    idlist.add(idFound);
+                }while(cursor.moveToNext());
+            }
+            if (tasklist.isEmpty()){
+                tasklist.add("今天没有任务哦!");
+                List<String> empty = new ArrayList<>();
+                empty.add("好好休息");
+                HomeItem HI = new HomeItem(tasklist.get(0),empty);
+                homelist.add(HI);
+                return  homelist;
+            }
+            cursor.close();
+        }
+        //读TODO_LINK表，填写todo_link二维列表
+        for (int i = 0; i < idlist.size(); i++) {
+            List<Integer> row = new ArrayList<>();
+            try (SQLiteDatabase db2 = this.getWritableDatabase()) {
+                Cursor cursor = db2.query("TODO_LINK",
+                        new String[]{"LINK"},
+                        "TODO = ?", new String[]{Long.toString(idlist.get(i))},
+                        null, null, null);
+                if (cursor.moveToFirst()) { // 检查是否有数据
+                    do {
+                        uriId = cursor.getInt(0);
+                        row.add(uriId);
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                // 只有当 row 不为空时才添加到 todo_link
+                if (!row.isEmpty()) {
+                    todo_link.add(row);
+                } else {
+                    todo_link.add(null);
+                }
+            }
+        }
+       //读LINK表，通过todo_link表得到的id值来获取link表中的uri
+        for (int i = 0; i < idlist.size(); i++) {
+            List<String> link = new ArrayList<>();
+            List<Integer> linkId = (todo_link.get(i) != null) ? todo_link.get(i) : new ArrayList<>(); // 初始化 linkId 以避免 NullPointerException
+            if (linkId.isEmpty()) {
+                link.add("无链接");
+                HomeItem hi = new HomeItem(tasklist.get(i),link);
+                homelist.add(hi);
+            } else {
+                for (int cnt = 0; cnt < linkId.size(); cnt++) {
+                    try (SQLiteDatabase db3 = this.getWritableDatabase()) {
+                        Cursor cursor = db3.query("LINK",
+                                new String[]{"URI"},
+                                "_id = ?", new String[]{Integer.toString(linkId.get(cnt))},
+                                null, null, null);
+                        if (cursor.moveToFirst()) {
+                            uriFound = cursor.getString(0);
+                            link.add(uriFound);
+                        }
+                        cursor.close();
+                    }
+                }
+                HomeItem hi = new HomeItem(tasklist.get(i), link);
+                homelist.add(hi);
+            }
+        }
+       return homelist;
+    }
 
     public List<InfoItem> loadInfo(long infoGroupId) {
         List<InfoItem> ret = new ArrayList<>();
