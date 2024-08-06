@@ -5,10 +5,39 @@
     android:layout_height="match_parent"
     tools:context=".SettingFragment">
 
-   <androidx.appcompat.widget.SwitchCompat
+
+
+   <androidx.cardview.widget.CardView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/daily_notification_card">
+      <androidx.appcompat.widget.SwitchCompat
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="每日早晨8:00通知"
+          android:id="@+id/daily_notification_switch"/>
+   </androidx.cardview.widget.CardView>
+
+   <androidx.cardview.widget.CardView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/daily_notification_card"
+       android:id="@+id/weekly_notification_card">
+      <androidx.appcompat.widget.SwitchCompat
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="每周日通知未完成的无日期待办"
+          android:id="@+id/weekly_notification_switch"/>
+   </androidx.cardview.widget.CardView>
+
+
+
+   <com.google.android.material.floatingactionbutton.FloatingActionButton
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:text="每日早晨8:00通知"
-       android:id="@+id/daily_notification_switch"/>
-
+       android:layout_centerHorizontal="true"
+       android:layout_alignParentBottom="true"
+       android:layout_marginBottom="20dp"
+       android:id="@+id/setting_confirm_fab"
+       android:src="@drawable/baseline_done_24"/>
 </RelativeLayout>
