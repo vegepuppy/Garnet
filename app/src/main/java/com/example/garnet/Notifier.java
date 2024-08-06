@@ -3,6 +3,7 @@ package com.example.garnet;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +13,14 @@ import androidx.core.app.NotificationCompat;
 
 import java.util.Calendar;
 import java.util.Date;
+
 import java.util.Objects;
+
 
 // 用于创建通知
 public class Notifier extends BroadcastReceiver {
     public static final String CHANNEL_ID = "daily_todo_channel";
+
     public static final int DAILY_NOTIFICATION_ID = 1;
     public static final int  START_ACTIVITY = 2; // TODO: 2024-08-05 这些pendingIntent的Id应该专门存储 
     public static final int WEEKLY_NOTIFICATION_ID = 3;
@@ -24,9 +28,11 @@ public class Notifier extends BroadcastReceiver {
     public static final String WEEKLY_NOTIFICATION = "weeklyNotification";
     public static final String NOTIFICATION_TYPE = "notificationType";
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Date dateToday = Calendar.getInstance().getTime();
+
         Log.d("NOTI", "dateToday is: " + dateToday.toString());
 
         //给notification添加一个pendingIntent，点击时打开应用

@@ -9,7 +9,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+
 import android.content.SharedPreferences;
+
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SwitchCompat;
@@ -20,21 +22,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class SettingFragment extends Fragment {
+
     private SwitchCompat dailyNotificationSwitchCompat;
     private SwitchCompat weeklyNotificationSwitchCompat;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_setting, container, false);
-
         initDailyNotificationSwitch(rootView);
         initConfirmButton(rootView);
         initWeeklyNotificationSwitch(rootView);
@@ -63,7 +68,9 @@ public class SettingFragment extends Fragment {
             if (isChecked) {
                 Log.d("NOTI", "turned on notification");
                 if (checkNotificationPermissions(requireActivity())) {
+
                     scheduleDailyNotification(pendingIntent);
+
                 }
             } else {
                 Log.d("NOTI", "turned off notification");
@@ -71,6 +78,7 @@ public class SettingFragment extends Fragment {
                 alarmManager.cancel(pendingIntent);
             }
         });
+
     }
     private void initWeeklyNotificationSwitch(View rootView){
         weeklyNotificationSwitchCompat = rootView.findViewById(R.id.weekly_notification_switch);
@@ -154,6 +162,7 @@ public class SettingFragment extends Fragment {
         return true;
     }
 
+
     private void scheduleDailyNotification(PendingIntent pendingIntent) {
         AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
         long time = getDailySendTimeInMillis();//以毫秒计，发送通知的时间
@@ -169,6 +178,7 @@ public class SettingFragment extends Fragment {
 
         Log.d("NOTI", "done setting pending intent");
     }
+
 
     private void scheduleWeeklyNotification(PendingIntent pendingIntent){
         AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
@@ -189,7 +199,9 @@ public class SettingFragment extends Fragment {
      * 获取第一次发送通知的时间，如果今天没到8.00am就是今天8.00am，如果今天过了8.00am就是明天的8.00am
      */
     @SuppressLint("SimpleDateFormat")//用于打log，忽视这warning
+
     private long getDailySendTimeInMillis() {
+
         Calendar calendar = Calendar.getInstance();
         // 获得今天8:00:00am
         calendar.set(Calendar.HOUR_OF_DAY, 8);
@@ -205,7 +217,6 @@ public class SettingFragment extends Fragment {
         //HH24小时制，hh12小时制
         return calendar.getTimeInMillis();
     }
-
     private long getWeeklySendTimeInMillis(){
         Calendar calendar = Calendar.getInstance();
         int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -223,4 +234,5 @@ public class SettingFragment extends Fragment {
         }
         return calendar.getTimeInMillis();
     }
+
 }
