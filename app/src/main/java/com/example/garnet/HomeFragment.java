@@ -80,12 +80,22 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            while (homeItems.get(position).getDone()||homeItems.get(position).getRead()) {
+                position++;
+            }
             holder.initItem(position);
+            homeItems.get(position).changeRead();
         }
 
         @Override
         public int getItemCount() {
-            return homeItemList.size();
+            int cnt = 0;
+            for(int i = 0; i<homeItemList.size(); i++){
+                if (!homeItems.get(i).getDone()){
+                    cnt++;
+                }
+            }
+            return cnt;
         }
     }
     //第二层RecyclerView的Adapter

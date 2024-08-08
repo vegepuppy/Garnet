@@ -198,31 +198,36 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         long idFound;
         String uriFound;
         int uriId;
+        boolean doneFound;
         List<String> tasklist = new ArrayList<>();
         List<Long> idlist = new ArrayList<>();
+        List<Boolean> doneList = new ArrayList<>();
         //用来存todo的task对应的link的id值
         List<List<Integer>> todo_link = new ArrayList<>();
         //读TODO表
         try (SQLiteDatabase db1 = this.getWritableDatabase()){
             Cursor cursor = db1.query("TODO",
-                    new String[]{"_id","TASK"},
+                    new String[]{"_id","TASK","DONE"},
                     "DUE = ?",new String[]{"2024-09-16"},null,null,null);
             if(cursor.moveToFirst()){
                 do{
                     final int idIdx = 0;
                     final int taskIdx = 1;
+                    final int doneIdx = 2;
 
                     taskFound = cursor.getString(taskIdx);
                     idFound = cursor.getLong(idIdx);
+                    doneFound = cursor.getInt(doneIdx) > 0;
                     tasklist.add(taskFound);
                     idlist.add(idFound);
+                    doneList.add(doneFound);
                 }while(cursor.moveToNext());
             }
             if (tasklist.isEmpty()){
                 tasklist.add("今天没有任务哦!");
                 List<String> empty = new ArrayList<>();
                 empty.add("好好休息");
-                HomeItem HI = new HomeItem(tasklist.get(0),empty);
+                HomeItem HI = new HomeItem(tasklist.get(0),empty,false,false);
                 homelist.add(HI);
                 return  homelist;
             }
@@ -257,7 +262,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             List<Integer> linkId = (todo_link.get(i) != null) ? todo_link.get(i) : new ArrayList<>(); // 初始化 linkId 以避免 NullPointerException
             if (linkId.isEmpty()) {
                 link.add("无链接");
-                HomeItem hi = new HomeItem(tasklist.get(i),link);
+                HomeItem hi = new HomeItem(tasklist.get(i),link,doneList.get(i),false);
                 homelist.add(hi);
             } else {
                 for (int cnt = 0; cnt < linkId.size(); cnt++) {
@@ -273,7 +278,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                         cursor.close();
                     }
                 }
-                HomeItem hi = new HomeItem(tasklist.get(i), link);
+                HomeItem hi = new HomeItem(tasklist.get(i), link,doneList.get(i),false);
                 homelist.add(hi);
             }
         }
