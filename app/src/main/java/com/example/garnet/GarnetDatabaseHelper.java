@@ -206,7 +206,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         try (SQLiteDatabase db1 = this.getWritableDatabase()){
             Cursor cursor = db1.query("TODO",
                     new String[]{"_id","TASK"},
-                    "DUE = ?",new String[]{formattedDate},null,null,null);
+                    "DUE = ?",new String[]{"2024-09-16"},null,null,null);
             if(cursor.moveToFirst()){
                 do{
                     final int idIdx = 0;
@@ -263,7 +263,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                 for (int cnt = 0; cnt < linkId.size(); cnt++) {
                     try (SQLiteDatabase db3 = this.getWritableDatabase()) {
                         Cursor cursor = db3.query("LINK",
-                                new String[]{"URI"},
+                                new String[]{"DISPLAY"},
                                 "_id = ?", new String[]{Integer.toString(linkId.get(cnt))},
                                 null, null, null);
                         if (cursor.moveToFirst()) {
