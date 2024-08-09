@@ -411,6 +411,15 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**删除所有已完成的待办事项*/
+    public void deleteDone() {
+        try (SQLiteDatabase db = this.getWritableDatabase()){
+            db.delete(TABLE_TODO_LINK, "TODO IN (SELECT _id FROM "+TABLE_TODO+" WHERE DONE = ?)", new String[]{"1"});
+            db.delete(TABLE_TODO, "DONE = ?", new String[]{"1"});
+        }
+    }
+
+
     public void updateTodoStatus(TodoItem ti, CheckBox cb) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             long id = ti.getId();

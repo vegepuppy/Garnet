@@ -28,8 +28,13 @@
           android:id="@+id/weekly_notification_switch"/>
    </androidx.cardview.widget.CardView>
 
-
-
+   <Button
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+      android:id="@+id/clear_done_now_button"
+      android:layout_below="@+id/weekly_notification_card"
+       android:text="立即清理已完成待办"/>
+   
    <com.google.android.material.floatingactionbutton.FloatingActionButton
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"

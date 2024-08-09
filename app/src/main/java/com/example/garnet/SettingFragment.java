@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,9 +44,22 @@ public class SettingFragment extends Fragment {
         initDailyNotificationSwitch(rootView);
         initConfirmButton(rootView);
         initWeeklyNotificationSwitch(rootView);
+        initClearDoneNowButton(rootView, requireActivity());
         createNotificationChannel();
 
         return rootView;
+    }
+
+    private void initClearDoneNowButton(View rootView, Context context) {
+        Button clearNowButton = rootView.findViewById(R.id.clear_done_now_button);
+        clearNowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GarnetDatabaseHelper mDatabaseHelper = new GarnetDatabaseHelper(context);
+                mDatabaseHelper.deleteDone();
+                Toast.makeText(context, "已清理", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initDailyNotificationSwitch(View rootView){
