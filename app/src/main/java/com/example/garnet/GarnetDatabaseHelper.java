@@ -217,6 +217,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     taskFoundList.add(taskFound);
                 }while(cursor.moveToNext());
             }
+            cursor.close();
             if (taskFoundList.isEmpty())return null;
             else {
                 return String.join("\n", taskFoundList);
