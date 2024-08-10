@@ -2,6 +2,8 @@ package com.example.garnet;
 
 import static java.util.Collections.sort;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ public class HomeFragment extends Fragment {
     private List<HomeItem> homeItems = new ArrayList<>();
     private final MyAdapter adapter = new MyAdapter();
     private List<String> link = new ArrayList<>();
+    private List<String> UriList = new ArrayList<>();
     private TextView tv;
     private TextView tv1;
     private final innerAdapter inneradapter = new innerAdapter();
@@ -141,6 +144,8 @@ public class HomeFragment extends Fragment {
                 }
             });
             link = getinfolist(position);
+            HomeItem homeItem = homeItems.get(position);
+            UriList = homeItem.getUriList();
             rv.setAdapter(inneradapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
         }
@@ -153,9 +158,19 @@ public class HomeFragment extends Fragment {
             task_view = itemView.findViewById(R.id.home_lk);
         }
         public void inner_initItem(int position){
-            String item = link.get(position).toString();
+            String item = link.get(position);
+            String uri = UriList.get(position);
             task_view.append(item);
             task_view.append("\n");
+            task_view.setOnClickListener(v->{
+                Uri Website = Uri.parse(uri);
+                Intent intent = new Intent(Intent.ACTION_VIEW,Website);
+                try{
+                    startActivity(intent);
+                }catch (android.content.ActivityNotFoundException e){
+                    Toast.makeText(getContext(),"无效链接",Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

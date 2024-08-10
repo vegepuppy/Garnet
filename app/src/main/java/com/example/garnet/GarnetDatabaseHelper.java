@@ -196,9 +196,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         List<HomeItem> homelist = new ArrayList<>();
         String taskFound;
         long idFound;
-        String uriFound;
+        String linkFound;
         int uriId;
         boolean doneFound;
+        String uriFound;
         List<String> tasklist = new ArrayList<>();
         List<Long> idlist = new ArrayList<>();
         List<Boolean> doneList = new ArrayList<>();
@@ -227,7 +228,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                 tasklist.add("今天没有任务哦!");
                 List<String> empty = new ArrayList<>();
                 empty.add("好好休息");
-                HomeItem HI = new HomeItem(tasklist.get(0),empty,false,false);
+                HomeItem HI = new HomeItem(tasklist.get(0),empty,empty,false,false);
                 homelist.add(HI);
                 return  homelist;
             }
@@ -259,26 +260,29 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
        //读LINK表，通过todo_link表得到的id值来获取link表中的uri
         for (int i = 0; i < idlist.size(); i++) {
             List<String> link = new ArrayList<>();
+            List<String> uri = new ArrayList<>();
             List<Integer> linkId = (todo_link.get(i) != null) ? todo_link.get(i) : new ArrayList<>(); // 初始化 linkId 以避免 NullPointerException
             if (linkId.isEmpty()) {
                 link.add("无链接");
-                HomeItem hi = new HomeItem(tasklist.get(i),link,doneList.get(i),false);
+                HomeItem hi = new HomeItem(tasklist.get(i),link,link,doneList.get(i),false);
                 homelist.add(hi);
             } else {
                 for (int cnt = 0; cnt < linkId.size(); cnt++) {
                     try (SQLiteDatabase db3 = this.getWritableDatabase()) {
                         Cursor cursor = db3.query("LINK",
-                                new String[]{"DISPLAY"},
+                                new String[]{"DISPLAY","URI"},
                                 "_id = ?", new String[]{Integer.toString(linkId.get(cnt))},
                                 null, null, null);
                         if (cursor.moveToFirst()) {
-                            uriFound = cursor.getString(0);
-                            link.add(uriFound);
+                            linkFound = cursor.getString(0);
+                            uriFound = cursor.getString(1);
+                            link.add(linkFound);
+                            uri.add(uriFound);
                         }
                         cursor.close();
                     }
                 }
-                HomeItem hi = new HomeItem(tasklist.get(i), link,doneList.get(i),false);
+                HomeItem hi = new HomeItem(tasklist.get(i),link,uri,doneList.get(i),false);
                 homelist.add(hi);
             }
         }
