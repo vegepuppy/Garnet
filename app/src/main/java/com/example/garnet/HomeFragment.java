@@ -2,6 +2,8 @@ package com.example.garnet;
 
 import static java.util.Collections.sort;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,13 +24,16 @@ import java.util.Calendar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     public List<String> homeItemList = new ArrayList<>();
     private List<HomeItem> homeItems = new ArrayList<>();
     private final MyAdapter adapter = new MyAdapter();
     private List<String> link = new ArrayList<>();
+    private List<String> UriList = new ArrayList<>();
     private TextView tv;
+    private TextView tv1;
     private final innerAdapter inneradapter = new innerAdapter();
     public List<String> getinfolist(int position) {
         return homeItems.get(position).getLinkList();
@@ -39,21 +44,31 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         homeHelper = new GarnetDatabaseHelper(getActivity());
         homeItems = homeHelper.loadHome();
-        for (int i=0; i<homeItems.size(); i++){
-            homeItemList.add(homeItems.get(i).getHomeTask());
-        }
-        View view = inflater.inflate(R.layout.fragment_home,container,false);
-        //Textview的初始化
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat("YYYY年MM月dd日");
         String formattedDate = formatter.format(calendar.getTime());
-        tv = view.findViewById(R.id.home_top_tv);
-        tv.setText(formattedDate);
-        //home_rv的初始化
-        RecyclerView rv = view.findViewById(R.id.home_rv);
-        rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        return view;
+        for (int i=0; i<homeItems.size(); i++){
+            homeItemList.add(homeItems.get(i).getHomeTask());
+        }
+        if(Objects.equals(homeItems.get(0).getHomeTask(), "今天没有任务哦!")){
+            View view = inflater.inflate(R.layout.home_none,container,false);
+            tv = view.findViewById(R.id.Date_tv);
+            tv.setText(formattedDate);
+            tv1 = view.findViewById(R.id.none_tv);
+            tv1.setText("今天没有任务哦!");
+            return view;
+        }
+        else {
+            View view = inflater.inflate(R.layout.fragment_home, container, false);
+            //Textview的初始化
+            tv = view.findViewById(R.id.home_top_tv);
+            tv.setText(formattedDate);
+            //home_rv的初始化
+            RecyclerView rv = view.findViewById(R.id.home_rv);
+            rv.setAdapter(adapter);
+            rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            return view;
+        }
     }
 
     //第一层RecyclerView的Adapter
@@ -68,12 +83,22 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            while (homeItems.get(position).getDone()||homeItems.get(position).getRead()) {
+                position++;
+            }
             holder.initItem(position);
+            homeItems.get(position).changeRead();
         }
 
         @Override
         public int getItemCount() {
-            return homeItemList.size();
+            int cnt = 0;
+            for(int i = 0; i<homeItemList.size(); i++){
+                if (!homeItems.get(i).getDone()){
+                    cnt++;
+                }
+            }
+            return cnt;
         }
     }
     //第二层RecyclerView的Adapter
@@ -88,12 +113,12 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull innerViewHolder holder, int position) {
-            holder.inner_initItem();
+            holder.inner_initItem(position);
         }
 
         @Override
         public int getItemCount() {
-            return 1;
+            return link.size();
         }
     }
     //第一层RecyclerView的ViewHolder
@@ -119,6 +144,8 @@ public class HomeFragment extends Fragment {
                 }
             });
             link = getinfolist(position);
+            HomeItem homeItem = homeItems.get(position);
+            UriList = homeItem.getUriList();
             rv.setAdapter(inneradapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
         }
@@ -130,12 +157,20 @@ public class HomeFragment extends Fragment {
             super(itemView);
             task_view = itemView.findViewById(R.id.home_lk);
         }
-        public void inner_initItem(){
-            for (int i = 0; i < link.size(); i++) {
-                String item = link.get(i).toString();
-                task_view.append(item);
-                task_view.append("\n");
-            }
+        public void inner_initItem(int position){
+            String item = link.get(position);
+            String uri = UriList.get(position);
+            task_view.append(item);
+            task_view.append("\n");
+            task_view.setOnClickListener(v->{
+                Uri Website = Uri.parse(uri);
+                Intent intent = new Intent(Intent.ACTION_VIEW,Website);
+                try{
+                    startActivity(intent);
+                }catch (android.content.ActivityNotFoundException e){
+                    Toast.makeText(getContext(),"无效链接",Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }
