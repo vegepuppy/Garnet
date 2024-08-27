@@ -38,11 +38,26 @@ public class NoteActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // TODO: 2024-08-27 退出时保存
-        Log.d("TAG", "onDestroy: "+ titleEt.getText().toString());
         GarnetDatabaseHelper helper = new GarnetDatabaseHelper(NoteActivity.this);
-        noteInfoItem.setContent(contentEt.getText().toString());
-        noteInfoItem.setDisplayString(titleEt.getText().toString());
-        helper.updateInfoItem(noteInfoItem, titleEt.getText().toString(), contentEt.getText().toString());
+        String displayString = titleEt.getText().toString();
+        String content = contentEt.getText().toString();
+
+        if(displayString.isEmpty()){
+            if(content.isEmpty()){
+                return;
+            }else {
+                displayString = content;
+            }
+        }
+        noteInfoItem.setContent(content);
+        noteInfoItem.setDisplayString(displayString);
+
+        if (noteInfoItem.getId() != InfoItem.LACK_ID) {
+            helper.updateInfoItem(noteInfoItem, displayString, content);
+        }else{
+            helper.insertInfoItem(noteInfoItem);
+        }
+
     }
 
 }

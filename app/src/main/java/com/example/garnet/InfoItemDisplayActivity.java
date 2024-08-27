@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,8 +43,33 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         this.infoGroupId = intent.getLongExtra(INFO_GROUP_ID,-1);
         //这里需要一个defaultValue，故设置为-1
 
-        FloatingActionButton fab = findViewById(R.id.add_info_item_fab);
-        fab.setOnClickListener(new AddInfoItemFabOnClickListener());
+
+        FloatingActionButton addLinkInfoItemFab = findViewById(R.id.add_link_fab);
+        FloatingActionButton addInfoFab = findViewById(R.id.add_info_item_fab);
+        FloatingActionButton addNoteInfoItemFab = findViewById(R.id.add_note_fab);
+        FloatingActionButton clearFab = findViewById(R.id.clear_fab);
+
+        addLinkInfoItemFab.setOnClickListener(new AddLinkInfoItemFabOnClickListener());
+
+        addNoteInfoItemFab.setOnClickListener(v -> {
+            NoteInfoItem noteInfoItem = new NoteInfoItem(null,null,infoGroupId,InfoItem.LACK_ID);
+            noteInfoItem.show(InfoItemDisplayActivity.this);//此处不保存到数据库，非空才保存
+            finish(); // FIXME: 2024-08-27 不该这样
+        });
+
+        clearFab.setOnClickListener(v -> {
+            clearFab.setVisibility(View.GONE);
+            addLinkInfoItemFab.setVisibility(View.GONE);
+            addNoteInfoItemFab.setVisibility(View.GONE);
+            addInfoFab.setVisibility(View.VISIBLE);
+        });
+
+        addInfoFab.setOnClickListener(v -> {
+            clearFab.setVisibility(View.VISIBLE);
+            addLinkInfoItemFab.setVisibility(View.VISIBLE);
+            addNoteInfoItemFab.setVisibility(View.VISIBLE);
+            addInfoFab.setVisibility(View.GONE);
+        });
 
         TextView infoGroupNameTextView = findViewById(R.id.info_item_group_name_tv);
         infoGroupNameTextView.setText(infoGroupName);
@@ -96,7 +120,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         }
     }
 
-    private class AddInfoItemFabOnClickListener implements View.OnClickListener {
+    private class AddLinkInfoItemFabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             final AddInfoDialogFragment addInfoDialogFragment = new AddInfoDialogFragment();
