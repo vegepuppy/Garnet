@@ -42,5 +42,4 @@ public class FetchLinkRunnable implements Runnable {
         }
         return object;
     }
-
 }

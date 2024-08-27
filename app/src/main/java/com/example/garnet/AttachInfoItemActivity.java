@@ -94,7 +94,7 @@ public class AttachInfoItemActivity extends AppCompatActivity {
                 }
             }
             List<Long> allItemIdList = new ArrayList<>();
-            mainList.forEach(infoItem -> allItemIdList.add(infoItem.getId()));
+            mainList.forEach(linkInfoItem -> allItemIdList.add(linkInfoItem.getId()));
             mDatabaseHelper.updateAttachment(mTodoItem.getId(),allItemIdList,selectedItemIdList);
             Toast.makeText(AttachInfoItemActivity.this, "选择已保存！", Toast.LENGTH_SHORT).show();
             finish();

@@ -1,61 +1,53 @@
 package com.example.garnet;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import android.content.Context;
 
-import java.io.IOException;
+import java.io.Serializable;
 
-public class InfoItem {
-    private String uri;
-    private long belong;
-    private String displayString;
-    private boolean isLinkFetched;
-    // 以上两个变量不能是final，用户可能会改，忽视IDE提示
+public abstract class InfoItem implements Serializable {
+    public static final int TYPE_LINK = 1;
+    public static final int TYPE_NOTE = 2;
+    protected String displayString;
+    protected String content;
+    protected long id;
+    protected long belong;
 
     public static final long LACK_ID = -1;
-    private long id;
 
-    public String getUri() {
-        return uri;
+    abstract void show(Context context);
+
+    public InfoItem(String displayString, String content, long belong, long id) {
+        this.displayString = displayString;
+        this.content = content;
+        this.id = id;
+        this.belong = belong;
     }
 
-    public String getDisplayString() {
+    public final String getDisplayString() {
         return displayString;
     }
 
-    public long getBelong() {
-        return belong;
+    public final String getContent() {
+        return content;
     }
 
-    public long getId() {
+    public final long getId() {
         return id;
     }
 
-    public void setId(long id){this.id = id;}
+    public final void setId(long id) {
+        this.id = id;
+    }
 
     public void setDisplayString(String displayString) {
         this.displayString = displayString;
     }
 
-    public InfoItem(String uri, long belong, long id) {
-        this.uri = uri;
-        this.belong = belong;
-        this.id = id;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public InfoItem(String uri, long belong, long id, String display) {
-        this.uri = uri;
-        this.belong = belong;
-        this.id = id;
-        this.displayString = display;
-    }
-
-    public boolean isLinkFetched() {
-        return isLinkFetched;
-    }
-
-    public void setLinkFetched(boolean linkFetched) {
-        isLinkFetched = linkFetched;
+    public final long getBelong() {
+        return belong;
     }
 }

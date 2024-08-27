@@ -22,7 +22,7 @@ import java.util.List;
  * */
 @Deprecated
 public class InfoItemDisplayFragment extends Fragment {
-    private List<InfoItem> mainList;
+    private List<LinkInfoItem> mainList;
     private View rootView;//整个fragment的UI
     private String infoGroupName = "SAMPLE TITLE #1";// TODO: 2024-07-18 改成与infoFragment通信
 
@@ -64,8 +64,8 @@ public class InfoItemDisplayFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            InfoItem infoItem = mainList.get(position);
-            holder.infoItemStringTextView.setText(infoItem.getUri());
+            LinkInfoItem linkInfoItem = mainList.get(position);
+            holder.infoItemStringTextView.setText(linkInfoItem.getContent());
         }
 
         @Override
