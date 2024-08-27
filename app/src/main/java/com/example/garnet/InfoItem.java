@@ -2,7 +2,9 @@ package com.example.garnet;
 
 import android.content.Context;
 
-public abstract class InfoItem {
+import java.io.Serializable;
+
+public abstract class InfoItem implements Serializable {
     protected String displayString;
     protected String content;
     protected long id;
@@ -35,7 +37,7 @@ public abstract class InfoItem {
         this.id = id;
     }
 
-    public long getBelong() {
+    public final long getBelong() {
         return belong;
     }
 }

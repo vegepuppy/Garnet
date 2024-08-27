@@ -12,10 +12,6 @@ public class LinkInfoItem extends InfoItem{
 
     public static final long LACK_ID = -1;
 
-    public long getBelong() {
-        return belong;
-    }
-
 
     public void setDisplayString(String displayString) {
         this.displayString = displayString;
