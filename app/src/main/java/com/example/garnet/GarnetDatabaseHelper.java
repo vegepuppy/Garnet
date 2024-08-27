@@ -225,6 +225,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //只能主页用
     public List<HomeItem> loadHome(){
         List<HomeItem> homelist = new ArrayList<>();
         String taskFound;
@@ -258,10 +259,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                 }while(cursor.moveToNext());
             }
             if (tasklist.isEmpty()){
-                tasklist.add("今天没有任务哦!");
-                List<String> empty = new ArrayList<>();
-                empty.add("好好休息");
-                HomeItem HI = new HomeItem(tasklist.get(0),empty,empty,false,false);
+                HomeItem HI = null;
                 homelist.add(HI);
                 return  homelist;
             }
@@ -297,7 +295,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             List<Integer> linkId = (todo_link.get(i) != null) ? todo_link.get(i) : new ArrayList<>(); // 初始化 linkId 以避免 NullPointerException
             if (linkId.isEmpty()) {
                 link.add("无链接");
-                HomeItem hi = new HomeItem(tasklist.get(i),link,link,doneList.get(i),false);
+                HomeItem hi = new HomeItem(tasklist.get(i),link,link,doneList.get(i),false,idlist.get(i));
                 homelist.add(hi);
             } else {
                 for (int cnt = 0; cnt < linkId.size(); cnt++) {
@@ -315,7 +313,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                         cursor.close();
                     }
                 }
-                HomeItem hi = new HomeItem(tasklist.get(i),link,uri,doneList.get(i),false);
+                HomeItem hi = new HomeItem(tasklist.get(i),link,uri,doneList.get(i),false,idlist.get(i));
                 homelist.add(hi);
             }
         }
@@ -433,6 +431,18 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     public void updateTodoStatus(TodoItem ti, CheckBox cb) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             long id = ti.getId();
+            String newIsCheckedString = cb.isChecked() ? "1" : "0";
+            String idString = String.valueOf(id);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("DONE", newIsCheckedString);
+            db.update(TABLE_TODO, contentValues, "_id = ?", new String[]{idString});
+        }
+    }
+
+    //只能主页用
+    public void updateHomeStatus(HomeItem hi, CheckBox cb) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            long id = hi.getId();
             String newIsCheckedString = cb.isChecked() ? "1" : "0";
             String idString = String.valueOf(id);
             ContentValues contentValues = new ContentValues();

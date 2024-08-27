@@ -44,13 +44,26 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         homeHelper = new GarnetDatabaseHelper(getActivity());
         homeItems = homeHelper.loadHome();
+        if (homeItems.get(0)!=null) {
+            for (int i = 0; i < homeItems.size(); i++) {
+                if (homeItems.get(i).getDone()) {
+                    homeItems.remove(i);
+                    i--;
+                }
+            }
+        }
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat formatter = new SimpleDateFormat("YYYY年MM月dd日");
         String formattedDate = formatter.format(calendar.getTime());
-        for (int i=0; i<homeItems.size(); i++){
-            homeItemList.add(homeItems.get(i).getHomeTask());
+        if (homeItems.isEmpty()){
+            View view = inflater.inflate(R.layout.home_none,container,false);
+            tv = view.findViewById(R.id.Date_tv);
+            tv.setText(formattedDate);
+            tv1 = view.findViewById(R.id.none_tv);
+            tv1.setText("今天任务完成了！");
+            return view;
         }
-        if(Objects.equals(homeItems.get(0).getHomeTask(), "今天没有任务哦!")){
+        else if(Objects.equals(homeItems.get(0), null)){
             View view = inflater.inflate(R.layout.home_none,container,false);
             tv = view.findViewById(R.id.Date_tv);
             tv.setText(formattedDate);
@@ -59,6 +72,9 @@ public class HomeFragment extends Fragment {
             return view;
         }
         else {
+            for (int i=0; i<homeItems.size(); i++){
+                homeItemList.add(homeItems.get(i).getHomeTask());
+            }
             View view = inflater.inflate(R.layout.fragment_home, container, false);
             //Textview的初始化
             tv = view.findViewById(R.id.home_top_tv);
@@ -83,9 +99,6 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            while (homeItems.get(position).getDone()||homeItems.get(position).getRead()) {
-                position++;
-            }
             holder.initItem(position);
             homeItems.get(position).changeRead();
         }
@@ -93,7 +106,7 @@ public class HomeFragment extends Fragment {
         @Override
         public int getItemCount() {
             int cnt = 0;
-            for(int i = 0; i<homeItemList.size(); i++){
+            for(int i = 0; i<homeItems.size(); i++){
                 if (!homeItems.get(i).getDone()){
                     cnt++;
                 }
@@ -134,12 +147,17 @@ public class HomeFragment extends Fragment {
 
         public void initItem(int position){
             cb.setText(homeItemList.get(position).toString());
+            HomeItem hi = homeItems.get(position);
             cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    homeHelper.updateHomeStatus(hi,cb);
                     if (isChecked) {
                         // CheckBox 被选中
                         Toast.makeText(getActivity(), "Task is finished", Toast.LENGTH_SHORT).show();
+                        adapter.notifyItemRemoved(homeItems.indexOf(hi));
+                        homeItems.remove(hi);
+                        homeItemList.remove(hi.getHomeTask());
                     }
                 }
             });
