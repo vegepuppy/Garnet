@@ -1,6 +1,9 @@
 package com.example.garnet;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.widget.Toast;
 
 public class LinkInfoItem extends InfoItem{
 
@@ -20,14 +23,19 @@ public class LinkInfoItem extends InfoItem{
 
     @Override
     void show(Context context) {
-        // TODO: 2024-08-27 网页跳转
+        String uriString = getContent();
 
+        Uri webpage = Uri.parse(uriString);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        try {
+            context.startActivity(intent);
+        } catch (android.content.ActivityNotFoundException e) {
+            Toast.makeText(context, "无效链接！", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public LinkInfoItem(String display, String uri, long belong, long id) {
         super(display, uri, belong, id);
-
-        // TODO: 2024-08-27 爬虫获取连接
     }
 
     public boolean isLinkFetched() {

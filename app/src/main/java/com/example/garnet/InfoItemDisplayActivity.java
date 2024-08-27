@@ -170,18 +170,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 LinkInfoItem linkInfoItem = mainList.get(position);
-                String uriString = linkInfoItem.getContent();
-
-                Uri webpage = Uri.parse(uriString);
-
-                    Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-                    try {
-                        startActivity(intent);
-                    }catch (android.content.ActivityNotFoundException e){
-                        Toast.makeText(InfoItemDisplayActivity.this, "无效链接！", Toast.LENGTH_SHORT).show();
-                    }
-
-
+                linkInfoItem.show(InfoItemDisplayActivity.this);
 
             });
             itemView.setOnLongClickListener(v -> {
