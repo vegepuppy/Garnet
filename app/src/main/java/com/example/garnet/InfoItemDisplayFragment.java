@@ -65,7 +65,7 @@ public class InfoItemDisplayFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             LinkInfoItem linkInfoItem = mainList.get(position);
-            holder.infoItemStringTextView.setText(linkInfoItem.getUri());
+            holder.infoItemStringTextView.setText(linkInfoItem.getContent());
         }
 
         @Override

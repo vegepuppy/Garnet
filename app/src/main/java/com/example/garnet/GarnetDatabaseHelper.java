@@ -117,7 +117,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     public LinkInfoItem insertInfo(LinkInfoItem item) {
         try (SQLiteDatabase db = this.getWritableDatabase()) { // 使用这样的try-with-resources可以自动调用close()方法，不用自己手动db.close()
             ContentValues contentValues = new ContentValues();
-            contentValues.put("URI", item.getUri());
+            contentValues.put("URI", item.getContent());
             contentValues.put("BELONG", item.getBelong());
             contentValues.put("DISPLAY", item.getDisplayString());
             long id = db.insert(TABLE_LINK, null, contentValues);
@@ -337,7 +337,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     long idFound = cursor.getLong(0);
                     String displayFound = cursor.getString(3);
 
-                    ret.add(new LinkInfoItem(uriFound, infoGroupId, idFound, displayFound));
+                    ret.add(new LinkInfoItem(displayFound,uriFound, infoGroupId, idFound));
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -362,7 +362,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     String displayFound = cursor.getString(3);
                     long belongIdFound = cursor.getLong(2);
 
-                    ret.add(new LinkInfoItem(uriFound, belongIdFound, idFound, displayFound));
+                    ret.add(new LinkInfoItem(displayFound, uriFound, belongIdFound, idFound));
                 } while (cursor.moveToNext());
             }
             cursor.close();

@@ -71,15 +71,15 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                             // 改成在这里Toast就可以了
                             if (!response.isValid) {
 //                                Toast.makeText(InfoItemDisplayActivity.this,
-//                                        linkInfoItem.getUri()+":无效链接！", Toast.LENGTH_SHORT).show();
-                                linkInfoItem.setDisplayString("无效链接:" + linkInfoItem.getUri());
-                                mDatabaseHelper.updateInfoItem(linkInfoItem, "无效链接:" + linkInfoItem.getUri());
+//                                        linkInfoItem.getContent()+":无效链接！", Toast.LENGTH_SHORT).show();
+                                linkInfoItem.setDisplayString("无效链接:" + linkInfoItem.getContent());
+                                mDatabaseHelper.updateInfoItem(linkInfoItem, "无效链接:" + linkInfoItem.getContent());
                                 myAdapter.notifyItemChanged(mainList.indexOf(linkInfoItem));
                                 linkInfoItem.setLinkFetched(true);
                             } else if (!response.isSuccess) {
                                 Toast.makeText(InfoItemDisplayActivity.this,
-                                        linkInfoItem.getUri()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
-                                linkInfoItem.setDisplayString(linkInfoItem.getUri());
+                                        linkInfoItem.getContent()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
+                                linkInfoItem.setDisplayString(linkInfoItem.getContent());
                                 linkInfoItem.setLinkFetched(false);
                             } else {
                                 mDatabaseHelper.updateInfoItem(linkInfoItem, response.linkTitle);
@@ -90,7 +90,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                     }
                 };
 
-                new Thread(new FetchLinkRunnable(titleFetchHandler, linkInfoItem.getUri())).start();
+                new Thread(new FetchLinkRunnable(titleFetchHandler, linkInfoItem.getContent())).start();
             }
         }
     }
@@ -102,7 +102,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             addInfoDialogFragment.setStateListener(new AddInfoDialogFragment.StateListener() {
                 @Override
                 public void onConfirmed(String uri) {
-                    LinkInfoItem linkInfoItem = new LinkInfoItem(uri,infoGroupId, LinkInfoItem.LACK_ID);
+                    LinkInfoItem linkInfoItem = new LinkInfoItem(null,uri,infoGroupId, LinkInfoItem.LACK_ID);
                     // TODO: 2024-07-22 handler可能要封装 
                     Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
                         @Override
@@ -113,7 +113,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                                 // 改成在这里Toast就可以了
                                 if (!response.isValid) {
                                     Toast.makeText(InfoItemDisplayActivity.this, "无效链接！", Toast.LENGTH_SHORT).show();
-                                    linkInfoItem.setDisplayString("无效链接:"+ linkInfoItem.getUri());
+                                    linkInfoItem.setDisplayString("无效链接:"+ linkInfoItem.getContent());
                                 } else if (!response.isSuccess) {
                                     Toast.makeText(InfoItemDisplayActivity.this, "获取网页超时信息失败！", Toast.LENGTH_SHORT).show();
                                     linkInfoItem.setDisplayString(uri);
@@ -170,7 +170,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 LinkInfoItem linkInfoItem = mainList.get(position);
-                String uriString = linkInfoItem.getUri();
+                String uriString = linkInfoItem.getContent();
 
                 Uri webpage = Uri.parse(uriString);
 
