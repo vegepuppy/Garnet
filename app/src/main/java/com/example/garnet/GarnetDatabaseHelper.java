@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.icu.text.IDNA;
 import android.util.Log;
 import android.widget.CheckBox;
 
@@ -79,19 +78,20 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             insertSampleTodo(db, "英语听说", "2024-09-16");
 
             insertSampleInfoGroup(db, "高等数学");
-            insertSampleInfoItem(db, "高数链接1", 1, InfoItem.TYPE_LINK);
-            insertSampleInfoItem(db, "高数链接2", 1, InfoItem.TYPE_LINK);
-            insertSampleInfoItem(db, "高数链接3", 1, InfoItem.TYPE_LINK);
+            insertSampleLinkInfoItem(db, "高数链接1", 1);
+            insertSampleLinkInfoItem(db, "高数链接2", 1);
+            insertSampleLinkInfoItem(db, "高数链接3", 1);
+            insertSampleNoteInfoItem(db, "高数笔记1", "y = x+b",1);
 
             insertSampleInfoGroup(db, "Android开发");
-            insertSampleInfoItem(db, "RecyclerView", 2, InfoItem.TYPE_LINK);
-            insertSampleInfoItem(db, "CheckBox", 2, InfoItem.TYPE_LINK);
-            insertSampleInfoItem(db, "TextView", 2, InfoItem.TYPE_LINK);
+            insertSampleLinkInfoItem(db, "RecyclerView", 2);
+            insertSampleLinkInfoItem(db, "CheckBox", 2);
+            insertSampleLinkInfoItem(db, "TextView", 2);
 
             insertSampleInfoGroup(db, "程序设计");
-            insertSampleInfoItem(db, "C语言", 3, InfoItem.TYPE_LINK);
-            insertSampleInfoItem(db, "Python", 3, InfoItem.TYPE_LINK);
-            insertSampleInfoItem(db, "Java", 3, InfoItem.TYPE_LINK);
+            insertSampleLinkInfoItem(db, "C语言", 3);
+            insertSampleLinkInfoItem(db, "Python", 3);
+            insertSampleLinkInfoItem(db, "Java", 3);
         }
     }
 
@@ -134,12 +134,21 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void insertSampleInfoItem(SQLiteDatabase db, String uri, long belong, int type) {
+    private void insertSampleLinkInfoItem(SQLiteDatabase db, String uri, long belong) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("CONTENT", uri);
         contentValues.put("BELONG", belong);
         contentValues.put("DISPLAY", uri);//样例数据直接把uri设置成展示字符串，反正给的也是无效链接
-        contentValues.put("TYPE", type);
+        contentValues.put("TYPE", InfoItem.TYPE_LINK);
+        db.insert(TABLE_INFO_ITEM, null, contentValues);
+    }
+
+    private void insertSampleNoteInfoItem(SQLiteDatabase db, String title, String content, long belong){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("CONTENT", content);
+        contentValues.put("BELONG", belong);
+        contentValues.put("DISPLAY", title);//样例数据直接把uri设置成展示字符串，反正给的也是无效链接
+        contentValues.put("TYPE", InfoItem.TYPE_NOTE);
         db.insert(TABLE_INFO_ITEM, null, contentValues);
     }
 
@@ -472,11 +481,21 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public void updateInfoItem(InfoItem infoItem, String newDisplayString) {
+    public void updateInfoItem(InfoItem infoItem, String displayString) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             String idString = String.valueOf(infoItem.getId());
             ContentValues contentValues = new ContentValues();
-            contentValues.put("DISPLAY", newDisplayString);
+            contentValues.put("DISPLAY", displayString);
+            db.update(TABLE_INFO_ITEM, contentValues, "_id = ?", new String[]{idString});
+        }
+    }
+
+    public void updateInfoItem(InfoItem infoItem, String displayString, String content){
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            String idString = String.valueOf(infoItem.getId());
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("DISPLAY", displayString);
+            contentValues.put("CONTENT", content);
             db.update(TABLE_INFO_ITEM, contentValues, "_id = ?", new String[]{idString});
         }
     }

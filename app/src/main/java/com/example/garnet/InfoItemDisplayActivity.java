@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -171,7 +172,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 int position = getAdapterPosition();
                 InfoItem infoItem = mainList.get(position);
                 infoItem.show(InfoItemDisplayActivity.this);
-
+                finish();// FIXME: 2024-08-27 不应该这样
             });
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
@@ -201,5 +202,10 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 return true;
             });
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

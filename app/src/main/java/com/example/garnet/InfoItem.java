@@ -39,6 +39,14 @@ public abstract class InfoItem implements Serializable {
         this.id = id;
     }
 
+    public void setDisplayString(String displayString) {
+        this.displayString = displayString;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public final long getBelong() {
         return belong;
     }

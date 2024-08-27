@@ -28,6 +28,37 @@
         android:layout_alignParentBottom="true"
         android:src="@drawable/baseline_add_24"
         android:layout_margin="20dp"
+        android:visibility="visible"
         android:id="@+id/add_info_item_fab"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/baseline_clear_24"
+        android:layout_margin="20dp"
+        android:visibility="gone"
+        android:id="@+id/clear_fab"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/clear_fab"
+        android:visibility="gone"
+        android:src="@drawable/baseline_edit_note_24"
+        android:id="@+id/add_note_fab"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/add_note_fab"
+        android:visibility="gone"
+        android:src="@drawable/baseline_add_link_24"
+        android:id="@+id/add_link_fab"/>
+
+
+
+
 
 </RelativeLayout>
