@@ -8,17 +8,19 @@
     tools:context=".NoteActivity"
     android:orientation="vertical">
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/note_title_tv"
-        android:text="title"
+        android:hint="title"
         style="@style/TextAppearance.AppCompat.Title"/>
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/note_content_tv"
-        android:text="content"/>
+        android:layout_gravity="top"
+        android:hint="content"
+        android:background="@drawable/note_background"/>
 
 </LinearLayout>

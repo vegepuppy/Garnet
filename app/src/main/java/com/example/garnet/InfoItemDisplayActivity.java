@@ -1,7 +1,6 @@
 package com.example.garnet;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,7 +26,7 @@ import java.util.List;
 public class InfoItemDisplayActivity extends AppCompatActivity {
     public static final String INFO_GROUP_NAME = "InfoGroupName";
     public static final String INFO_GROUP_ID = "InfoGroupId";
-    private List<LinkInfoItem> mainList;
+    private List<InfoItem> mainList;
     private MyAdapter myAdapter;
     private long infoGroupId;
     private GarnetDatabaseHelper mDatabaseHelper;
@@ -60,37 +59,38 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     }
 
     private void reFetchLinkTitle(){
-        for(LinkInfoItem linkInfoItem : mainList){
-            //如果url和display相等，那么就再获取一次
-            if(!linkInfoItem.isLinkFetched()){
-                Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
-                    public void handleMessage(Message msg){
-                        if (msg.what == 1) {//用if替换掉原来的switch减少一个warning，兼顾安全性
-                            FetchLinkMessageObject response = (FetchLinkMessageObject) msg.obj;
-                            Log.d("TAG", "handleMessage...");
-                            // 改成在这里Toast就可以了
-                            if (!response.isValid) {
-//                                Toast.makeText(InfoItemDisplayActivity.this,
-//                                        linkInfoItem.getContent()+":无效链接！", Toast.LENGTH_SHORT).show();
-                                linkInfoItem.setDisplayString("无效链接:" + linkInfoItem.getContent());
-                                mDatabaseHelper.updateInfoItem(linkInfoItem, "无效链接:" + linkInfoItem.getContent());
-                                myAdapter.notifyItemChanged(mainList.indexOf(linkInfoItem));
-                                linkInfoItem.setLinkFetched(true);
-                            } else if (!response.isSuccess) {
-                                Toast.makeText(InfoItemDisplayActivity.this,
-                                        linkInfoItem.getContent()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
-                                linkInfoItem.setDisplayString(linkInfoItem.getContent());
-                                linkInfoItem.setLinkFetched(false);
-                            } else {
-                                mDatabaseHelper.updateInfoItem(linkInfoItem, response.linkTitle);
-                                linkInfoItem.setDisplayString(response.linkTitle);
-                                Log.d("TAG", "linkInfoItem displayString set");
+        for(InfoItem infoItem : mainList){
+            if (infoItem instanceof LinkInfoItem) {
+                LinkInfoItem linkInfoItem = (LinkInfoItem) infoItem;
+                if(!linkInfoItem.isLinkFetched()){
+                    Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
+                        public void handleMessage(Message msg){
+                            if (msg.what == 1) {//用if替换掉原来的switch减少一个warning，兼顾安全性
+                                FetchLinkMessageObject response = (FetchLinkMessageObject) msg.obj;
+                                Log.d("TAG", "handleMessage...");
+                                // 改成在这里Toast就可以了
+                                if (!response.isValid) {
+    //                                Toast.makeText(InfoItemDisplayActivity.this,
+    //                                        linkInfoItem.getContent()+":无效链接！", Toast.LENGTH_SHORT).show();
+                                    linkInfoItem.setDisplayString("无效链接:" + linkInfoItem.getContent());
+                                    mDatabaseHelper.updateInfoItem(linkInfoItem, "无效链接:" + linkInfoItem.getContent());
+                                    myAdapter.notifyItemChanged(mainList.indexOf(linkInfoItem));
+                                    linkInfoItem.setLinkFetched(true);
+                                } else if (!response.isSuccess) {
+                                    Toast.makeText(InfoItemDisplayActivity.this,
+                                            linkInfoItem.getContent()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
+                                    linkInfoItem.setDisplayString(linkInfoItem.getContent());
+                                    linkInfoItem.setLinkFetched(false);
+                                } else {
+                                    mDatabaseHelper.updateInfoItem(linkInfoItem, response.linkTitle);
+                                    linkInfoItem.setDisplayString(response.linkTitle);
+                                    Log.d("TAG", "linkInfoItem displayString set");
+                                }
                             }
                         }
-                    }
-                };
-
-                new Thread(new FetchLinkRunnable(titleFetchHandler, linkInfoItem.getContent())).start();
+                    };
+                    new Thread(new FetchLinkRunnable(titleFetchHandler, linkInfoItem.getContent())).start();
+                }
             }
         }
     }
@@ -121,7 +121,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                                     linkInfoItem.setDisplayString(response.linkTitle);
                                     Log.d("TAG","linkInfoItem displayString set");
                                 }
-                                LinkInfoItem itemWithId = mDatabaseHelper.insertInfo(linkInfoItem);
+                                InfoItem itemWithId = mDatabaseHelper.insertInfoItem(linkInfoItem);
                                 updateMainList(itemWithId);
                             }
                         }
@@ -133,8 +133,8 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         }
     }
 
-    private void updateMainList(LinkInfoItem linkInfoItem){
-        mainList.add(linkInfoItem);
+    private void updateMainList(InfoItem infoItem){
+        mainList.add(infoItem);
         myAdapter.notifyItemInserted(mainList.size()-1); //这里是照搬原来的通知方法，不知道为什么要减一
     }
 
@@ -148,8 +148,8 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            LinkInfoItem linkInfoItem = mainList.get(position);
-            holder.infoItemStringTextView.setText(linkInfoItem.getDisplayString());
+            InfoItem infoItem = mainList.get(position);
+            holder.infoItemStringTextView.setText(infoItem.getDisplayString());
         }
 
         @Override
@@ -169,21 +169,21 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             //设置短按跳转连接
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                LinkInfoItem linkInfoItem = mainList.get(position);
-                linkInfoItem.show(InfoItemDisplayActivity.this);
+                InfoItem infoItem = mainList.get(position);
+                infoItem.show(InfoItemDisplayActivity.this);
 
             });
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
-                LinkInfoItem linkInfoItem = mainList.get(position);
+                InfoItem infoItem = mainList.get(position);
 
                 mainList.remove(position);
                 myAdapter.notifyItemRemoved(position);
 
-                Snackbar snackbar = Snackbar.make(getWindow().getDecorView(), "已删除："+ linkInfoItem.getDisplayString(),Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(getWindow().getDecorView(), "已删除："+ infoItem.getDisplayString(),Snackbar.LENGTH_LONG);
 
                 snackbar.setAction("撤销", v1 -> {
-                    mainList.add(position, linkInfoItem);
+                    mainList.add(position, infoItem);
                     myAdapter.notifyItemInserted(position);
                 });
 
@@ -193,7 +193,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                         super.onDismissed(transientBottomBar, event);
 
                         if (event != DISMISS_EVENT_ACTION){//只要不是点击了撤销
-                            mDatabaseHelper.deleteInfo(linkInfoItem);
+                            mDatabaseHelper.deleteInfo(infoItem);
                         }
                     }
                 });

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class AttachInfoItemActivity extends AppCompatActivity {
-    private List<LinkInfoItem> mainList;
+    private List<InfoItem> mainList;
     private List<Boolean> isAttachedList;
     private GarnetDatabaseHelper mDatabaseHelper;
     public static final String TODO_ITEM = "TodoItem";
@@ -63,8 +63,8 @@ public class AttachInfoItemActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            LinkInfoItem linkInfoItem = mainList.get(position);
-            holder.checkBox.setText(linkInfoItem.getDisplayString());
+            InfoItem infoItem = mainList.get(position);
+            holder.checkBox.setText(infoItem.getDisplayString());
             holder.checkBox.setChecked(isAttachedList.get(position));
         }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.icu.text.IDNA;
 import android.util.Log;
 import android.widget.CheckBox;
 
@@ -78,19 +79,19 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             insertSampleTodo(db, "英语听说", "2024-09-16");
 
             insertSampleInfoGroup(db, "高等数学");
-            insertSampleInfo(db, "高数链接1", 1);
-            insertSampleInfo(db, "高数链接2", 1);
-            insertSampleInfo(db, "高数链接3", 1);
+            insertSampleInfoItem(db, "高数链接1", 1, InfoItem.TYPE_LINK);
+            insertSampleInfoItem(db, "高数链接2", 1, InfoItem.TYPE_LINK);
+            insertSampleInfoItem(db, "高数链接3", 1, InfoItem.TYPE_LINK);
 
             insertSampleInfoGroup(db, "Android开发");
-            insertSampleInfo(db, "RecyclerView", 2);
-            insertSampleInfo(db, "CheckBox", 2);
-            insertSampleInfo(db, "TextView", 2);
+            insertSampleInfoItem(db, "RecyclerView", 2, InfoItem.TYPE_LINK);
+            insertSampleInfoItem(db, "CheckBox", 2, InfoItem.TYPE_LINK);
+            insertSampleInfoItem(db, "TextView", 2, InfoItem.TYPE_LINK);
 
             insertSampleInfoGroup(db, "程序设计");
-            insertSampleInfo(db, "C语言", 3);
-            insertSampleInfo(db, "Python", 3);
-            insertSampleInfo(db, "Java", 3);
+            insertSampleInfoItem(db, "C语言", 3, InfoItem.TYPE_LINK);
+            insertSampleInfoItem(db, "Python", 3, InfoItem.TYPE_LINK);
+            insertSampleInfoItem(db, "Java", 3, InfoItem.TYPE_LINK);
         }
     }
 
@@ -115,23 +116,30 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_TODO, null, c);
     }
 
-    public LinkInfoItem insertInfo(LinkInfoItem item) {
+    public InfoItem insertInfoItem(InfoItem item) {
         try (SQLiteDatabase db = this.getWritableDatabase()) { // 使用这样的try-with-resources可以自动调用close()方法，不用自己手动db.close()
             ContentValues contentValues = new ContentValues();
             contentValues.put("CONTENT", item.getContent());
             contentValues.put("BELONG", item.getBelong());
             contentValues.put("DISPLAY", item.getDisplayString());
+            if (item instanceof LinkInfoItem) {
+                contentValues.put("TYPE", InfoItem.TYPE_LINK);
+            } else if (item instanceof NoteInfoItem) {
+                contentValues.put("TYPE", InfoItem.TYPE_NOTE);
+            }
+
             long id = db.insert(TABLE_INFO_ITEM, null, contentValues);
             item.setId(id);
             return item;
         }
     }
 
-    private void insertSampleInfo(SQLiteDatabase db, String uri, long belong) {
+    private void insertSampleInfoItem(SQLiteDatabase db, String uri, long belong, int type) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("CONTENT", uri);
         contentValues.put("BELONG", belong);
         contentValues.put("DISPLAY", uri);//样例数据直接把uri设置成展示字符串，反正给的也是无效链接
+        contentValues.put("TYPE", type);
         db.insert(TABLE_INFO_ITEM, null, contentValues);
     }
 
@@ -154,7 +162,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
      * 将资料-待办关联添加到表中。如果所要插入的值已经存在就跳过
      *
      * @param todoId         对应的{@link TodoItem}的id
-     * @param infoItemIdList 所要与之关联的所有{@link LinkInfoItem}的id
+     * @param infoItemIdList 所要与之关联的所有{@link InfoItem}的id
      */
     public void updateAttachment(long todoId, List<Long> infoItemIdList, List<Long> attachedIdList) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
@@ -323,47 +331,27 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
        return homelist;
     }
 
-    public List<LinkInfoItem> loadInfo(long infoGroupId) {
-        List<LinkInfoItem> ret = new ArrayList<>();
+    public List<InfoItem> loadInfo(long infoGroupId) {
+        List<InfoItem> ret = new ArrayList<>();
         String infoGroupIdString = String.valueOf(infoGroupId);
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             Cursor cursor = db.query(TABLE_INFO_ITEM,
-                    new String[]{"_id", "CONTENT", "BELONG", "DISPLAY"},
+                    new String[]{"_id", "CONTENT", "BELONG", "DISPLAY","TYPE"},
                     "BELONG = ?", new String[]{infoGroupIdString}, null, null, null);
 
             if (cursor.moveToFirst()) {
                 do {
                     //符合BELONG的话，存进来
-                    String uriFound = cursor.getString(1);
+                    String contentFound = cursor.getString(1);
                     long idFound = cursor.getLong(0);
                     String displayFound = cursor.getString(3);
+                    int type = cursor.getInt(4);
 
-                    ret.add(new LinkInfoItem(displayFound,uriFound, infoGroupId, idFound));
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-            return ret;
-        }
-    }
-
-    /**
-     * 读取所有的info
-     */
-    public List<LinkInfoItem> loadInfo() {
-        List<LinkInfoItem> ret = new ArrayList<>();
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            Cursor cursor = db.query(TABLE_INFO_ITEM,
-                    new String[]{"_id", "CONTENT", "BELONG", "DISPLAY"},
-                    null, null, null, null, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    String uriFound = cursor.getString(1);
-                    long idFound = cursor.getLong(0);
-                    String displayFound = cursor.getString(3);
-                    long belongIdFound = cursor.getLong(2);
-
-                    ret.add(new LinkInfoItem(displayFound, uriFound, belongIdFound, idFound));
+                    if(type == InfoItem.TYPE_LINK){
+                        ret.add(new LinkInfoItem(displayFound,contentFound, infoGroupId, idFound));
+                    }else if(type == InfoItem.TYPE_NOTE){
+                        ret.add(new NoteInfoItem(displayFound,contentFound, infoGroupId, idFound));
+                    }
                 } while (cursor.moveToNext());
             }
             cursor.close();
@@ -403,18 +391,18 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             db.delete(TABLE_INFO_GROUP, "_id=?", new String[]{idString});
 
             // 删除InfoGroup下的所有链接（这方法里包含了删除链接和待办事项的关联
-            List<LinkInfoItem> linkInfoItemsToDelete = loadInfo(infoGroup.getId());
-            deleteInfo(linkInfoItemsToDelete);
+            List<InfoItem> infoItemsToDelete = loadInfo(infoGroup.getId());
+            deleteInfo(infoItemsToDelete);
         }
     }
 
-    public void deleteInfo(List<LinkInfoItem> linkInfoItemList){
-        for (LinkInfoItem item : linkInfoItemList){
+    public void deleteInfo(List<InfoItem> infoItemList){
+        for (InfoItem item : infoItemList){
             deleteInfo(item);
         }
     }
 
-    public void deleteInfo(LinkInfoItem item) {
+    public void deleteInfo(InfoItem item) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             String idString = String.valueOf(item.getId());
             db.delete(TABLE_INFO_ITEM, "_id=?", new String[]{idString});
@@ -453,14 +441,14 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * 查看传入列表里的{@link LinkInfoItem}是否与相应的{@link TodoItem}相关
+     * 查看传入列表里的{@link InfoItem}是否与相应的{@link TodoItem}相关
      */
-    public List<Boolean> checkAttached(long todoItemId, List<LinkInfoItem> linkInfoItemList) {
+    public List<Boolean> checkAttached(long todoItemId, List<InfoItem> infoItemList) {
         List<Boolean> ret = new ArrayList<>();
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            for (LinkInfoItem linkInfoItem : linkInfoItemList) {
+            for (InfoItem infoItem : infoItemList) {
                 String selection = "TODO=? AND INFO_ITEM=?";
-                String[] selectionArgs = {String.valueOf(todoItemId), String.valueOf(linkInfoItem.getId())};
+                String[] selectionArgs = {String.valueOf(todoItemId), String.valueOf(infoItem.getId())};
                 Cursor cursor = db.query(TABLE_TODO_INFO_ITEM, new String[]{"_id"},
                         selection, selectionArgs, null, null, null);
                 ret.add(cursor.moveToFirst());
@@ -484,9 +472,9 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public void updateInfoItem(LinkInfoItem linkInfoItem, String newDisplayString) {
+    public void updateInfoItem(InfoItem infoItem, String newDisplayString) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String idString = String.valueOf(linkInfoItem.getId());
+            String idString = String.valueOf(infoItem.getId());
             ContentValues contentValues = new ContentValues();
             contentValues.put("DISPLAY", newDisplayString);
             db.update(TABLE_INFO_ITEM, contentValues, "_id = ?", new String[]{idString});
