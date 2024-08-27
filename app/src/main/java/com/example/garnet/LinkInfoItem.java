@@ -1,12 +1,6 @@
 package com.example.garnet;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
-
-public class InfoItem {
+public class LinkInfoItem {
     private String uri;
     private long belong;
     private String displayString;
@@ -38,13 +32,13 @@ public class InfoItem {
         this.displayString = displayString;
     }
 
-    public InfoItem(String uri, long belong, long id) {
+    public LinkInfoItem(String uri, long belong, long id) {
         this.uri = uri;
         this.belong = belong;
         this.id = id;
     }
 
-    public InfoItem(String uri, long belong, long id, String display) {
+    public LinkInfoItem(String uri, long belong, long id, String display) {
         this.uri = uri;
         this.belong = belong;
         this.id = id;

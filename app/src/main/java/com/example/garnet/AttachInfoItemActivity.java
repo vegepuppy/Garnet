@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class AttachInfoItemActivity extends AppCompatActivity {
-    private List<InfoItem> mainList;
+    private List<LinkInfoItem> mainList;
     private List<Boolean> isAttachedList;
     private GarnetDatabaseHelper mDatabaseHelper;
     public static final String TODO_ITEM = "TodoItem";
@@ -63,8 +63,8 @@ public class AttachInfoItemActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            InfoItem infoItem = mainList.get(position);
-            holder.checkBox.setText(infoItem.getDisplayString());
+            LinkInfoItem linkInfoItem = mainList.get(position);
+            holder.checkBox.setText(linkInfoItem.getDisplayString());
             holder.checkBox.setChecked(isAttachedList.get(position));
         }
 
@@ -94,7 +94,7 @@ public class AttachInfoItemActivity extends AppCompatActivity {
                 }
             }
             List<Long> allItemIdList = new ArrayList<>();
-            mainList.forEach(infoItem -> allItemIdList.add(infoItem.getId()));
+            mainList.forEach(linkInfoItem -> allItemIdList.add(linkInfoItem.getId()));
             mDatabaseHelper.updateAttachment(mTodoItem.getId(),allItemIdList,selectedItemIdList);
             Toast.makeText(AttachInfoItemActivity.this, "选择已保存！", Toast.LENGTH_SHORT).show();
             finish();
