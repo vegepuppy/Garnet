@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,9 +36,6 @@ public class AttachInfoItemActivity extends AppCompatActivity {
         setContentView(R.layout.activity_info_item_select);
 
         mDatabaseHelper = new GarnetDatabaseHelper(AttachInfoItemActivity.this);
-
-        FloatingActionButton fab = findViewById(R.id.confirm_item_select_fab);
-        fab.setOnClickListener(new ConfirmListener());
 
         rv = findViewById(R.id.select_info_item_rv);
         rv.setAdapter(new MyAdapter());
@@ -80,24 +78,20 @@ public class AttachInfoItemActivity extends AppCompatActivity {
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.select_info_item_cb);
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if(!buttonView.isPressed()){
+                    return;
+                }//必须是点击触发，否则会触发多次插入，导致冗余
+
+                int position = getAdapterPosition();
+                InfoItem infoItem = mainList.get(position);
+                if(isChecked){
+                    mDatabaseHelper.insertAttachment(mTodoItem, infoItem);
+                }else{
+                    mDatabaseHelper.deleteAttachment(mTodoItem, infoItem);
+                }
+            });
         }
     }
 
-    private class ConfirmListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            List<Long> selectedItemIdList = new ArrayList<>();
-            for (int i = 0; i < Objects.requireNonNull(rv.getAdapter()).getItemCount(); i++) {
-                CheckBox itemCheckbox = (CheckBox) rv.getChildAt(i);
-                if (itemCheckbox.isChecked()){
-                    selectedItemIdList.add(mainList.get(i).getId());
-                }
-            }
-            List<Long> allItemIdList = new ArrayList<>();
-            mainList.forEach(linkInfoItem -> allItemIdList.add(linkInfoItem.getId()));
-            mDatabaseHelper.updateAttachment(mTodoItem.getId(),allItemIdList,selectedItemIdList);
-            Toast.makeText(AttachInfoItemActivity.this, "选择已保存！", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-    }
 }
