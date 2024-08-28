@@ -506,4 +506,25 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void insertAttachment(TodoItem todoItem, InfoItem infoItem) {
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("TODO", String.valueOf(todoItem.getId()));
+            contentValues.put("INFO_ITEM", String.valueOf(infoItem.getId()));
+            db.insert(TABLE_TODO_INFO_ITEM, null, contentValues);
+            Log.d("DATA", "insertAttachment: "+todoItem.getTask()+"<->"+infoItem.getDisplayString());
+        }
+    }
+
+    public void deleteAttachment(TodoItem todoItem, InfoItem infoItem) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            String todoIdString = String.valueOf(todoItem.getId());
+            String infoIdString = String.valueOf(infoItem.getId());
+
+            db.delete(TABLE_TODO_INFO_ITEM, "TODO = ? AND INFO_ITEM = ?",
+                    new String[]{todoIdString, infoIdString});
+            Log.d("DATA", "deleteAttachment: "+todoItem.getTask()+"<->"+infoItem.getDisplayString());
+
+        }
+    }
 }
