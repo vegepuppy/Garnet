@@ -2,8 +2,6 @@ package com.example.garnet;
 
 import static java.util.Collections.sort;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,13 +28,15 @@ public class HomeFragment extends Fragment {
     private List<HomeItem> homeItems = new ArrayList<>();
     private final MyAdapter adapter = new MyAdapter();
     private List<String> link = new ArrayList<>();
-    private List<String> UriList = new ArrayList<>();
+    private List<InfoItem> ContentList = new ArrayList<>();
     private TextView tv;
     private TextView tv1;
     private final innerAdapter inneradapter = new innerAdapter();
-    public List<String> getinfolist(int position) {
-        return homeItems.get(position).getLinkList();
+
+    public List<String> getlinkList(int position) {
+        return homeItems.get(position).getLink();
     }
+
     private GarnetDatabaseHelper homeHelper;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -100,7 +99,6 @@ public class HomeFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             holder.initItem(position);
-            homeItems.get(position).changeRead();
         }
 
         @Override
@@ -154,16 +152,15 @@ public class HomeFragment extends Fragment {
                     homeHelper.updateHomeStatus(hi,cb);
                     if (isChecked) {
                         // CheckBox 被选中
-                        Toast.makeText(getActivity(), "Task is finished", Toast.LENGTH_SHORT).show();
                         adapter.notifyItemRemoved(homeItems.indexOf(hi));
                         homeItems.remove(hi);
                         homeItemList.remove(hi.getHomeTask());
                     }
                 }
             });
-            link = getinfolist(position);
+            link = getlinkList(position);
             HomeItem homeItem = homeItems.get(position);
-            UriList = homeItem.getUriList();
+            ContentList = homeItem.getinfolist();
             rv.setAdapter(inneradapter);
             rv.setLayoutManager(new LinearLayoutManager(getContext()));
         }
@@ -177,17 +174,11 @@ public class HomeFragment extends Fragment {
         }
         public void inner_initItem(int position){
             String item = link.get(position);
-            String uri = UriList.get(position);
+            InfoItem content = ContentList.get(position);
             task_view.append(item);
             task_view.append("\n");
             task_view.setOnClickListener(v->{
-                Uri Website = Uri.parse(uri);
-                Intent intent = new Intent(Intent.ACTION_VIEW,Website);
-                try{
-                    startActivity(intent);
-                }catch (android.content.ActivityNotFoundException e){
-                    Toast.makeText(getContext(),"无效链接",Toast.LENGTH_SHORT).show();
-                }
+                content.show(getContext());
             });
         }
     }

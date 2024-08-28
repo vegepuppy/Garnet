@@ -248,10 +248,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         List<HomeItem> homelist = new ArrayList<>();
         String taskFound;
         long idFound;
-        String linkFound;
         int uriId;
         boolean doneFound;
-        String uriFound;
         List<String> tasklist = new ArrayList<>();
         List<Long> idlist = new ArrayList<>();
         List<Boolean> doneList = new ArrayList<>();
@@ -308,30 +306,34 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         }
        //读LINK表，通过todo_link表得到的id值来获取link表中的uri
         for (int i = 0; i < idlist.size(); i++) {
-            List<String> link = new ArrayList<>();
-            List<String> uri = new ArrayList<>();
-            List<Integer> linkId = (todo_link.get(i) != null) ? todo_link.get(i) : new ArrayList<>(); // 初始化 linkId 以避免 NullPointerException
-            if (linkId.isEmpty()) {
-                link.add("无链接");
-                HomeItem hi = new HomeItem(tasklist.get(i),link,link,doneList.get(i),false,idlist.get(i));
+            List<InfoItem> infolist = new ArrayList<>();
+            List<Integer> infoId = (todo_link.get(i) != null) ? todo_link.get(i) : new ArrayList<>(); // 初始化 linkId 以避免 NullPointerException
+            if (infoId.isEmpty()) {
+                infolist.add(null);
+                HomeItem hi = new HomeItem(tasklist.get(i),infolist,doneList.get(i),idlist.get(i));
                 homelist.add(hi);
             } else {
-                for (int cnt = 0; cnt < linkId.size(); cnt++) {
+                for (int cnt = 0; cnt < infoId.size(); cnt++) {
                     try (SQLiteDatabase db3 = this.getWritableDatabase()) {
                         Cursor cursor = db3.query(TABLE_INFO_ITEM,
-                                new String[]{"DISPLAY","CONTENT"},
-                                "_id = ?", new String[]{Integer.toString(linkId.get(cnt))},
+                                new String[]{"_id", "CONTENT", "BELONG", "DISPLAY","TYPE"},
+                                "_id = ?", new String[]{Integer.toString(infoId.get(cnt))},
                                 null, null, null);
                         if (cursor.moveToFirst()) {
-                            linkFound = cursor.getString(0);
-                            uriFound = cursor.getString(1);
-                            link.add(linkFound);
-                            uri.add(uriFound);
+                            String contentFound = cursor.getString(1);
+                            String displayFound = cursor.getString(3);
+                            int type = cursor.getInt(4);
+                            long infoGroupId = cursor.getLong(2);
+                            if(type == InfoItem.TYPE_LINK){
+                                infolist.add(new LinkInfoItem(displayFound,contentFound, infoGroupId, infoId.get(cnt)));
+                            }else if(type == InfoItem.TYPE_NOTE){
+                                infolist.add(new NoteInfoItem(displayFound,contentFound, infoGroupId, infoId.get(cnt)));
+                            }
                         }
                         cursor.close();
                     }
                 }
-                HomeItem hi = new HomeItem(tasklist.get(i),link,uri,doneList.get(i),false,idlist.get(i));
+                HomeItem hi = new HomeItem(tasklist.get(i),infolist,doneList.get(i),idlist.get(i));
                 homelist.add(hi);
             }
         }
