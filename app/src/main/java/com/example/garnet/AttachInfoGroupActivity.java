@@ -100,6 +100,7 @@ public class AttachInfoGroupActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Toast.makeText(this, "关联信息已保存！", Toast.LENGTH_SHORT).show();
         recreate();
     }
 }
