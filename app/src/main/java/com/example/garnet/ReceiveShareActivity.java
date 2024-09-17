@@ -2,7 +2,6 @@ package com.example.garnet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,6 +9,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class ReceiveShareActivity extends AppCompatActivity {
     private GarnetDatabaseHelper helper;
+    public static final String CONTENT = "CONTENT";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,21 +19,41 @@ public class ReceiveShareActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         InfoFragment infoFragment = new InfoFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(CONTENT, getSharedUri());
+        infoFragment.setArguments(bundle);
+
         transaction.add(R.id.receive_content, infoFragment);
         transaction.show(infoFragment);
         transaction.commit();
 
+//        Intent intent = getIntent();
+//        String action = intent.getAction();
+//        String type = intent.getType();
+//        if (Intent.ACTION_SEND.equals(action) && type != null){
+//            if ("text/plain".equals(type)){
+//                String content = intent.getStringExtra(Intent.EXTRA_TEXT);
+//                Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+//                LinkInfoItem linkInfoItem = new LinkInfoItem(null,content,1, LinkInfoItem.LACK_ID);
+//                helper.insertInfoItem(linkInfoItem);
+////                finish();
+//            }
+//        }
+    }
+
+    // 获得从其他app中分享的Uri字符串
+    private String getSharedUri() {
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        if (Intent.ACTION_SEND.equals(action) && type != null){
-            if ("text/plain".equals(type)){
-                String content = intent.getStringExtra(Intent.EXTRA_TEXT);
-                Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
-                LinkInfoItem linkInfoItem = new LinkInfoItem(null,content,1, LinkInfoItem.LACK_ID);
-                helper.insertInfoItem(linkInfoItem);
-//                finish();
+        String content = null;
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                content = intent.getStringExtra(Intent.EXTRA_TEXT);
             }
         }
+        return content;
     }
 }
