@@ -27,19 +27,6 @@ public class ReceiveShareActivity extends AppCompatActivity {
         transaction.add(R.id.receive_content, infoFragment);
         transaction.show(infoFragment);
         transaction.commit();
-
-//        Intent intent = getIntent();
-//        String action = intent.getAction();
-//        String type = intent.getType();
-//        if (Intent.ACTION_SEND.equals(action) && type != null){
-//            if ("text/plain".equals(type)){
-//                String content = intent.getStringExtra(Intent.EXTRA_TEXT);
-//                Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
-//                LinkInfoItem linkInfoItem = new LinkInfoItem(null,content,1, LinkInfoItem.LACK_ID);
-//                helper.insertInfoItem(linkInfoItem);
-////                finish();
-//            }
-//        }
     }
 
     // 获得从其他app中分享的Uri字符串
