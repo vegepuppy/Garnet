@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class InfoFragment extends Fragment {
     private RecyclerView infoItemListRecyclerView;
     private MyAdapter myAdapter;
     private List<InfoGroup> mainList;// 所有资料库的标题
+    private String content = null; // 如果是在ReceiveShareActivity中打开的这一fragment，那么这参数将根据bundle赋值
     private GarnetDatabaseHelper mDatabaseHelper;
 
     @Override
@@ -55,6 +57,11 @@ public class InfoFragment extends Fragment {
         FloatingActionButton floatingActionButton = view.findViewById(R.id.fab_add);
         floatingActionButton.setOnClickListener(myClickListener);
 
+        //如果在ReceiveShareActivity中打开
+        Bundle bundle = this.getArguments();
+        if (bundle != null && bundle.containsKey(ReceiveShareActivity.CONTENT)){
+            content = this.getArguments().getString(ReceiveShareActivity.CONTENT);
+        }
         ///SQLite数据库部分
         mainList = mDatabaseHelper.loadInfoGroup();
 
@@ -154,21 +161,32 @@ public class InfoFragment extends Fragment {
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             this.infoListTitleTextView = itemView.findViewById(R.id.text_in_card);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
+
+                if (requireActivity().getClass().equals(MainActivity.class)) {
+                    itemView.setOnClickListener(v -> {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            InfoGroup infoGroup = mainList.get(position);
+
+                            Intent intent = new Intent();
+                            intent.setClass(requireActivity(), InfoItemDisplayActivity.class);
+                            intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_ID, infoGroup.getId());
+                            intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, infoGroup.getName());
+                            startActivity(intent);
+                        }
+                    });
+                } else if (requireActivity().getClass().equals(ReceiveShareActivity.class)) {
+                    itemView.setOnClickListener(v ->{
+                        Log.d("SHARE", "another listener works.");
+                        int position = getAdapterPosition();
                         InfoGroup infoGroup = mainList.get(position);
 
-                        Intent intent = new Intent();
-                        intent.setClass(requireActivity(), InfoItemDisplayActivity.class);
-                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_ID, infoGroup.getId());
-                        intent.putExtra(InfoItemDisplayActivity.INFO_GROUP_NAME, infoGroup.getName());
-                        startActivity(intent);
-                    }
+                        LinkInfoItem linkInfoItem = getSharedLinkInfoItem(infoGroup);
+                        mDatabaseHelper.insertInfoItem(linkInfoItem);
+                        Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
+                        requireActivity().finish();
+                    });
                 }
-            });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -179,6 +197,17 @@ public class InfoFragment extends Fragment {
                     return true;
                 }
             });
+        }
+
+        private @NonNull LinkInfoItem getSharedLinkInfoItem(InfoGroup infoGroup) {
+            // 查找以 'https://' 开头的部分
+            int index = content.indexOf("https://");
+
+            // 分割字符串
+            String displayString = content.substring(0, index).trim();
+            String uri = content.substring(index);
+
+            return new LinkInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
         }
 
 
@@ -219,8 +248,6 @@ public class InfoFragment extends Fragment {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
-//                        toast.show();
                             InfoGroup infoGroup = mainList.get(position);
                             String newTitle = editText.getText().toString();
                             InfoGroup groupModified = mDatabaseHelper.updateInfoGroup(infoGroup, newTitle);
