@@ -181,14 +181,7 @@ public class InfoFragment extends Fragment {
                         int position = getAdapterPosition();
                         InfoGroup infoGroup = mainList.get(position);
 
-                        // 查找以 'https://' 开头的部分
-                        int index = content.indexOf("https://");
-
-                        // 分割字符串
-                        String displayString = content.substring(0, index).trim();
-                        String uri = content.substring(index);
-
-                        LinkInfoItem linkInfoItem = new LinkInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
+                        LinkInfoItem linkInfoItem = getSharedLinkInfoItem(infoGroup);
                         mDatabaseHelper.insertInfoItem(linkInfoItem);
                         Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
                         requireActivity().finish();
@@ -204,6 +197,17 @@ public class InfoFragment extends Fragment {
                     return true;
                 }
             });
+        }
+
+        private @NonNull LinkInfoItem getSharedLinkInfoItem(InfoGroup infoGroup) {
+            // 查找以 'https://' 开头的部分
+            int index = content.indexOf("https://");
+
+            // 分割字符串
+            String displayString = content.substring(0, index).trim();
+            String uri = content.substring(index);
+
+            return new LinkInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
         }
 
 
@@ -244,8 +248,6 @@ public class InfoFragment extends Fragment {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                        Toast toast = Toast.makeText(MainActivity.this,"点击了确定" , Toast.LENGTH_LONG);
-//                        toast.show();
                             InfoGroup infoGroup = mainList.get(position);
                             String newTitle = editText.getText().toString();
                             InfoGroup groupModified = mDatabaseHelper.updateInfoGroup(infoGroup, newTitle);
