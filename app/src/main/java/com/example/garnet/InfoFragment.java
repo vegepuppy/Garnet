@@ -190,6 +190,7 @@ public class InfoFragment extends Fragment {
 
                         LinkInfoItem linkInfoItem = new LinkInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
                         mDatabaseHelper.insertInfoItem(linkInfoItem);
+                        Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
                         requireActivity().finish();
                     });
                 }
