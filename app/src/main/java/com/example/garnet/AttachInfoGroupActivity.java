@@ -76,17 +76,17 @@ public class AttachInfoGroupActivity extends AppCompatActivity {
     private class MyViewHolder extends RecyclerView.ViewHolder{
         private final TextView nameTv;
         private final TextView numTv;
-        private final Button button;
+        private final View itemView;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTv = itemView.findViewById(R.id.attach_info_group_name_tv);
             numTv = itemView.findViewById(R.id.attach_info_group_num_tv);
-            button = itemView.findViewById(R.id.attach_info_group_btn_view);
+            this.itemView = itemView;
         }
         public void initViews(InfoGroup infoGroup){
             nameTv.setText(infoGroup.getName());
             numTv.setText(mDatabaseHelper.countAttached(mTodoItem.getId(), infoGroup.getId()));
-            button.setOnClickListener(v -> {
+            itemView.setOnClickListener(v -> {
                 Intent intent = new Intent();
                 intent.setClass(AttachInfoGroupActivity.this, AttachInfoItemActivity.class);
                 intent.putExtra(AttachInfoItemActivity.TODO_ITEM, mTodoItem);

@@ -26,15 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="(5/5)"
+            android:text=""
             android:id="@+id/attach_info_group_num_tv"/>
-        <Button
-            android:id="@+id/attach_info_group_btn_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginVertical="10dp"
-            android:background="@drawable/todo_btn_view_24"
-            android:padding="1dp" />
 
     </LinearLayout>
 
