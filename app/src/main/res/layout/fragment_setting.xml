@@ -8,39 +8,78 @@
    <androidx.cardview.widget.CardView
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       android:drawableStart="@drawable/baseline_123_24"
+       app:cardCornerRadius="20dp"
+       android:layout_margin="10dp"
+       android:layout_marginHorizontal="16dp"
+       android:layout_marginVertical="8dp"
+       android:foreground="?android:attr/selectableItemBackground"
+       xmlns:tools="http://schemas.android.com/tools"
        android:id="@+id/daily_notification_card">
       <androidx.appcompat.widget.SwitchCompat
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="每日早晨8:00通知"
+          android:text="每日早晨通知"
+          android:layout_margin="10dp"
           android:id="@+id/daily_notification_switch"/>
    </androidx.cardview.widget.CardView>
 
    <androidx.cardview.widget.CardView
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:layout_below="@+id/daily_notification_card"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       android:drawableStart="@drawable/baseline_123_24"
+       app:cardCornerRadius="20dp"
+       android:layout_margin="10dp"
+       android:layout_marginHorizontal="16dp"
+       android:layout_marginVertical="8dp"
+       android:layout_below="@id/daily_notification_card"
+       android:foreground="?android:attr/selectableItemBackground"
        android:id="@+id/weekly_notification_card">
       <androidx.appcompat.widget.SwitchCompat
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
+          android:layout_margin="10dp"
           android:text="每周日通知未完成的无日期待办"
           android:id="@+id/weekly_notification_switch"/>
    </androidx.cardview.widget.CardView>
 
-   <Button
-       android:layout_width="wrap_content"
+
+   <androidx.cardview.widget.CardView
+       android:layout_width="match_parent"
        android:layout_height="wrap_content"
-      android:id="@+id/clear_done_now_button"
-      android:layout_below="@+id/weekly_notification_card"
-       android:text="立即清理已完成待办"/>
-   
-   <com.google.android.material.floatingactionbutton.FloatingActionButton
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_centerHorizontal="true"
-       android:layout_alignParentBottom="true"
-       android:layout_marginBottom="20dp"
-       android:id="@+id/setting_confirm_fab"
-       android:src="@drawable/baseline_done_24"/>
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       android:drawableStart="@drawable/baseline_123_24"
+       app:cardCornerRadius="20dp"
+       android:layout_margin="10dp"
+       android:layout_marginHorizontal="16dp"
+       android:layout_marginVertical="8dp"
+       android:layout_below="@id/weekly_notification_card"
+       android:foreground="?android:attr/selectableItemBackground"
+       android:id="@+id/clear_card">
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+         <androidx.appcompat.widget.SwitchCompat
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_alignParentStart="true"
+             android:layout_margin="10dp"
+             android:id="@+id/weekly_clear_card"
+             android:text="定期清理过期待办"/>
+         <android.widget.Button
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:id="@+id/clear_done_now_button"
+             android:layout_alignParentEnd="true"
+             android:text="立即清理!"
+             android:textSize="20sp"
+             android:textColor="#6200EE"
+             android:layout_margin="10dp"
+             android:padding="5dp"
+             android:background="@drawable/blank_background"/>
+      </RelativeLayout>
+   </androidx.cardview.widget.CardView>
+
 </RelativeLayout>

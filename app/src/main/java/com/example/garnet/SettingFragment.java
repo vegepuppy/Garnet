@@ -42,7 +42,6 @@ public class SettingFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_setting, container, false);
         initDailyNotificationSwitch(rootView);
-        initConfirmButton(rootView);
         initWeeklyNotificationSwitch(rootView);
         initClearDoneNowButton(rootView, requireActivity());
         createNotificationChannel();
@@ -120,29 +119,6 @@ public class SettingFragment extends Fragment {
                 AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                 alarmManager.cancel(pendingIntent);
             }
-        });
-    }
-    private void initConfirmButton(View rootView){
-        FloatingActionButton confirmButton = rootView.findViewById(R.id.setting_confirm_fab);
-
-        confirmButton.setOnClickListener(v -> {
-            SharedPreferences preferences = getActivity().getSharedPreferences("settings",Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("dailyNotification", dailyNotificationSwitchCompat.isChecked());
-            editor.putBoolean("weeklyNotification", weeklyNotificationSwitchCompat.isChecked());
-            editor.apply();
-
-//            Intent intent1 = new Intent(requireActivity(), Notifier.class);
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-//                    requireActivity(),
-//                    Notifier.NOTIFICATION_ID,
-//                    intent1,
-//                    PendingIntent.FLAG_IMMUTABLE
-//            );
-//            AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
-//            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent);
-//
-            Toast.makeText(getActivity(), "设置已保存", Toast.LENGTH_SHORT).show();
         });
     }
 
