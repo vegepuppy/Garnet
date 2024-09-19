@@ -14,19 +14,19 @@ import androidx.core.app.NotificationCompat;
 import java.util.Calendar;
 import java.util.Date;
 
-import java.util.Objects;
-
 
 // 用于创建通知
 public class Notifier extends BroadcastReceiver {
     public static final String CHANNEL_ID = "daily_todo_channel";
 
     public static final int DAILY_NOTIFICATION_ID = 1;
-    public static final int  START_ACTIVITY = 2; // TODO: 2024-08-05 这些pendingIntent的Id应该专门存储 
+    public static final int START_ACTIVITY_CODE = 2; // TODO: 2024-08-05 这些pendingIntent的Id应该专门存储
     public static final int WEEKLY_NOTIFICATION_ID = 3;
+    public static final int CLEARED_NOTIFICATION_ID = 4;// TODO: 2024-09-19 notificationId 有什么用？
     public static final String DAILY_NOTIFICATION = "dailyNotification";
     public static final String WEEKLY_NOTIFICATION = "weeklyNotification";
     public static final String NOTIFICATION_TYPE = "notificationType";
+    public static final String CLEARED_NOTIFICATION = "clearedNotification";
 
 
     @Override
@@ -39,7 +39,7 @@ public class Notifier extends BroadcastReceiver {
         Intent startActivity = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
-                Notifier.START_ACTIVITY,
+                Notifier.START_ACTIVITY_CODE,
                 startActivity,
                 PendingIntent.FLAG_IMMUTABLE);
 
@@ -62,7 +62,7 @@ public class Notifier extends BroadcastReceiver {
         } else if (notificationType.equals(WEEKLY_NOTIFICATION)) {
             String message = new GarnetDatabaseHelper(context).loadTodoString("无日期");
             Log.d("NOTI", "preparing to fire notification message: " + message);
-            if ( message != null ){//如果当日有未完成待办才发送通知
+            if ( message != null ){
                 Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_launcher_foreground)
                         .setContentTitle("未完成无日期待办")
@@ -72,8 +72,17 @@ public class Notifier extends BroadcastReceiver {
                 Log.d("NOTI","Notification sent!");
                 NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 manager.notify(DAILY_NOTIFICATION_ID, notification);// TODO: 2024-08-05 这里这个id有什么用？为什么要重复用1
-
             }
+        } else if (notificationType.equals(CLEARED_NOTIFICATION)) {
+            String message = "已完成定时清理！";
+            Notification notification = new NotificationCompat.Builder(context,CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle("待办清理")
+                    .setContentText(message)
+                    .setContentIntent(pendingIntent)
+                    .build();
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(CLEARED_NOTIFICATION_ID, notification);
         }
     }
 }

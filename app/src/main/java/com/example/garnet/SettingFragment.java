@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -51,19 +52,53 @@ public class SettingFragment extends Fragment {
 
     private void initClearDoneNowButton(View rootView, Context context) {
         Button clearNowButton = rootView.findViewById(R.id.clear_done_now_button);
-        clearNowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GarnetDatabaseHelper mDatabaseHelper = new GarnetDatabaseHelper(context);
-                mDatabaseHelper.deleteDone();
-                Toast.makeText(context, "已清理", Toast.LENGTH_SHORT).show();
+        SwitchCompat clearSwitchCompat = rootView.findViewById(R.id.weekly_clear_switch);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        boolean prefBoolean = sharedPreferences.getBoolean("weeklyClear", false);
+        clearSwitchCompat.setChecked(prefBoolean);
+
+        clearNowButton.setOnClickListener(v -> {
+            GarnetDatabaseHelper mDatabaseHelper = new GarnetDatabaseHelper(context);
+            mDatabaseHelper.deleteDone();
+            Toast.makeText(context, "已清理", Toast.LENGTH_SHORT).show();
+        });
+
+        clearSwitchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Intent intent = new Intent(requireActivity(), DataClearReceiver.class);
+            intent.putExtra(DataClearReceiver.CLEAR_TYPE,DataClearReceiver.CLEAR_DONE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    requireActivity(),
+                    DataClearReceiver.DATA_CLEAR_CODE,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+            );
+            AlarmManager alarmManager;// 可能有问题
+            if(isChecked){
+                alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
+                long time = getDailySendTimeInMillis();
+
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                        time,
+                        AlarmManager.INTERVAL_DAY*7,
+                        pendingIntent);
+
+            }else {
+                alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+                alarmManager.cancel(pendingIntent);
+
             }
+            editor.putBoolean("weeklyClear", isChecked);
+            editor.apply();
         });
     }
 
     private void initDailyNotificationSwitch(View rootView){
         dailyNotificationSwitchCompat = rootView.findViewById(R.id.daily_notification_switch);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         boolean notification = sharedPreferences.getBoolean("dailyNotification", false);
         dailyNotificationSwitchCompat.setChecked(notification);
 
@@ -81,21 +116,25 @@ public class SettingFragment extends Fragment {
             if (isChecked) {
                 Log.d("NOTI", "turned on notification");
                 if (checkNotificationPermissions(requireActivity())) {
-
                     scheduleDailyNotification(pendingIntent);
-
                 }
+
             } else {
                 Log.d("NOTI", "turned off notification");
                 AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                 alarmManager.cancel(pendingIntent);
+                //保存设置
             }
+            editor.putBoolean("dailyNotification", isChecked);
+            editor.apply();
         });
 
     }
     private void initWeeklyNotificationSwitch(View rootView){
         weeklyNotificationSwitchCompat = rootView.findViewById(R.id.weekly_notification_switch);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         boolean notification = sharedPreferences.getBoolean("weeklyNotification", false);
         weeklyNotificationSwitchCompat.setChecked(notification);
 
@@ -119,6 +158,9 @@ public class SettingFragment extends Fragment {
                 AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                 alarmManager.cancel(pendingIntent);
             }
+
+            editor.putBoolean("weeklyNotification", isChecked);
+            editor.apply();
         });
     }
 
