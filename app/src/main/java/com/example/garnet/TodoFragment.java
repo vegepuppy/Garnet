@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,19 @@ public class TodoFragment extends Fragment {
                     TodoItem ti =  new TodoItem(task,date,TodoItem.LACK_ID,false);
                     TodoItem tiWithId = mDatabaseHelper.insertTodo(ti);
                     updateMainList(tiWithId);
+
+                    Snackbar snackbar = Snackbar.make(requireActivity().getWindow().getDecorView(),
+                            "已添加待办:"+ti.getDueDate()+":"+ti.getTask(), Snackbar.LENGTH_SHORT);
+                    snackbar.setAction("关联待办", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent();
+                            intent.setClass(requireActivity(), AttachInfoGroupActivity.class);
+                            intent.putExtra(AttachInfoGroupActivity.TODO_ITEM, tiWithId);
+                            startActivity(intent);
+                        }
+                    });
+                    snackbar.show();
                 }
             });
             // 根据IDE提示将getActivity()改为requireActivity()

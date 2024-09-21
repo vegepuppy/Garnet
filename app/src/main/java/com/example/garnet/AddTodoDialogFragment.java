@@ -66,8 +66,6 @@ public class AddTodoDialogFragment extends DialogFragment {
         Button confrimButton = v.findViewById(R.id.add_todo_confirm_button);
         confrimButton.setOnClickListener(new ConfirmedListener());
 
-        Button attachInfoButton = v.findViewById(R.id.attach_info_button);
-        attachInfoButton.setOnClickListener(new AttachInfoListener());
         return v;
     }
 
@@ -117,6 +115,7 @@ public class AddTodoDialogFragment extends DialogFragment {
         }
     }
 
+    @Deprecated
     private class AttachInfoListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {

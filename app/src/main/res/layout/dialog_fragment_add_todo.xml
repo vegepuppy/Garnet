@@ -51,18 +51,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/add_todo_date_button"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:text="关联资料"
-        android:id="@+id/attach_info_button"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
 
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/attach_info_button"
+        android:layout_below="@id/add_todo_date_button"
         android:id="@+id/add_todo_confirm_button"
         android:layout_margin="10dp"
         android:text="确定"

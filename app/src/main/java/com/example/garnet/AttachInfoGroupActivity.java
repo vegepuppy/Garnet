@@ -92,7 +92,7 @@ public class AttachInfoGroupActivity extends AppCompatActivity {
                 intent.putExtra(AttachInfoItemActivity.TODO_ITEM, mTodoItem);
                 int position = getAdapterPosition();
                 intent.putExtra(AttachInfoItemActivity.INFO_GROUP, (Serializable) mainList.get(position));
-                startActivityForResult(intent,1);
+                startActivityForResult(intent,1,null);
             });
         }
     }
