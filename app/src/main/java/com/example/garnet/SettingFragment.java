@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.Settings;
@@ -28,6 +29,7 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 
 import java.text.SimpleDateFormat;
@@ -38,6 +40,10 @@ public class SettingFragment extends Fragment {
     private SwitchCompat dailyNotificationSwitchCompat;
     private SwitchCompat weeklyNotificationSwitchCompat;
 
+    private static final String PREF_TABLE_NAME = "prefTableName";
+    private static final String PREF_DAILY_NOTIFICATION = "prefDailyNotification";
+    private static final String PREF_WEEKLY_NOTIFICATION = "prefWeeklyNotification";
+    private static final String PREF_WEEKLY_CLEAR = "prefWeeklyClear";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,10 +59,10 @@ public class SettingFragment extends Fragment {
     private void initClearDoneNowButton(View rootView, Context context) {
         Button clearNowButton = rootView.findViewById(R.id.clear_done_now_button);
         SwitchCompat clearSwitchCompat = rootView.findViewById(R.id.weekly_clear_switch);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TABLE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        boolean prefBoolean = sharedPreferences.getBoolean("weeklyClear", false);
+        boolean prefBoolean = sharedPreferences.getBoolean(PREF_WEEKLY_CLEAR, false);
         clearSwitchCompat.setChecked(prefBoolean);
 
         clearNowButton.setOnClickListener(v -> {
@@ -89,17 +95,17 @@ public class SettingFragment extends Fragment {
                 alarmManager.cancel(pendingIntent);
 
             }
-            editor.putBoolean("weeklyClear", isChecked);
+            editor.putBoolean(PREF_WEEKLY_CLEAR, isChecked);
             editor.apply();
         });
     }
 
     private void initDailyNotificationSwitch(View rootView){
         dailyNotificationSwitchCompat = rootView.findViewById(R.id.daily_notification_switch);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TABLE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        boolean notification = sharedPreferences.getBoolean("dailyNotification", false);
+        boolean notification = sharedPreferences.getBoolean(PREF_DAILY_NOTIFICATION, false);
         dailyNotificationSwitchCompat.setChecked(notification);
 
         dailyNotificationSwitchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -125,49 +131,52 @@ public class SettingFragment extends Fragment {
                 alarmManager.cancel(pendingIntent);
                 //保存设置
             }
-            editor.putBoolean("dailyNotification", isChecked);
+            // Permissions are granted
+            editor.putBoolean(PREF_DAILY_NOTIFICATION, isChecked);
             editor.apply();
         });
 
     }
     private void initWeeklyNotificationSwitch(View rootView){
         weeklyNotificationSwitchCompat = rootView.findViewById(R.id.weekly_notification_switch);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TABLE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        boolean notification = sharedPreferences.getBoolean("weeklyNotification", false);
+        boolean notification = sharedPreferences.getBoolean(PREF_WEEKLY_NOTIFICATION, false);
         weeklyNotificationSwitchCompat.setChecked(notification);
 
         weeklyNotificationSwitchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Intent intent = new Intent(requireActivity(), Notifier.class);
-            intent.putExtra(Notifier.NOTIFICATION_TYPE, Notifier.WEEKLY_NOTIFICATION);
-            // Create a PendingIntent for the broadcast
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    requireActivity(),
-                    Notifier.WEEKLY_NOTIFICATION_ID,
-                    intent,
-                    PendingIntent.FLAG_IMMUTABLE
-            );
-            if (isChecked) {
-                Log.d("NOTI", "turned on notification");
-                if (checkNotificationPermissions(requireActivity())) {
-                    scheduleWeeklyNotification(pendingIntent);
+            if (buttonView.isPressed()) {
+                Intent intent = new Intent(requireActivity(), Notifier.class);
+                intent.putExtra(Notifier.NOTIFICATION_TYPE, Notifier.WEEKLY_NOTIFICATION);
+                // Create a PendingIntent for the broadcast
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        requireActivity(),
+                        Notifier.WEEKLY_NOTIFICATION_ID,
+                        intent,
+                        PendingIntent.FLAG_IMMUTABLE
+                );
+                if (isChecked) {
+                    Log.d("NOTI", "turned on notification");
+                    if (checkNotificationPermissions(requireActivity())) {
+                        scheduleWeeklyNotification(pendingIntent);
+                    }
+                } else {
+                    Log.d("NOTI", "turned off notification");
+                    AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
+                    alarmManager.cancel(pendingIntent);
                 }
-            } else {
-                Log.d("NOTI", "turned off notification");
-                AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
-                alarmManager.cancel(pendingIntent);
-            }
 
-            editor.putBoolean("weeklyNotification", isChecked);
-            editor.apply();
+                editor.putBoolean(PREF_WEEKLY_NOTIFICATION, isChecked);
+                editor.apply();
+            }
         });
     }
 
     private void createNotificationChannel() {
         // Android Oreo (API level 26) and above
-        String name = "每日通知";
-        String desc = "提醒当日的待办事项";
+        String name = "待办通知";
+        String desc = "提醒待办事项";
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
 
         NotificationChannel channel = new NotificationChannel(Notifier.CHANNEL_ID, name, importance);
@@ -182,7 +191,6 @@ public class SettingFragment extends Fragment {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         boolean isEnabled = notificationManager.areNotificationsEnabled();
-
         if (!isEnabled) {
             // Open the app notification settings if notifications are not enabled
             Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
