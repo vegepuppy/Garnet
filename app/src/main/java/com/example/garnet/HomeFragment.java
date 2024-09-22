@@ -38,6 +38,8 @@ public class HomeFragment extends Fragment {
     }
 
     private GarnetDatabaseHelper homeHelper;
+
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

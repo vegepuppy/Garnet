@@ -70,6 +70,15 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
+        <service
+            android:name=".ListWidgetService"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS">
+            <intent-filter>
+                <action android:name="android.widget.RemoteViewsService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
