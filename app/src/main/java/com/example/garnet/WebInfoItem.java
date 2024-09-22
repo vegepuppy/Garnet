@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
-public class LinkInfoItem extends InfoItem{
+public class WebInfoItem extends InfoItem{
 
     private boolean isLinkFetched;
     // 以上两个变量不能是final，用户可能会改，忽视IDE提示
@@ -30,7 +30,7 @@ public class LinkInfoItem extends InfoItem{
         }
     }
 
-    public LinkInfoItem(String display, String uri, long belong, long id) {
+    public WebInfoItem(String display, String uri, long belong, long id) {
         super(display, uri, belong, id);
     }
 

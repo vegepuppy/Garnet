@@ -181,8 +181,8 @@ public class InfoFragment extends Fragment {
                         int position = getAdapterPosition();
                         InfoGroup infoGroup = mainList.get(position);
 
-                        LinkInfoItem linkInfoItem = getSharedLinkInfoItem(infoGroup);
-                        mDatabaseHelper.insertInfoItem(linkInfoItem);
+                        WebInfoItem webInfoItem = getSharedLinkInfoItem(infoGroup);
+                        mDatabaseHelper.insertInfoItem(webInfoItem);
                         Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
                         requireActivity().finish();
                     });
@@ -199,7 +199,7 @@ public class InfoFragment extends Fragment {
             });
         }
 
-        private @NonNull LinkInfoItem getSharedLinkInfoItem(InfoGroup infoGroup) {
+        private @NonNull WebInfoItem getSharedLinkInfoItem(InfoGroup infoGroup) {
             // 查找以 'https://' 开头的部分
             int index = content.indexOf("https://");
 
@@ -207,7 +207,7 @@ public class InfoFragment extends Fragment {
             String displayString = content.substring(0, index).trim();
             String uri = content.substring(index);
 
-            return new LinkInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
+            return new WebInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
         }
 
 

@@ -122,7 +122,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             contentValues.put("CONTENT", item.getContent());
             contentValues.put("BELONG", item.getBelong());
             contentValues.put("DISPLAY", item.getDisplayString());
-            if (item instanceof LinkInfoItem) {
+            if (item instanceof WebInfoItem) {
                 contentValues.put("TYPE", InfoItem.TYPE_LINK);
             } else if (item instanceof NoteInfoItem) {
                 contentValues.put("TYPE", InfoItem.TYPE_NOTE);
@@ -325,7 +325,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                             int type = cursor.getInt(4);
                             long infoGroupId = cursor.getLong(2);
                             if(type == InfoItem.TYPE_LINK){
-                                infolist.add(new LinkInfoItem(displayFound,contentFound, infoGroupId, infoId.get(cnt)));
+                                infolist.add(new WebInfoItem(displayFound,contentFound, infoGroupId, infoId.get(cnt)));
                             }else if(type == InfoItem.TYPE_NOTE){
                                 infolist.add(new NoteInfoItem(displayFound,contentFound, infoGroupId, infoId.get(cnt)));
                             }
@@ -357,7 +357,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     int type = cursor.getInt(4);
 
                     if(type == InfoItem.TYPE_LINK){
-                        ret.add(new LinkInfoItem(displayFound,contentFound, infoGroupId, idFound));
+                        ret.add(new WebInfoItem(displayFound,contentFound, infoGroupId, idFound));
                     }else if(type == InfoItem.TYPE_NOTE){
                         ret.add(new NoteInfoItem(displayFound,contentFound, infoGroupId, idFound));
                     }
