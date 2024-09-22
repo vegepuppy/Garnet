@@ -1,37 +1,33 @@
 package com.example.garnet;
 
 import android.content.Intent;
-import android.icu.text.IDNA;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.w3c.dom.Text;
+import androidx.activity.result.ActivityResultLauncher;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AttachInfoGroupActivity extends AppCompatActivity {
     private List<InfoGroup> mainList;
     private List<Boolean> isAttachedList;
+    private MyAdapter myAdapter;
     private GarnetDatabaseHelper mDatabaseHelper;
     public static final String TODO_ITEM = "TodoItem";
     private TodoItem mTodoItem;
     private RecyclerView rv;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +37,8 @@ public class AttachInfoGroupActivity extends AppCompatActivity {
         mDatabaseHelper = new GarnetDatabaseHelper(AttachInfoGroupActivity.this);
 
         rv = findViewById(R.id.attach_info_group_rv);
-        rv.setAdapter(new MyAdapter());
+        myAdapter= new MyAdapter();
+        rv.setAdapter(myAdapter);
         rv.setLayoutManager(new LinearLayoutManager(AttachInfoGroupActivity.this));
 
         mTodoItem = (TodoItem) getIntent().getSerializableExtra(TODO_ITEM);
@@ -49,8 +46,11 @@ public class AttachInfoGroupActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.attach_info_group_tv);
         tv.setText(mTodoItem.getTask());
         mainList = mDatabaseHelper.loadInfoGroup();
-    }
 
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> myAdapter.notifyDataSetChanged()); // TODO: 2024-09-22 不应该全部通知
+    }
     private class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
         @NonNull
         @Override
@@ -92,15 +92,8 @@ public class AttachInfoGroupActivity extends AppCompatActivity {
                 intent.putExtra(AttachInfoItemActivity.TODO_ITEM, mTodoItem);
                 int position = getAdapterPosition();
                 intent.putExtra(AttachInfoItemActivity.INFO_GROUP, (Serializable) mainList.get(position));
-                startActivityForResult(intent,1,null);
+                activityResultLauncher.launch(intent);
             });
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(this, "关联信息已保存！", Toast.LENGTH_SHORT).show();
-        recreate();
     }
 }
