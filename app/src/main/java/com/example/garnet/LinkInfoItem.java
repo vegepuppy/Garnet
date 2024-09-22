@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+
 public class LinkInfoItem extends InfoItem{
 
     private boolean isLinkFetched;
@@ -28,6 +30,11 @@ public class LinkInfoItem extends InfoItem{
         } catch (android.content.ActivityNotFoundException e) {
             Toast.makeText(context, "无效链接！", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    void show(Context context, ActivityResultLauncher<Intent> launcher) {
+        show(context); //打开链接不需要result
     }
 
     public LinkInfoItem(String display, String uri, long belong, long id) {

@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -30,6 +32,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     private MyAdapter myAdapter;
     private long infoGroupId;
     private GarnetDatabaseHelper mDatabaseHelper;
+    private ActivityResultLauncher<Intent> activityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,20 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         this.infoGroupId = intent.getLongExtra(INFO_GROUP_ID,-1);
         //这里需要一个defaultValue，故设置为-1
 
+        //注册ActivityResultLauncher
+        activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Toast.makeText(InfoItemDisplayActivity.this,"返回码" + result.getResultCode(), Toast.LENGTH_SHORT).show();
+                    if (result.getResultCode() == NoteActivity.RESULT_NOTE_INSERT_CODE) {
+                        mainList = mDatabaseHelper.loadInfo(infoGroupId);
+                        myAdapter.notifyItemInserted(mainList.size());
+                    } else if(result.getResultCode() == NoteActivity.RESULT_NOTE_UPDATE_CODE){
+                        mainList = mDatabaseHelper.loadInfo(infoGroupId);
+                        myAdapter.notifyDataSetChanged(); // TODO: 2024-09-22 如果不全局通知，就需要回传noteItem
+                    }
+                });
+
 
         FloatingActionButton addLinkInfoItemFab = findViewById(R.id.add_link_fab);
         FloatingActionButton addInfoFab = findViewById(R.id.add_info_item_fab);
@@ -53,8 +70,7 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
 
         addNoteInfoItemFab.setOnClickListener(v -> {
             NoteInfoItem noteInfoItem = new NoteInfoItem(null,null,infoGroupId,InfoItem.LACK_ID);
-            noteInfoItem.show(InfoItemDisplayActivity.this);//此处不保存到数据库，非空才保存
-            finish(); // FIXME: 2024-08-27 不该这样
+            noteInfoItem.show(InfoItemDisplayActivity.this, activityResultLauncher);//此处不保存到数据库，非空才保存
         });
 
         clearFab.setOnClickListener(v -> {
@@ -195,9 +211,9 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 InfoItem infoItem = mainList.get(position);
-                infoItem.show(InfoItemDisplayActivity.this);
-                finish();// FIXME: 2024-08-27 不应该这样
+                infoItem.show(InfoItemDisplayActivity.this, activityResultLauncher);
             });
+
             itemView.setOnLongClickListener(v -> {
                 int position = getAdapterPosition();
                 InfoItem infoItem = mainList.get(position);
@@ -228,8 +244,4 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 }

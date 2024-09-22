@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NoteActivity"
-    android:orientation="vertical">
+    tools:context=".NoteActivity">
 
     <EditText
         android:layout_width="match_parent"
@@ -15,12 +14,24 @@
         android:hint="title"
         style="@style/TextAppearance.AppCompat.Title"/>
 
+    <!--    这里从layout_gravity改成了gravity就能实现编辑位置的变化了-->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/note_content_tv"
-        android:layout_gravity="top"
+        android:gravity="top"
+        android:layout_below="@id/note_title_tv"
         android:hint="content"
         android:background="@drawable/note_background"/>
 
-</LinearLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/baseline_save_24"
+        android:layout_margin="20dp"
+        android:visibility="visible"
+        android:id="@+id/save_note_fab"/>
+
+</RelativeLayout>

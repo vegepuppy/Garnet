@@ -1,6 +1,9 @@
 package com.example.garnet;
 
 import android.content.Context;
+import android.content.Intent;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 import java.io.Serializable;
 
@@ -15,7 +18,7 @@ public abstract class InfoItem implements Serializable {
     public static final long LACK_ID = -1;
 
     abstract void show(Context context);
-
+    abstract void show(Context context, ActivityResultLauncher<Intent> launcher);// FIXME: 2024-09-22 这里不应该是Intent，最好要是InfoItem，但是这样需要自定义协议
     public InfoItem(String displayString, String content, long belong, long id) {
         this.displayString = displayString;
         this.content = content;
