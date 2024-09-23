@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.Nullable;
 
 import java.io.Serializable;
 
@@ -52,5 +53,11 @@ public abstract class InfoItem implements Serializable {
 
     public final long getBelong() {
         return belong;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        //比较Id相同
+        return obj instanceof InfoItem && ((InfoItem) obj).getId() == getId();
     }
 }

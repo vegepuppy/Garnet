@@ -19,6 +19,7 @@ public class NoteActivity extends AppCompatActivity {
     public static final int RESULT_NOTE_INSERT_CODE = 1111;// FIXME: 2024-09-22 暂时用1111表示，后面再改
     public static final int RESULT_NOTE_UPDATE_CODE = 2222;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +30,7 @@ public class NoteActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        noteInfoItem = (NoteInfoItem) intent.getSerializableExtra(NOTE_INFO_ITEM);
+        noteInfoItem = (NoteInfoItem) intent.getSerializableExtra(NOTE_INFO_ITEM, NoteInfoItem.class);//后面加入class对象，更加安全
 
         titleEt.setText(noteInfoItem.getDisplayString());
         contentEt.setText(noteInfoItem.getContent());
@@ -44,7 +45,6 @@ public class NoteActivity extends AppCompatActivity {
             String displayString = titleEt.getText().toString();
             String content = contentEt.getText().toString();
 
-            setResult(333);
             if (displayString.isEmpty()) {
                 if (content.isEmpty()) {
                     finish();
@@ -60,11 +60,14 @@ public class NoteActivity extends AppCompatActivity {
             noteInfoItem.setContent(content);
             noteInfoItem.setDisplayString(displayString);
 
+            Intent intent = new Intent();
+            intent.putExtra(NOTE_INFO_ITEM, noteInfoItem);
+
             if (noteInfoItem.getId() != InfoItem.LACK_ID) {
-                setResult(RESULT_NOTE_UPDATE_CODE);
+                setResult(RESULT_NOTE_UPDATE_CODE,intent);
                 helper.updateInfoItem(noteInfoItem, displayString, content);
             } else {
-                setResult(RESULT_NOTE_INSERT_CODE);
+                setResult(RESULT_NOTE_INSERT_CODE,intent);
                 helper.insertInfoItem(noteInfoItem);
             }
 

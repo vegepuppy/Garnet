@@ -1,6 +1,7 @@
 package com.example.garnet;
 
 import android.content.Intent;
+import android.icu.text.IDNA;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -50,13 +51,16 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    Toast.makeText(InfoItemDisplayActivity.this,"返回码" + result.getResultCode(), Toast.LENGTH_SHORT).show();
+                    InfoItem infoItem = null;
+                    if (result.getResultCode()!= RESULT_CANCELED) {
+                        infoItem = result.getData().getParcelableExtra(NoteActivity.NOTE_INFO_ITEM, InfoItem.class);
+                    }
                     if (result.getResultCode() == NoteActivity.RESULT_NOTE_INSERT_CODE) {
-                        mainList = mDatabaseHelper.loadInfo(infoGroupId);
-                        myAdapter.notifyItemInserted(mainList.size());
+                        mainList.add(infoItem);
+                        myAdapter.notifyItemInserted(mainList.size() - 1);
                     } else if(result.getResultCode() == NoteActivity.RESULT_NOTE_UPDATE_CODE){
-                        mainList = mDatabaseHelper.loadInfo(infoGroupId);
-                        myAdapter.notifyDataSetChanged(); // TODO: 2024-09-22 如果不全局通知，就需要回传noteItem
+                        mainList.set(mainList.indexOf(infoItem),infoItem);
+                        myAdapter.notifyItemChanged(mainList.indexOf(infoItem));
                     }
                 });
 
