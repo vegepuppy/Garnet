@@ -126,6 +126,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                 contentValues.put("TYPE", InfoItem.TYPE_LINK);
             } else if (item instanceof NoteInfoItem) {
                 contentValues.put("TYPE", InfoItem.TYPE_NOTE);
+            } else if ( item instanceof AppInfoItem) {
+                contentValues.put("TYPE", InfoItem.TYPE_APP);
             }
 
             long id = db.insert(TABLE_INFO_ITEM, null, contentValues);
@@ -360,6 +362,10 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                         ret.add(new WebInfoItem(displayFound,contentFound, infoGroupId, idFound));
                     }else if(type == InfoItem.TYPE_NOTE){
                         ret.add(new NoteInfoItem(displayFound,contentFound, infoGroupId, idFound));
+                    }else if(type == InfoItem.TYPE_APP){
+                        ret.add(new AppInfoItem(displayFound,contentFound, infoGroupId, idFound));
+                    }else{
+                        // TODO: 2024-09-24 throw exception ·
                     }
                 } while (cursor.moveToNext());
             }
