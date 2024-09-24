@@ -184,7 +184,16 @@ public class InfoFragment extends Fragment {
                         WebInfoItem webInfoItem = getSharedLinkInfoItem(infoGroup);
                         mDatabaseHelper.insertInfoItem(webInfoItem);
                         Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
-                        requireActivity().finish();
+                        //requireActivity().finish();
+                        // TODO: 2024-09-22 这里给用户一个选择，是回到原来的app还是继续在Garnet里面操作
+                        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+                        builder.setTitle("链接处理完毕");
+                        builder.setNegativeButton("离开Garnet", (dialog, which) -> requireActivity().finish());
+                        builder.setPositiveButton("留在Garnet", ((dialog, which) -> {
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        }));
+
                     });
                 }
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -202,15 +211,19 @@ public class InfoFragment extends Fragment {
         private @NonNull WebInfoItem getSharedLinkInfoItem(InfoGroup infoGroup) {
             // 查找以 'https://' 开头的部分
             int index = content.indexOf("https://");
-
-            // 分割字符串
-            String displayString = content.substring(0, index).trim();
-            String uri = content.substring(index);
-
-            return new WebInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
+            if (index != -1){
+                // 分割字符串
+                String displayString = content.substring(0, index).trim();
+                String uri = content.substring(index);
+                // TODO: 2024-09-22 这里应该改成AppInfoItem了，并且执行相应的跳转工作
+                return new WebInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
+            }
+            else {
+                Log.e("share", "自动处理链接失败！");
+                return null;
+                // FIXME: 2024-09-22 改成抛出异常
+            }
         }
-
-
     }
 
     private void showPopupMenu(View view, int position) {
