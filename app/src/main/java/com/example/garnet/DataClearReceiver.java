@@ -19,22 +19,8 @@ public class DataClearReceiver extends BroadcastReceiver {
         if(clearType.equals(CLEAR_DONE)){
             GarnetDatabaseHelper mDatabaseHelper = new GarnetDatabaseHelper(context);
             mDatabaseHelper.deleteDone();
+            // TODO: 2024-09-29 清理完之后应当发送通知，还没做
 
-            //发送一个通知，表示已经清理了
-            Intent notificationIntent = new Intent(context, Notifier.class);
-            intent.putExtra(Notifier.NOTIFICATION_TYPE, Notifier.CLEARED_NOTIFICATION);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    CLEARED_NOTIFICATION_CODE,
-                    notificationIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-            );
-
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                throw new RuntimeException(e);
-            } //这里必须要try-catch
         }
     }
 }

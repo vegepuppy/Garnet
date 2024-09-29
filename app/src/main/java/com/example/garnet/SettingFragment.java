@@ -14,6 +14,8 @@ import android.content.SharedPreferences;
 
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -39,6 +41,7 @@ public class SettingFragment extends Fragment {
 
     private SwitchCompat dailyNotificationSwitchCompat;
     private SwitchCompat weeklyNotificationSwitchCompat;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     private static final String PREF_TABLE_NAME = "prefTableName";
     private static final String PREF_DAILY_NOTIFICATION = "prefDailyNotification";
@@ -53,6 +56,16 @@ public class SettingFragment extends Fragment {
         initClearDoneNowButton(rootView, requireActivity());
         createNotificationChannel();
 
+        requestPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+//                        Snackbar.make(rootView, "已开启", Snackbar.LENGTH_SHORT).show();
+                    } else {
+//                        Snackbar.make(rootView, "未开启", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+         );
         return rootView;
     }
 
@@ -121,18 +134,21 @@ public class SettingFragment extends Fragment {
             );
             if (isChecked) {
                 Log.d("NOTI", "turned on notification");
+
                 if (checkNotificationPermissions(requireActivity())) {
                     scheduleDailyNotification(pendingIntent);
+                    editor.putBoolean(PREF_DAILY_NOTIFICATION,true);
+                    dailyNotificationSwitchCompat.setChecked(true);
+                }else{
+                    dailyNotificationSwitchCompat.setChecked(false);
                 }
-
             } else {
                 Log.d("NOTI", "turned off notification");
                 AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                 alarmManager.cancel(pendingIntent);
+                editor.putBoolean(PREF_DAILY_NOTIFICATION,false);
                 //保存设置
             }
-            // Permissions are granted
-            editor.putBoolean(PREF_DAILY_NOTIFICATION, isChecked);
             editor.apply();
         });
 
@@ -159,15 +175,20 @@ public class SettingFragment extends Fragment {
                 if (isChecked) {
                     Log.d("NOTI", "turned on notification");
                     if (checkNotificationPermissions(requireActivity())) {
-                        scheduleWeeklyNotification(pendingIntent);
+                        scheduleDailyNotification(pendingIntent);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,true);
+                        dailyNotificationSwitchCompat.setChecked(true);
+                    }else{
+                        dailyNotificationSwitchCompat.setChecked(false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,false);
                     }
                 } else {
                     Log.d("NOTI", "turned off notification");
                     AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                     alarmManager.cancel(pendingIntent);
+                    editor.putBoolean(PREF_WEEKLY_NOTIFICATION, false);
                 }
 
-                editor.putBoolean(PREF_WEEKLY_NOTIFICATION, isChecked);
                 editor.apply();
             }
         });
@@ -193,13 +214,10 @@ public class SettingFragment extends Fragment {
         boolean isEnabled = notificationManager.areNotificationsEnabled();
         if (!isEnabled) {
             // Open the app notification settings if notifications are not enabled
-            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
-            context.startActivity(intent);
-            return false;
+            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
         }
-        // Permissions are granted
-        return true;
+        isEnabled = notificationManager.areNotificationsEnabled();
+        return isEnabled;
     }
 
 
