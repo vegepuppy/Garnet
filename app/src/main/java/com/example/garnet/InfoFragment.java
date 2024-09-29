@@ -179,10 +179,9 @@ public class InfoFragment extends Fragment {
                     itemView.setOnClickListener(v ->{
                         int position = getAdapterPosition();
                         InfoGroup infoGroup = mainList.get(position);
-                        // FIXME: 2024-09-24 这块应该改成AppInfoItem更合适
                         AppInfoItem appInfoItem = getSharedAppInfoItem(infoGroup);
                         mDatabaseHelper.insertInfoItem(appInfoItem);
-                        LogUtils.logShare("saved to database");
+                        LogUtils.logShare(appInfoItem.getDisplayString() + "saved to database");
                         Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
 
                         showAlertDialog(infoGroup);
@@ -213,7 +212,7 @@ public class InfoFragment extends Fragment {
             builder.create().show();
         }
 
-        private @NonNull AppInfoItem getSharedAppInfoItem(InfoGroup infoGroup) {
+        private AppInfoItem getSharedAppInfoItem (InfoGroup infoGroup) {
             // 查找以 'https://' 开头的部分
             int index = content.indexOf("https://");
             if (index != -1){
