@@ -207,6 +207,7 @@ public class InfoFragment extends Fragment {
             builder.setPositiveButton("留在Garnet", ((dialog, which) -> {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
+                requireActivity().finish();
             }));
             LogUtils.logShare("alertDialog shown");
             builder.create().show();
