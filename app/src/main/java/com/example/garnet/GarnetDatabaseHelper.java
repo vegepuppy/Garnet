@@ -56,7 +56,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     "CONTENT TEXT," +
                     "BELONG INTEGER," +
                     "DISPLAY TEXT," +
-                    "TYPE INTEGER);");
+                    "TYPE INTEGER," +
+                    "PKG_NAME TEXT);");
 
             // 待办事项的相关信息：名称、日期、是否已经完成（0或1）
             db.execSQL("CREATE TABLE "+TABLE_TODO+"(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -122,12 +123,14 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             contentValues.put("CONTENT", item.getContent());
             contentValues.put("BELONG", item.getBelong());
             contentValues.put("DISPLAY", item.getDisplayString());
+
             if (item instanceof WebInfoItem) {
                 contentValues.put("TYPE", InfoItem.TYPE_LINK);
             } else if (item instanceof NoteInfoItem) {
                 contentValues.put("TYPE", InfoItem.TYPE_NOTE);
             } else if ( item instanceof AppInfoItem) {
                 contentValues.put("TYPE", InfoItem.TYPE_APP);
+                contentValues.put("PKG_NAME", ((AppInfoItem) item).getAppPackageName());
             }
 
             long id = db.insert(TABLE_INFO_ITEM, null, contentValues);
@@ -347,7 +350,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         String infoGroupIdString = String.valueOf(infoGroupId);
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             Cursor cursor = db.query(TABLE_INFO_ITEM,
-                    new String[]{"_id", "CONTENT", "BELONG", "DISPLAY","TYPE"},
+                    new String[]{"_id", "CONTENT", "BELONG", "DISPLAY","TYPE", "PKG_NAME"},
                     "BELONG = ?", new String[]{infoGroupIdString}, null, null, null);
 
             if (cursor.moveToFirst()) {
@@ -363,9 +366,8 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
                     }else if(type == InfoItem.TYPE_NOTE){
                         ret.add(new NoteInfoItem(displayFound,contentFound, infoGroupId, idFound));
                     }else if(type == InfoItem.TYPE_APP){
-                        ret.add(new AppInfoItem(displayFound,contentFound, infoGroupId, idFound));
-                    }else{
-                        // TODO: 2024-09-24 throw exception ·
+                        String packageName = cursor.getString(5);
+                        ret.add(new AppInfoItem(packageName, displayFound,contentFound, infoGroupId, idFound));
                     }
                 } while (cursor.moveToNext());
             }

@@ -212,20 +212,33 @@ public class InfoFragment extends Fragment {
             builder.create().show();
         }
 
-        private AppInfoItem getSharedAppInfoItem (InfoGroup infoGroup) {
-            // 查找以 'https://' 开头的部分
-            int index = content.indexOf("https://");
-            if (index != -1){
+        private @NonNull AppInfoItem getSharedAppInfoItem(InfoGroup infoGroup) {
+            // decide which app this content is from, candidates are: zhihu, bilibili, nullApp.
+            if (content.contains(AppInfoItem.ZHIHU_IDENTIFIER)) {
+                return parseZhihuInfo(content, infoGroup.getId());
+            } else if (content.contains(AppInfoItem.BILI_IDENTIFIER)) {
+                return parseBiliInfo(content, infoGroup.getId());
+            } else {
+                LogUtils.logShare("处理链接：" + content + "失败");
+                return new AppInfoItem(content, content, infoGroup.getId(), InfoItem.LACK_ID);
+            }
+        }
+
+        private AppInfoItem parseBiliInfo(String content, long infoGroupId) {
+            int index = content.indexOf(AppInfoItem.BILI_IDENTIFIER);
+            if (index != -1) {
                 // 分割字符串
                 String displayString = content.substring(0, index).trim();
                 String uri = content.substring(index);
-                return new AppInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
+                return new AppInfoItem(AppInfoItem.BILI_PACKAGE_NAME, displayString, uri, infoGroupId, InfoItem.LACK_ID);
+            } else {
+                LogUtils.logShare("处理链接：" + content + "失败");
+                return new AppInfoItem(content, content, infoGroupId, InfoItem.LACK_ID);
             }
-            else {
-                LogUtils.logShare("处理链接："+content+"失败");
-                return null;
-                // FIXME: 2024-09-22 改成抛出异常
-            }
+        }
+
+        private AppInfoItem parseZhihuInfo(String content, long infoGroupId) {
+            return new AppInfoItem(AppInfoItem.ZHIHU_PACKAGE_NAME, "知乎链接："+content,content, infoGroupId,InfoItem.LACK_ID);
         }
     }
 

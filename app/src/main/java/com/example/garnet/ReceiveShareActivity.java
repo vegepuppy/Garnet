@@ -1,5 +1,6 @@
 package com.example.garnet;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -42,7 +43,7 @@ public class ReceiveShareActivity extends AppCompatActivity{
             if ("text/plain".equals(type)) {
                 content = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if (content == null){
-                    throw new NullPointerException("null share intent");
+                    throw new NullPointerException("null share intent content");
                 }
             }
         }

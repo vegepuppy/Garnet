@@ -7,15 +7,24 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.garnet.utils.LogUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-// TODO: 2024-09-22 实机测试一下这个类是否正常工作
 public class AppInfoItem extends InfoItem{
-    public String appPackageName = "tv.danmaku.bili";
+    public static final String BILI_IDENTIFIER = "https://b23.tv";
+    public static final String ZHIHU_IDENTIFIER ="https://www.zhihu.com";
+    public static final String BILI_PACKAGE_NAME = "tv.danmaku.bili";
+    public static final String ZHIHU_PACKAGE_NAME = "com.zhihu.android";
+
+    public String getAppPackageName() {
+        return appPackageName;
+    }
+
+    private String appPackageName;
 
     public AppInfoItem(String appPackageName, String display, String uri, long belong, long id) {
         super(display, uri, belong, id);
@@ -24,32 +33,36 @@ public class AppInfoItem extends InfoItem{
 
     public AppInfoItem(String display, String uri, long belong, long id) {
         super(display, uri, belong, id);
-        this.appPackageName = "tv.danmaku.bili";
+        if (this.content.contains(AppInfoItem.BILI_IDENTIFIER)) {
+            this.appPackageName = BILI_PACKAGE_NAME;
+        }else if (this.content.contains(AppInfoItem.ZHIHU_IDENTIFIER)){
+            this.appPackageName = ZHIHU_PACKAGE_NAME;
+        } else {
+            this.appPackageName = "com.android.settings";
+        }
     }
 
     @Override
     void show(Context context) {
-        getAllApp(context);
-        getPackageActivities(context, "tv.danmaku.bili");
-
         LogUtils.logShare("AppInfoItem.show() called");
         PackageManager pm = context.getPackageManager();
         try {
             pm.getPackageInfo(appPackageName, PackageManager.GET_ACTIVITIES);
         } catch ( PackageManager.NameNotFoundException e){
             LogUtils.logShare("package name " +appPackageName+" not found");
+            Toast.makeText(context, "无效app外链！", Toast.LENGTH_SHORT).show();
         }
 
         Intent intent = pm.getLaunchIntentForPackage(appPackageName);
         if (intent != null) {
             intent.putExtra(Intent.EXTRA_TEXT, this.content);
-//            intent.setFlags(Intent.FLAG);
             context.startActivity(intent);
         }else {
             LogUtils.logShare("null share intent");
         }
     }
 
+    // 一下两个函数只用于调试，在业务中不发挥实际作用
     /**
      * 通过PackageManager获取手机内所有app的包名和启动页（首个启动Activity的类名）
      * 可根据自己业务需求封装方法的返回体，可以是单app信息，也可以是appList
