@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.garnet.utils.LogUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -177,14 +177,14 @@ public class InfoFragment extends Fragment {
                     });
                 } else if (requireActivity().getClass().equals(ReceiveShareActivity.class)) {
                     itemView.setOnClickListener(v ->{
-                        Log.d("SHARE", "another listener works.");
                         int position = getAdapterPosition();
                         InfoGroup infoGroup = mainList.get(position);
-
-                        LinkInfoItem linkInfoItem = getSharedLinkInfoItem(infoGroup);
-                        mDatabaseHelper.insertInfoItem(linkInfoItem);
+                        AppInfoItem appInfoItem = getSharedAppInfoItem(infoGroup);
+                        mDatabaseHelper.insertInfoItem(appInfoItem);
+                        LogUtils.logShare(appInfoItem.getDisplayString() + "saved to database");
                         Toast.makeText(requireActivity(), "成功添加信息！", Toast.LENGTH_SHORT).show();
-                        requireActivity().finish();
+
+                        showAlertDialog(infoGroup);
                     });
                 }
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -199,18 +199,48 @@ public class InfoFragment extends Fragment {
             });
         }
 
-        private @NonNull LinkInfoItem getSharedLinkInfoItem(InfoGroup infoGroup) {
-            // 查找以 'https://' 开头的部分
-            int index = content.indexOf("https://");
-
-            // 分割字符串
-            String displayString = content.substring(0, index).trim();
-            String uri = content.substring(index);
-
-            return new LinkInfoItem(displayString, uri, infoGroup.getId(), InfoItem.LACK_ID);
+        private void showAlertDialog(InfoGroup infoGroup) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            String str = "成功添加至：" + infoGroup.getName();
+            builder.setTitle(str);
+            builder.setNegativeButton("离开Garnet", (dialog, which) -> requireActivity().finish());
+            builder.setPositiveButton("留在Garnet", ((dialog, which) -> {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }));
+            LogUtils.logShare("alertDialog shown");
+            builder.create().show();
         }
 
+        private @NonNull AppInfoItem getSharedAppInfoItem(InfoGroup infoGroup) {
+            // decide which app this content is from, candidates are: zhihu, bilibili, nullApp.
+            if (content.contains(AppInfoItem.ZHIHU_IDENTIFIER)) {
+                return parseZhihuInfo(content, infoGroup.getId());
+            } else if (content.contains(AppInfoItem.BILI_IDENTIFIER)) {
+                return parseBiliInfo(content, infoGroup.getId());
+            } else {
+                LogUtils.logShare("处理链接：" + content + "失败");
+                return new AppInfoItem(content, content, infoGroup.getId(), InfoItem.LACK_ID);
+            }
+        }
 
+        private AppInfoItem parseBiliInfo(String content, long infoGroupId) {
+            int index = content.indexOf(AppInfoItem.BILI_IDENTIFIER);
+            if (index != -1) {
+                // 分割字符串
+                String displayString = content.substring(0, index).trim();
+                String uri = content.substring(index);
+                return new AppInfoItem(AppInfoItem.BILI_PACKAGE_NAME, displayString, uri, infoGroupId, InfoItem.LACK_ID);
+            } else {
+                LogUtils.logShare("处理链接：" + content + "失败");
+                return new AppInfoItem(content, content, infoGroupId, InfoItem.LACK_ID);
+            }
+        }
+
+        private AppInfoItem parseZhihuInfo(String content, long infoGroupId) {
+            return new AppInfoItem(AppInfoItem.ZHIHU_PACKAGE_NAME, "知乎链接："+content,content, infoGroupId,InfoItem.LACK_ID);
+        }
     }
 
     private void showPopupMenu(View view, int position) {

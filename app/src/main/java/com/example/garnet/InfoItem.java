@@ -11,6 +11,7 @@ import java.io.Serializable;
 public abstract class InfoItem implements Serializable {
     public static final int TYPE_LINK = 1;
     public static final int TYPE_NOTE = 2;
+    public static final int TYPE_APP = 3;
     protected String displayString;
     protected String content;
     protected long id;

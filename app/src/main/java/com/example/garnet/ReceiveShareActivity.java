@@ -6,8 +6,10 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.garnet.utils.LogUtils;
 
-public class ReceiveShareActivity extends AppCompatActivity {
+
+public class ReceiveShareActivity extends AppCompatActivity{
     private GarnetDatabaseHelper helper;
     public static final String CONTENT = "CONTENT";
 
@@ -30,7 +32,7 @@ public class ReceiveShareActivity extends AppCompatActivity {
     }
 
     // 获得从其他app中分享的Uri字符串
-    private String getSharedUri() {
+    private String getSharedUri() throws NullPointerException{
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -39,6 +41,9 @@ public class ReceiveShareActivity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
                 content = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (content == null){
+                    throw new NullPointerException("null share intent content");
+                }
             }
         }
         return content;

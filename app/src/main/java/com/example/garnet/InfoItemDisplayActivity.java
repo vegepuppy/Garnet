@@ -65,12 +65,12 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                 });
 
 
-        FloatingActionButton addLinkInfoItemFab = findViewById(R.id.add_link_fab);
+        FloatingActionButton addWebInfoItemFab = findViewById(R.id.add_link_fab);
         FloatingActionButton addInfoFab = findViewById(R.id.add_info_item_fab);
         FloatingActionButton addNoteInfoItemFab = findViewById(R.id.add_note_fab);
         FloatingActionButton clearFab = findViewById(R.id.clear_fab);
 
-        addLinkInfoItemFab.setOnClickListener(new AddLinkInfoItemFabOnClickListener());
+        addWebInfoItemFab.setOnClickListener(new AddWebInfoItemFabOnClickListener());
 
         addNoteInfoItemFab.setOnClickListener(v -> {
             NoteInfoItem noteInfoItem = new NoteInfoItem(null,null,infoGroupId,InfoItem.LACK_ID);
@@ -79,14 +79,14 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
 
         clearFab.setOnClickListener(v -> {
             clearFab.setVisibility(View.GONE);
-            addLinkInfoItemFab.setVisibility(View.GONE);
+            addWebInfoItemFab.setVisibility(View.GONE);
             addNoteInfoItemFab.setVisibility(View.GONE);
             addInfoFab.setVisibility(View.VISIBLE);
         });
 
         addInfoFab.setOnClickListener(v -> {
             clearFab.setVisibility(View.VISIBLE);
-            addLinkInfoItemFab.setVisibility(View.VISIBLE);
+            addWebInfoItemFab.setVisibility(View.VISIBLE);
             addNoteInfoItemFab.setVisibility(View.VISIBLE);
             addInfoFab.setVisibility(View.GONE);
         });
@@ -105,9 +105,9 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
 
     private void reFetchLinkTitle(){
         for(InfoItem infoItem : mainList){
-            if (infoItem instanceof LinkInfoItem) {
-                LinkInfoItem linkInfoItem = (LinkInfoItem) infoItem;
-                if(!linkInfoItem.isLinkFetched()){
+            if (infoItem instanceof WebInfoItem) {
+                WebInfoItem webInfoItem = (WebInfoItem) infoItem;
+                if(!webInfoItem.isLinkFetched()){
                     Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
                         public void handleMessage(Message msg){
                             if (msg.what == 1) {//用if替换掉原来的switch减少一个warning，兼顾安全性
@@ -117,37 +117,37 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                                 if (!response.isValid) {
     //                                Toast.makeText(InfoItemDisplayActivity.this,
     //                                        linkInfoItem.getContent()+":无效链接！", Toast.LENGTH_SHORT).show();
-                                    linkInfoItem.setDisplayString("无效链接:" + linkInfoItem.getContent());
-                                    mDatabaseHelper.updateInfoItem(linkInfoItem, "无效链接:" + linkInfoItem.getContent());
-                                    myAdapter.notifyItemChanged(mainList.indexOf(linkInfoItem));
-                                    linkInfoItem.setLinkFetched(true);
+                                    webInfoItem.setDisplayString("无效链接:" + webInfoItem.getContent());
+                                    mDatabaseHelper.updateInfoItem(webInfoItem, "无效链接:" + webInfoItem.getContent());
+                                    myAdapter.notifyItemChanged(mainList.indexOf(webInfoItem));
+                                    webInfoItem.setLinkFetched(true);
                                 } else if (!response.isSuccess) {
                                     Toast.makeText(InfoItemDisplayActivity.this,
-                                            linkInfoItem.getContent()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
-                                    linkInfoItem.setDisplayString(linkInfoItem.getContent());
-                                    linkInfoItem.setLinkFetched(false);
+                                            webInfoItem.getContent()+"获取网页信息超时失败！", Toast.LENGTH_SHORT).show();
+                                    webInfoItem.setDisplayString(webInfoItem.getContent());
+                                    webInfoItem.setLinkFetched(false);
                                 } else {
-                                    mDatabaseHelper.updateInfoItem(linkInfoItem, response.linkTitle);
-                                    linkInfoItem.setDisplayString(response.linkTitle);
+                                    mDatabaseHelper.updateInfoItem(webInfoItem, response.linkTitle);
+                                    webInfoItem.setDisplayString(response.linkTitle);
                                     Log.d("TAG", "linkInfoItem displayString set");
                                 }
                             }
                         }
                     };
-                    new Thread(new FetchLinkRunnable(titleFetchHandler, linkInfoItem.getContent())).start();
+                    new Thread(new FetchLinkRunnable(titleFetchHandler, webInfoItem.getContent())).start();
                 }
             }
         }
     }
 
-    private class AddLinkInfoItemFabOnClickListener implements View.OnClickListener {
+    private class AddWebInfoItemFabOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             final AddInfoDialogFragment addInfoDialogFragment = new AddInfoDialogFragment();
             addInfoDialogFragment.setStateListener(new AddInfoDialogFragment.StateListener() {
                 @Override
                 public void onConfirmed(String uri) {
-                    LinkInfoItem linkInfoItem = new LinkInfoItem(null,uri,infoGroupId, LinkInfoItem.LACK_ID);
+                    WebInfoItem webInfoItem = new WebInfoItem(null,uri,infoGroupId, WebInfoItem.LACK_ID);
                     // TODO: 2024-07-22 handler可能要封装 
                     Handler titleFetchHandler = new Handler(Looper.getMainLooper()){
                         @Override
@@ -158,15 +158,15 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
                                 // 改成在这里Toast就可以了
                                 if (!response.isValid) {
                                     Toast.makeText(InfoItemDisplayActivity.this, "无效链接！", Toast.LENGTH_SHORT).show();
-                                    linkInfoItem.setDisplayString("无效链接:"+ linkInfoItem.getContent());
+                                    webInfoItem.setDisplayString("无效链接:"+ webInfoItem.getContent());
                                 } else if (!response.isSuccess) {
                                     Toast.makeText(InfoItemDisplayActivity.this, "获取网页超时信息失败！", Toast.LENGTH_SHORT).show();
-                                    linkInfoItem.setDisplayString(uri);
+                                    webInfoItem.setDisplayString(uri);
                                 } else {
-                                    linkInfoItem.setDisplayString(response.linkTitle);
+                                    webInfoItem.setDisplayString(response.linkTitle);
                                     Log.d("TAG","linkInfoItem displayString set");
                                 }
-                                InfoItem itemWithId = mDatabaseHelper.insertInfoItem(linkInfoItem);
+                                InfoItem itemWithId = mDatabaseHelper.insertInfoItem(webInfoItem);
                                 updateMainList(itemWithId);
                             }
                         }
