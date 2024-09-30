@@ -9,6 +9,8 @@ import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+
 import com.example.garnet.utils.LogUtils;
 
 import java.util.Collections;
@@ -62,6 +64,11 @@ public class AppInfoItem extends InfoItem{
         }
     }
 
+    @Override
+    void show(Context context, ActivityResultLauncher<Intent> launcher) {
+        show(context);
+    }
+
     // 一下两个函数只用于调试，在业务中不发挥实际作用
     /**
      * 通过PackageManager获取手机内所有app的包名和启动页（首个启动Activity的类名）
@@ -94,6 +101,4 @@ public class AppInfoItem extends InfoItem{
             LogUtils.logShare("name not found");
         }
     }
-
-
 }

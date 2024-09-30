@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 
-public class LinkInfoItem extends InfoItem{
+public class WebInfoItem extends InfoItem{
 
     private boolean isLinkFetched;
     // 以上两个变量不能是final，用户可能会改，忽视IDE提示
@@ -37,7 +37,7 @@ public class LinkInfoItem extends InfoItem{
         show(context); //打开链接不需要result
     }
 
-    public LinkInfoItem(String display, String uri, long belong, long id) {
+    public WebInfoItem(String display, String uri, long belong, long id) {
         super(display, uri, belong, id);
     }
 
