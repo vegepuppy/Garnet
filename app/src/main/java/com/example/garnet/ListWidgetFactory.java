@@ -1,6 +1,8 @@
 package com.example.garnet;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -16,7 +18,6 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
     private final Context context;
     public ListWidgetFactory(Context context) {
         this.context = context;
-        loadData();
     }
 
     @Override
@@ -50,6 +51,15 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
         else {
             RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget_link);
             views.setTextViewText(R.id.widget_link,widget_list.get(position));
+            // 创建 Intent 用于删除
+            Intent intent = new Intent(context, MyWidgetProvider.class);
+            intent.setAction("ACTION_DELETE_ITEM");
+            intent.putExtra("ITEM_POSITION", position); // 传递要删除的项的索引
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            // 设置复选框的点击事件
+            views.setOnClickPendingIntent(R.id.widget_link, pendingIntent);
+            String num = String.valueOf(position);
+            Log.v("d_robot", num);
             return views;
         }
     }
@@ -74,14 +84,16 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
         return true;
     }
 
-    public void loadData(){
+    private void loadData(){
         widget_list.clear();
         GarnetDatabaseHelper widget_helper = new GarnetDatabaseHelper(context);
         List<HomeItem> widget_items = widget_helper.loadHome();
-        if (!widget_items.isEmpty()){
+        if (widget_items.get(0)!=null){
             for (int i = 0; i< widget_items.size(); i++){
-                String widget_task = widget_items.get(i).getHomeTask();
-                widget_list.add(widget_task);
+                if (!widget_items.get(i).getDone()) {
+                    String widget_task = widget_items.get(i).getHomeTask();
+                    widget_list.add(widget_task);
+                }
             }
         }
     }
