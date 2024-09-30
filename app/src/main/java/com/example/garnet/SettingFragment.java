@@ -59,13 +59,10 @@ public class SettingFragment extends Fragment {
         requestPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
-                    if(!isGranted){
-                        Snackbar.make(rootView, "通知权限未开启，无法使用通知功能", Snackbar.LENGTH_LONG)
-                                .setAction("前往设置", v -> {
-                                    Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
-                                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireActivity().getPackageName());
-                                    startActivity(intent);
-                                }).show();
+                    if (isGranted) {
+//                        Snackbar.make(rootView, "已开启", Snackbar.LENGTH_SHORT).show();
+                    } else {
+//                        Snackbar.make(rootView, "未开启", Snackbar.LENGTH_SHORT).show();
                     }
                 }
          );
