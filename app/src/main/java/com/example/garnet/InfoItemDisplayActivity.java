@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +35,14 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
     private long infoGroupId;
     private GarnetDatabaseHelper mDatabaseHelper;
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private TranslateAnimation showFabAnimation, hideFabAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info_item_display);
+
+        initAnimation();//初始化动画
 
         mDatabaseHelper = new GarnetDatabaseHelper(InfoItemDisplayActivity.this);
 
@@ -74,16 +79,24 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         });
 
         clearFab.setOnClickListener(v -> {
+            addWebInfoItemFab.startAnimation(hideFabAnimation);
             clearFab.setVisibility(View.GONE);
             addWebInfoItemFab.setVisibility(View.GONE);
+
+            addNoteInfoItemFab.startAnimation(hideFabAnimation);
             addNoteInfoItemFab.setVisibility(View.GONE);
             addInfoFab.setVisibility(View.VISIBLE);
+
         });
 
         addInfoFab.setOnClickListener(v -> {
             clearFab.setVisibility(View.VISIBLE);
             addWebInfoItemFab.setVisibility(View.VISIBLE);
+            addWebInfoItemFab.startAnimation(showFabAnimation);
+
             addNoteInfoItemFab.setVisibility(View.VISIBLE);
+            addNoteInfoItemFab.startAnimation(showFabAnimation);
+
             addInfoFab.setVisibility(View.GONE);
         });
 
@@ -97,6 +110,32 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
 
         mainList = mDatabaseHelper.loadInfo(infoGroupId);
         reFetchLinkTitle();
+    }
+
+    private void initAnimation() {
+        showFabAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF,//RELATIVE_TO_SELF表示操作自身
+                2,//fromXValue表示开始的X轴位置
+                Animation.RELATIVE_TO_SELF,
+                0,//fromXValue表示结束的X轴位置
+                Animation.RELATIVE_TO_SELF,
+                0,//fromXValue表示开始的Y轴位置
+                Animation.RELATIVE_TO_SELF,
+                0);//fromXValue表示结束的Y轴位置
+        showFabAnimation.setRepeatMode(Animation.REVERSE);
+        showFabAnimation.setDuration(300);
+
+        hideFabAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF,//RELATIVE_TO_SELF表示操作自身
+                0,//fromXValue表示开始的X轴位置
+                Animation.RELATIVE_TO_SELF,
+                2,//fromXValue表示结束的X轴位置
+                Animation.RELATIVE_TO_SELF,
+                0,//fromXValue表示开始的Y轴位置
+                Animation.RELATIVE_TO_SELF,
+                0);//fromXValue表示结束的Y轴位置
+        hideFabAnimation.setRepeatMode(Animation.REVERSE);
+        hideFabAnimation.setDuration(300);
     }
 
     private void reFetchLinkTitle(){
