@@ -88,8 +88,6 @@ public class SettingFragment extends Fragment {
             Intent intent = new Intent(requireActivity(), DataClearReceiver.class);
             intent.setAction(DataClearReceiver.ACTION_DATA_CLEAR_RECEIVER);
             intent.putExtra(DataClearReceiver.CLEAR_TYPE,DataClearReceiver.CLEAR_DONE);
-
-            requireActivity().sendBroadcast(intent);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     requireActivity(),
                     DataClearReceiver.DATA_CLEAR_CODE,
