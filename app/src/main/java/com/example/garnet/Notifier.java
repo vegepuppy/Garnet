@@ -28,13 +28,14 @@ public class Notifier extends BroadcastReceiver {
     public static final String NOTIFICATION_TYPE = "notificationType";
     public static final String CLEARED_NOTIFICATION = "clearedNotification";
 
+    public static final String ACTION_NOTIFIER_RECEIVER = "ACTION_NOTIFIER_RECEIVER";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Date dateToday = Calendar.getInstance().getTime();
 
         Log.d("NOTI", "dateToday is: " + dateToday.toString());
-
+        Log.d("Broadcast", "notifier receive");
         //给notification添加一个pendingIntent，点击时打开应用
         Intent startActivity = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -44,6 +45,7 @@ public class Notifier extends BroadcastReceiver {
                 PendingIntent.FLAG_IMMUTABLE);
 
         String notificationType = intent.getStringExtra(NOTIFICATION_TYPE);
+        Log.d("Broadcast", "notificationType is: " + notificationType);
 
         if (notificationType.equals(DAILY_NOTIFICATION)) {
             String message = new GarnetDatabaseHelper(context).loadTodoString(dateToday);

@@ -86,7 +86,10 @@ public class SettingFragment extends Fragment {
 
         clearSwitchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Intent intent = new Intent(requireActivity(), DataClearReceiver.class);
+            intent.setAction(DataClearReceiver.ACTION_DATA_CLEAR_RECEIVER);
             intent.putExtra(DataClearReceiver.CLEAR_TYPE,DataClearReceiver.CLEAR_DONE);
+
+            requireActivity().sendBroadcast(intent);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     requireActivity(),
                     DataClearReceiver.DATA_CLEAR_CODE,
@@ -125,6 +128,7 @@ public class SettingFragment extends Fragment {
             // Create an intent for the Notification BroadcastReceiver
             Intent intent = new Intent(requireActivity(), Notifier.class);
             intent.putExtra(Notifier.NOTIFICATION_TYPE, Notifier.DAILY_NOTIFICATION);
+            intent.setAction(Notifier.ACTION_NOTIFIER_RECEIVER);
             // Create a PendingIntent for the broadcast
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     requireActivity(),
