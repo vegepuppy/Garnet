@@ -1,9 +1,6 @@
 package com.example.garnet;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,67 +29,39 @@ public class MainActivity extends AppCompatActivity {
             // 在导航栏中的控件被用户选中时，执行此方法
             int id = menuItem.getItemId();
             if (id == R.id.bottom_home) {
-                selectedFragment(0);
+                replaceFragment(0);
             } else if (id == R.id.bottom_info) {
-                selectedFragment(1);
+                replaceFragment(1);
             } else if (id == R.id.bottom_todo) {
-                selectedFragment(2);
+                replaceFragment(2);
             } else if (id == R.id.bottom_settings) {
-                selectedFragment(3);
+                replaceFragment(3);
             }
             return true;
         });
-        selectedFragment(0);// 默认进入主页
+        replaceFragment(0);// 默认进入主页
     }
 
-    public void selectedFragment(int position) {
+    public void replaceFragment(int position) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        hideFragment(transaction);
 
-        if (position == 0) {
-            if (homeFragment == null) {
-                homeFragment = new HomeFragment();
-                transaction.add(R.id.content, homeFragment);
-            } else {
-                transaction.show(homeFragment);
-            }
-        } else if (position == 1) {
-            if (infoFragment == null) {
-                infoFragment = new InfoFragment();
-                transaction.add(R.id.content, infoFragment);
-            } else {
-                transaction.show(infoFragment);
-            }
-        } else if (position == 2) {
-            if (todoFragment == null) {
-                todoFragment = new TodoFragment();
-                transaction.add(R.id.content, todoFragment);
-            } else {
-                transaction.show(todoFragment);
-            }
-        } else if (position == 3) {
-            if (settingFragment == null) {
-                settingFragment = new SettingFragment();
-                transaction.add(R.id.content, settingFragment);
-            } else {
-                transaction.show(settingFragment);
-            }
+        switch (position){
+            case 0:
+                transaction.replace(R.id.content, new HomeFragment());
+                break;
+            case 1:
+                transaction.replace(R.id.content, new InfoFragment());
+                break;
+            case 2:
+                transaction.replace(R.id.content, new TodoFragment());
+                break;
+            case 3:
+                transaction.replace(R.id.content, new SettingFragment());
+                break;
+            default:
+                throw new IllegalArgumentException("invalid navigation position");
         }
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);// 设置过渡动画
         transaction.commit();
-    }
-
-    private void hideFragment(FragmentTransaction transaction) {
-        if (homeFragment != null) {
-            transaction.hide(homeFragment);
-        }
-        if (infoFragment != null) {
-            transaction.hide(infoFragment);
-        }
-        if (todoFragment != null) {
-            transaction.hide(todoFragment);
-        }
-        if (settingFragment != null){
-            transaction.hide(settingFragment);
-        }
     }
 }
