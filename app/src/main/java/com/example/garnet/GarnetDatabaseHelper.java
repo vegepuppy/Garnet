@@ -1,5 +1,6 @@
 package com.example.garnet;
 
+import android.appwidget.AppWidgetManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -264,7 +265,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         try (SQLiteDatabase db1 = this.getWritableDatabase()){
             Cursor cursor = db1.query(TABLE_TODO,
                     new String[]{"_id","TASK","DONE"},
-                    "DUE = ?",new String[]{"2024-09-16"},null,null,null);
+                    "DUE = ?",new String[]{"2024-07-23"},null,null,null);
             if(cursor.moveToFirst()){
                 do{
                     final int idIdx = 0;
@@ -455,6 +456,16 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
             String idString = String.valueOf(id);
             ContentValues contentValues = new ContentValues();
             contentValues.put("DONE", newIsCheckedString);
+            db.update(TABLE_TODO, contentValues, "_id = ?", new String[]{idString});
+        }
+    }
+
+    public void updateWidgetStatus(HomeItem widget_hi){
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            long id = widget_hi.getId();
+            String idString = String.valueOf(id);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("DONE", 1);
             db.update(TABLE_TODO, contentValues, "_id = ?", new String[]{idString});
         }
     }
