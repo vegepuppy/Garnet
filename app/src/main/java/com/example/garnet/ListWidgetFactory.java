@@ -55,9 +55,8 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
             Intent intent = new Intent(context, MyWidgetProvider.class);
             intent.setAction("ACTION_DELETE_ITEM");
             intent.putExtra("ITEM_POSITION", position); // 传递要删除的项的索引
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             // 设置复选框的点击事件
-            views.setOnClickPendingIntent(R.id.widget_link, pendingIntent);
+            views.setOnClickFillInIntent(R.id.widget_link, intent);
             String num = String.valueOf(position);
             Log.v("d_robot", num);
             return views;

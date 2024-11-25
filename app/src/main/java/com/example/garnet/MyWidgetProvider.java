@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.ListView;
@@ -84,7 +85,10 @@ public class MyWidgetProvider extends AppWidgetProvider{
             //获得listview的适配器
             Intent listIntent = new Intent(context, ListWidgetService.class);
             remoteViews.setRemoteAdapter(R.id.widget_lv,listIntent);
-
+            Intent intentTemplate = new Intent(context, MyWidgetProvider.class);
+            intentTemplate.setAction("ACTION_DELETE_ITEM");
+            PendingIntent pendingIntentTemplate = PendingIntent.getBroadcast(context, 1563298, intentTemplate, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            remoteViews.setPendingIntentTemplate(R.id.widget_lv, pendingIntentTemplate);
             //点击日期跳转到原应用
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
