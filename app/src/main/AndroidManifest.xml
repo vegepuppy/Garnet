@@ -7,9 +7,9 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <queries>
-        <package android:name="tv.danmaku.bili"/>
-        <package android:name="com.zhihu.android"/>
-        <package android:name="com.xingin.xhs"/>
+        <package android:name="tv.danmaku.bili" />
+        <package android:name="com.zhihu.android" />
+        <package android:name="com.xingin.xhs" />
     </queries>
 
     <application
@@ -22,12 +22,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Garnet"
         tools:targetApi="31">
+        <activity
+            android:name=".LogInActivity"
+            android:exported="false" />
 
         <receiver
             android:name=".DataClearReceiver"
             android:enabled="true"
-            android:exported="true">
-        </receiver>
+            android:exported="true"></receiver>
 
         <activity
             android:name=".ReceiveShareActivity"
@@ -45,11 +47,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".NoteActivity"
             android:exported="false" />
@@ -58,9 +61,9 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".AttachInfoGroupActivity"
@@ -75,13 +78,14 @@
         <receiver
             android:name=".Notifier"
             android:enabled="true" />
-
-        <receiver android:name=".MyWidgetProvider"
+        <receiver
+            android:name=".MyWidgetProvider"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="ACTION_DELETE_ITEM" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
@@ -96,7 +100,6 @@
                 <action android:name="ACTION_DELETE_ITEM" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>
