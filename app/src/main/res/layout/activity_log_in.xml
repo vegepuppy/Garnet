@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="80dp"
     tools:context=".LogInActivity">
 
     <ImageView
@@ -26,18 +25,19 @@
         android:id="@+id/login_tv"/>
     <EditText
         android:layout_marginBottom="10dp"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:hint="User Name"
         android:id="@+id/user_name_et"/>
     <EditText
         android:layout_marginBottom="10dp"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/password_et"
         android:hint="Password"
         android:inputType="textPassword"
+        android:layout_centerHorizontal="true"
         android:layout_below="@+id/user_name_et"/>
     <Button
         android:layout_width="wrap_content"

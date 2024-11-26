@@ -54,6 +54,7 @@ public class SettingFragment extends Fragment {
         initDailyNotificationSwitch(rootView);
         initWeeklyNotificationSwitch(rootView);
         initClearDoneNowButton(rootView, requireActivity());
+        initLogInButton(rootView);
         createNotificationChannel();
 
         requestPermissionLauncher = registerForActivityResult(
@@ -67,6 +68,14 @@ public class SettingFragment extends Fragment {
                 }
          );
         return rootView;
+    }
+
+    private void initLogInButton(View rootView) {
+        Button logInButton = rootView.findViewById(R.id.log_in_button);
+        logInButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), LogInActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void initClearDoneNowButton(View rootView, Context context) {
