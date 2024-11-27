@@ -44,10 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/password_et"
         android:layout_centerHorizontal="true"
+        android:id="@+id/log_in_button_activity"
         android:text="登录/注册"/>
-
-
-
-
-
 </RelativeLayout>
