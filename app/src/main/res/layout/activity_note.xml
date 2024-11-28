@@ -12,17 +12,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/note_title_tv"
         android:hint="title"
+        android:textSize="@dimen/text_size_large"
         style="@style/TextAppearance.AppCompat.Title"/>
 
     <!--    这里从layout_gravity改成了gravity就能实现编辑位置的变化了-->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingHorizontal="5dp"
         android:id="@+id/note_content_tv"
         android:gravity="top"
         android:layout_below="@id/note_title_tv"
+        android:textSize="@dimen/text_size_small"
         android:hint="content"
-        android:background="@drawable/note_background"/>
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/GarnetFabStyle"
@@ -30,6 +33,7 @@
         android:src="@drawable/baseline_save_24"
         android:layout_marginBottom="20dp"
         android:visibility="visible"
+        android:background="@null"
         android:id="@+id/save_note_fab"/>
 
 </RelativeLayout>

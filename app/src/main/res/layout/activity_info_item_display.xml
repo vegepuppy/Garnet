@@ -6,19 +6,12 @@
     tools:context=".InfoItemDisplayActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
+        style="@style/GarnetHeadingStyle"
         android:id="@+id/info_item_group_name_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        style="@style/GarnetTopRvStyle"
         android:layout_below="@+id/info_item_group_name_tv"
-        android:layout_alignStart="@+id/info_item_group_name_tv"
-        android:layout_marginTop="20dp"
         android:id="@+id/info_item_display_rv"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

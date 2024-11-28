@@ -6,15 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InfoFragment">
+    <TextView
+        style="@style/GarnetHeadingStyle"
+        android:text="资料列表"
+        android:id="@+id/info_heading_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        style="@style/GarnetTopRvStyle"
+        android:layout_below="@id/info_heading_tv"
         android:id="@+id/info_item_recyclerview"
-        android:paddingTop = "20dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_centerHorizontal="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         style="@style/GarnetFabStyle"

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_large" >30sp</dimen>
+    <dimen name="text_size_medium">22sp</dimen>
+    <dimen name="text_size_small" >20sp</dimen>
+    <dimen name="padding_top_rv">20dp</dimen>
+    <dimen name="padding_inner_rv">10dp</dimen>
+</resources>

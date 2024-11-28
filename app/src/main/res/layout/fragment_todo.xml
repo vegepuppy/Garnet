@@ -5,14 +5,15 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".TodoFragment">
+    <TextView
+        style="@style/GarnetHeadingStyle"
+        android:text="待办事项"
+        android:id="@+id/todo_heading_rv"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        style="@style/GarnetTopRvStyle"
         android:id="@+id/todo_rv"
-        android:paddingLeft="10dp"
-        android:paddingTop="20dp"
-        android:paddingRight="10dp"
+        android:layout_below="@id/todo_heading_rv"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

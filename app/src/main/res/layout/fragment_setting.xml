@@ -5,6 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".SettingFragment">
 
+   <TextView
+       style="@style/GarnetHeadingStyle"
+       android:text="设置"
+       android:id="@+id/settings_heading_tv"/>
    <androidx.cardview.widget.CardView
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
@@ -16,6 +20,7 @@
        android:layout_marginVertical="8dp"
        android:foreground="?android:attr/selectableItemBackground"
        xmlns:tools="http://schemas.android.com/tools"
+       android:layout_below="@id/settings_heading_tv"
        android:id="@+id/daily_notification_card">
       <androidx.appcompat.widget.SwitchCompat
           android:layout_width="wrap_content"
