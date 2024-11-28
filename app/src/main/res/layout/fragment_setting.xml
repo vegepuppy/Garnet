@@ -10,16 +10,7 @@
        android:text="设置"
        android:id="@+id/settings_heading_tv"/>
    <androidx.cardview.widget.CardView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       xmlns:app="http://schemas.android.com/apk/res-auto"
-       android:drawableStart="@drawable/baseline_123_24"
-       app:cardCornerRadius="20dp"
-       android:layout_margin="10dp"
-       android:layout_marginHorizontal="16dp"
-       android:layout_marginVertical="8dp"
-       android:foreground="?android:attr/selectableItemBackground"
-       xmlns:tools="http://schemas.android.com/tools"
+       style="@style/GarnetCardStyle"
        android:layout_below="@id/settings_heading_tv"
        android:id="@+id/daily_notification_card">
       <androidx.appcompat.widget.SwitchCompat
@@ -31,16 +22,8 @@
    </androidx.cardview.widget.CardView>
 
    <androidx.cardview.widget.CardView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       xmlns:app="http://schemas.android.com/apk/res-auto"
-       android:drawableStart="@drawable/baseline_123_24"
-       app:cardCornerRadius="20dp"
-       android:layout_margin="10dp"
-       android:layout_marginHorizontal="16dp"
-       android:layout_marginVertical="8dp"
+       style="@style/GarnetCardStyle"
        android:layout_below="@id/daily_notification_card"
-       android:foreground="?android:attr/selectableItemBackground"
        android:id="@+id/weekly_notification_card">
       <androidx.appcompat.widget.SwitchCompat
           android:layout_width="wrap_content"
@@ -52,16 +35,8 @@
 
 
    <androidx.cardview.widget.CardView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       xmlns:app="http://schemas.android.com/apk/res-auto"
-       android:drawableStart="@drawable/baseline_123_24"
-       app:cardCornerRadius="20dp"
-       android:layout_margin="10dp"
-       android:layout_marginHorizontal="16dp"
-       android:layout_marginVertical="8dp"
+      style="@style/GarnetCardStyle"
        android:layout_below="@id/weekly_notification_card"
-       android:foreground="?android:attr/selectableItemBackground"
        android:id="@+id/clear_card">
       <RelativeLayout
           android:layout_width="match_parent"

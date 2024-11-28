@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:drawableStart="@drawable/baseline_123_24"
-    app:cardCornerRadius="20dp"
-    android:layout_margin="10dp"
-    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/GarnetCardStyle"
     android:id="@+id/info_item_cardview"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
     android:foreground="?android:attr/selectableItemBackground">
 
     <TextView

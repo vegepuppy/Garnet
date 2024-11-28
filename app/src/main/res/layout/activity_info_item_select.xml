@@ -14,6 +14,6 @@
     <androidx.recyclerview.widget.RecyclerView
         style="@style/GarnetTopRvStyle"
         android:id="@+id/select_info_item_rv"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@id/select_info_item_title_tv" />
 
 </RelativeLayout>
