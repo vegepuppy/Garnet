@@ -3,6 +3,7 @@ package com.example.garnet;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,41 +13,54 @@ import android.content.Intent;
 
 import android.content.SharedPreferences;
 
+import android.icu.text.IDNA;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
+import com.example.garnet.utils.LogUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class SettingFragment extends Fragment {
 
+    private static final int LAUNCH_LOGIN_ACTIVITY = 100;
     private SwitchCompat dailyNotificationSwitchCompat;
     private SwitchCompat weeklyNotificationSwitchCompat;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private TextView userNameTextView;
 
     private static final String PREF_TABLE_NAME = "prefTableName";
     private static final String PREF_DAILY_NOTIFICATION = "prefDailyNotification";
     private static final String PREF_WEEKLY_NOTIFICATION = "prefWeeklyNotification";
     private static final String PREF_WEEKLY_CLEAR = "prefWeeklyClear";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,7 +68,7 @@ public class SettingFragment extends Fragment {
         initDailyNotificationSwitch(rootView);
         initWeeklyNotificationSwitch(rootView);
         initClearDoneNowButton(rootView, requireActivity());
-        initLogInButton(rootView);
+        initLogInPart(rootView);
         createNotificationChannel();
 
         requestPermissionLauncher = registerForActivityResult(
@@ -66,16 +80,77 @@ public class SettingFragment extends Fragment {
 //                        Snackbar.make(rootView, "未开启", Snackbar.LENGTH_SHORT).show();
                     }
                 }
-         );
+        );
         return rootView;
     }
 
-    private void initLogInButton(View rootView) {
+    private void initLogInPart(View rootView) {
         Button logInButton = rootView.findViewById(R.id.log_in_button);
+        userNameTextView = rootView.findViewById(R.id.user_name_tv);
         logInButton.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), LogInActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, LAUNCH_LOGIN_ACTIVITY);
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LAUNCH_LOGIN_ACTIVITY) {
+            if (resultCode == Activity.RESULT_OK) {
+                String userName = data.getStringExtra("username");
+                userNameTextView.setText(userName);
+                syncDatabase();
+            }
+        }
+    }
+
+    // 先只做待办
+    private void syncDatabase() {
+        GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
+        List<InfoItem> testInfoItemList = helper.loadInfo(1);//当前只测试id为1的InfoGroup
+        OkHttpClient client = new OkHttpClient();
+
+        JSONArray jsonArray = new JSONArray();
+        for (InfoItem infoItem : testInfoItemList) {
+            putInfoItemJson(infoItem, jsonArray);
+        }
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody requestBody = RequestBody.create(JSON, jsonArray.toString());
+
+        String url = "http://10.0.2.2:3001/infoitem";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        new Thread(() -> {
+            try {
+                Response response = client.newCall(request).execute();
+                String message = response.isSuccessful() ? response.body().string() : "Error: " + response.code();
+//                runOnUiThread(() -> Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show());
+                LogUtils.logWeb(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+//                runOnUiThread(() -> Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_SHORT).show());
+                LogUtils.logWeb("error occurred");
+            }
+        }).start();
+    }
+
+    private void putInfoItemJson(InfoItem infoItem, JSONArray jsonArray) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("id", infoItem.getId());
+            jsonObject.put("content", infoItem.getContent());
+            jsonObject.put("belong", infoItem.getBelong());
+            jsonObject.put("display", infoItem.getDisplayString());
+        } catch (Exception e) {
+            Log.e("TAG", "putInfoItemJson: error occurred in putting in JSON.");
+        }
+        jsonArray.put(jsonObject);
     }
 
     private void initClearDoneNowButton(View rootView, Context context) {
@@ -95,7 +170,7 @@ public class SettingFragment extends Fragment {
 
         clearSwitchCompat.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Intent intent = new Intent(requireActivity(), DataClearReceiver.class);
-            intent.putExtra(DataClearReceiver.CLEAR_TYPE,DataClearReceiver.CLEAR_DONE);
+            intent.putExtra(DataClearReceiver.CLEAR_TYPE, DataClearReceiver.CLEAR_DONE);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     requireActivity(),
                     DataClearReceiver.DATA_CLEAR_CODE,
@@ -103,16 +178,16 @@ public class SettingFragment extends Fragment {
                     PendingIntent.FLAG_IMMUTABLE
             );
             AlarmManager alarmManager;// 可能有问题
-            if(isChecked){
+            if (isChecked) {
                 alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
                 long time = getDailySendTimeInMillis();
 
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                         time,
-                        AlarmManager.INTERVAL_DAY*7,
+                        AlarmManager.INTERVAL_DAY * 7,
                         pendingIntent);
 
-            }else {
+            } else {
                 alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
                 alarmManager.cancel(pendingIntent);
 
@@ -122,7 +197,7 @@ public class SettingFragment extends Fragment {
         });
     }
 
-    private void initDailyNotificationSwitch(View rootView){
+    private void initDailyNotificationSwitch(View rootView) {
         dailyNotificationSwitchCompat = rootView.findViewById(R.id.daily_notification_switch);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TABLE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -146,23 +221,24 @@ public class SettingFragment extends Fragment {
 
                 if (checkNotificationPermissions(requireActivity())) {
                     scheduleDailyNotification(pendingIntent);
-                    editor.putBoolean(PREF_DAILY_NOTIFICATION,true);
+                    editor.putBoolean(PREF_DAILY_NOTIFICATION, true);
                     dailyNotificationSwitchCompat.setChecked(true);
-                }else{
+                } else {
                     dailyNotificationSwitchCompat.setChecked(false);
                 }
             } else {
                 Log.d("NOTI", "turned off notification");
                 AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE); // 可能有问题
                 alarmManager.cancel(pendingIntent);
-                editor.putBoolean(PREF_DAILY_NOTIFICATION,false);
+                editor.putBoolean(PREF_DAILY_NOTIFICATION, false);
                 //保存设置
             }
             editor.apply();
         });
 
     }
-    private void initWeeklyNotificationSwitch(View rootView){
+
+    private void initWeeklyNotificationSwitch(View rootView) {
         weeklyNotificationSwitchCompat = rootView.findViewById(R.id.weekly_notification_switch);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TABLE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -185,11 +261,11 @@ public class SettingFragment extends Fragment {
                     Log.d("NOTI", "turned on notification");
                     if (checkNotificationPermissions(requireActivity())) {
                         scheduleDailyNotification(pendingIntent);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,true);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, true);
                         dailyNotificationSwitchCompat.setChecked(true);
-                    }else{
+                    } else {
                         dailyNotificationSwitchCompat.setChecked(false);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, false);
                     }
                 } else {
                     Log.d("NOTI", "turned off notification");
@@ -247,7 +323,7 @@ public class SettingFragment extends Fragment {
     }
 
 
-    private void scheduleWeeklyNotification(PendingIntent pendingIntent){
+    private void scheduleWeeklyNotification(PendingIntent pendingIntent) {
         AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
         long time = getWeeklySendTimeInMillis();
         Log.d("NOTI", "time: " + time);
@@ -255,7 +331,7 @@ public class SettingFragment extends Fragment {
 
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 time,
-                AlarmManager.INTERVAL_DAY*7,
+                AlarmManager.INTERVAL_DAY * 7,
                 pendingIntent);
         Log.d("NOTI", "alarm set at: " + new SimpleDateFormat("yyyy-MM-dd, HH:mm:ss").format(time));
 
@@ -284,14 +360,14 @@ public class SettingFragment extends Fragment {
         //HH24小时制，hh12小时制
         return calendar.getTimeInMillis();
     }
-    private long getWeeklySendTimeInMillis(){
+
+    private long getWeeklySendTimeInMillis() {
         Calendar calendar = Calendar.getInstance();
         int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-        if(currentDayOfWeek == Calendar.SUNDAY){
+        if (currentDayOfWeek == Calendar.SUNDAY) {
             Log.d("NOTI", "Sunday today");
-        }
-        else{
+        } else {
             calendar.set(Calendar.DAY_OF_WEEK, 7);
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
