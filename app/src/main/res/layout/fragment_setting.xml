@@ -11,6 +11,7 @@
        android:id="@+id/settings_heading_tv"/>
    <androidx.cardview.widget.CardView
        style="@style/GarnetCardStyle"
+       android:layout_marginHorizontal="18dp"
        android:layout_below="@id/settings_heading_tv"
        android:id="@+id/daily_notification_card">
       <androidx.appcompat.widget.SwitchCompat
@@ -22,6 +23,7 @@
    </androidx.cardview.widget.CardView>
 
    <androidx.cardview.widget.CardView
+       android:layout_marginHorizontal="18dp"
        style="@style/GarnetCardStyle"
        android:layout_below="@id/daily_notification_card"
        android:id="@+id/weekly_notification_card">
@@ -35,7 +37,8 @@
 
 
    <androidx.cardview.widget.CardView
-      style="@style/GarnetCardStyle"
+       android:layout_marginHorizontal="18dp"
+       style="@style/GarnetCardStyle"
        android:layout_below="@id/weekly_notification_card"
        android:id="@+id/clear_card">
       <RelativeLayout
