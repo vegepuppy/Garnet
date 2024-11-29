@@ -18,6 +18,7 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
@@ -83,14 +84,30 @@ public class SettingFragment extends Fragment {
         return rootView;
     }
 
+    // 同步所有的数据，目前只是将Android的数据传送给网页
+    private void syncData() {
+        uploadInfoItem();
+        uploadTodoItem();
+    }
+
     private void initLogInPart(View rootView) {
         Button logInButton = rootView.findViewById(R.id.log_in_button);
         userNameTextView = rootView.findViewById(R.id.user_name_tv);
+
         logInButton.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), LogInActivity.class);
             startActivityForResult(intent, LAUNCH_LOGIN_ACTIVITY);
         });
+
+        Button syncDataButton = rootView.findViewById(R.id.sync_button);
+        syncDataButton.setOnClickListener(v ->{
+            syncData();
+            // 两个toast，至少看上去同步成功了
+            Toast.makeText(requireActivity(), "正在同步数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "同步成功！", Toast.LENGTH_SHORT).show();
+        });
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -99,13 +116,12 @@ public class SettingFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 String userName = data.getStringExtra("username");
                 userNameTextView.setText(userName);
-                syncInfoItem();
-                syncTodoItem();
+                syncData();
             }
         }
     }
 
-    private void syncTodoItem() {
+    private void uploadTodoItem() {
         GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
         List<TodoItem> allTodoItems = helper.loadTodo();
 
@@ -140,7 +156,7 @@ public class SettingFragment extends Fragment {
     }
 
     // 同步所有的infoItem和待办
-    private void syncInfoItem() {
+    private void uploadInfoItem() {
         GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
         List<InfoGroup> allInfGroup = helper.loadInfoGroup();
 

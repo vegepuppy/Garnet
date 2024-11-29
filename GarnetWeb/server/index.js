@@ -52,7 +52,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/infoitem', (req, res) => {
-  infoItems = [...infoItems, ...req.body];
+  infoItems = [...req.body];
 
   if (!Array.isArray(infoItems)) {
     return res
@@ -76,7 +76,7 @@ app.post('/infoitem', (req, res) => {
 });
 
 app.post('/todoitem', (req, res) => {
-  todoItems = [...todoItems, ...req.body];
+  todoItems = [...req.body];
 
   if (!Array.isArray(todoItems)) {
     return res

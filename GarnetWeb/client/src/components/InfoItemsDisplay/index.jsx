@@ -34,7 +34,7 @@ function InfoItemDisplay() {
       <ul>
         {data.map((item) => (
           <li key={item.id}>
-            <a href={item.display}>{item.content}</a> (Belong: {item.belong})
+            <a href={item.content}>{item.display}</a> (Belong: {item.belong})
           </li>
         ))}
       </ul>
