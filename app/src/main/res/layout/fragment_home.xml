@@ -8,21 +8,14 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_margin="20dp"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        style="@style/GarnetHeadingStyle"
         android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/home_top_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        style="@style/GarnetTopRvStyle"
         android:layout_below="@+id/home_top_tv"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
         android:id="@+id/home_rv"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </RelativeLayout>

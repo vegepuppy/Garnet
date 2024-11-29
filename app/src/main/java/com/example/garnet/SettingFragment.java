@@ -177,9 +177,9 @@ public class SettingFragment extends Fragment {
                     if (checkNotificationPermissions(requireActivity())) {
                         scheduleDailyNotification(pendingIntent);
                         editor.putBoolean(PREF_WEEKLY_NOTIFICATION,true);
-                        dailyNotificationSwitchCompat.setChecked(true);
+                        weeklyNotificationSwitchCompat.setChecked(true);
                     }else{
-                        dailyNotificationSwitchCompat.setChecked(false);
+                        weeklyNotificationSwitchCompat.setChecked(false);
                         editor.putBoolean(PREF_WEEKLY_NOTIFICATION,false);
                     }
                 } else {
