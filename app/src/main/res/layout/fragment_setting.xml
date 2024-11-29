@@ -1,85 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".SettingFragment">
 
-   <TextView
-       style="@style/GarnetHeadingStyle"
-       android:layout_marginBottom="20dp"
-       android:text="设置"
-       android:id="@+id/settings_heading_tv"/>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        app:cardCornerRadius="20dp">
 
-   <androidx.cardview.widget.CardView
-       style="@style/GarnetCardStyle"
-       android:layout_marginHorizontal="18dp"
-       android:layout_below="@id/settings_heading_tv"
-       android:id="@+id/daily_notification_card">
-      <androidx.appcompat.widget.SwitchCompat
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="每日早晨通知"
-          android:textSize="@dimen/text_size_small"
-          android:padding="@dimen/padding_inner_tv"
-          android:id="@+id/daily_notification_switch"
-          android:thumb="@drawable/switch_thumb"
-          app:track="@drawable/switch_track_style"
-          app:switchPadding="5dp"/>
-   </androidx.cardview.widget.CardView>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-   <androidx.cardview.widget.CardView
-       android:layout_marginHorizontal="18dp"
-       style="@style/GarnetCardStyle"
-       android:layout_below="@id/daily_notification_card"
-       android:id="@+id/weekly_notification_card">
-      <androidx.appcompat.widget.SwitchCompat
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:padding="@dimen/padding_inner_tv"
-          android:text="每周通知未完成的无日期待办"
-          android:textSize="@dimen/text_size_small"
-          android:id="@+id/weekly_notification_switch"
-          android:thumb="@drawable/switch_thumb"
-          app:track="@drawable/switch_track_style"
-          app:switchPadding="5dp"/>
+            <TextView
+                android:id="@+id/user_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="尚未登录"
+                android:textSize="50px" />
 
-   </androidx.cardview.widget.CardView>
+            <Button
+                android:id="@+id/log_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="登录/注册" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sync_button"
+                android:layout_toLeftOf="@+id/log_in_button"
+                android:text="同步数据"/>
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 
-   <androidx.cardview.widget.CardView
-       android:layout_marginHorizontal="18dp"
-       style="@style/GarnetCardStyle"
-       android:layout_below="@id/weekly_notification_card"
-       android:id="@+id/clear_card">
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-         <androidx.appcompat.widget.SwitchCompat
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_alignParentStart="true"
-             android:padding="@dimen/padding_inner_tv"
-             android:textSize="@dimen/text_size_small"
-             android:id="@+id/weekly_clear_switch"
-             android:thumb="@drawable/switch_thumb"
-             app:track="@drawable/switch_track_style"
-             app:switchPadding="5dp"
-             android:text="定期清理过期待办"/>
-         <android.widget.Button
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:id="@+id/clear_done_now_button"
-             android:layout_alignParentEnd="true"
-             android:text="立即清理!"
-             android:textSize="@dimen/text_size_small"
-             android:textColor="@color/blue_primary"
-             android:textStyle="bold"
-             android:padding="@dimen/padding_inner_tv"
-             android:background="@drawable/blank_background"/>
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/daily_notification_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:drawableStart="@drawable/baseline_123_24"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="20dp">
 
-      </RelativeLayout>
-   </androidx.cardview.widget.CardView>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/daily_notification_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="每日早晨通知" />
+    </androidx.cardview.widget.CardView>
 
-</RelativeLayout>
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/weekly_notification_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:drawableStart="@drawable/baseline_123_24"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="20dp">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/weekly_notification_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="每周日通知未完成的无日期待办" />
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/clear_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:drawableStart="@drawable/baseline_123_24"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="20dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/weekly_clear_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_margin="10dp"
+                android:text="定期清理过期待办" />
+
+            <android.widget.Button
+                android:id="@+id/clear_done_now_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                android:background="@drawable/blank_background"
+                android:padding="5dp"
+                android:text="立即清理!"
+                android:textColor="#6200EE"
+                android:textSize="20sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
