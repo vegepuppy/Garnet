@@ -328,11 +328,11 @@ public class SettingFragment extends Fragment {
                     Log.d("NOTI", "turned on notification");
                     if (checkNotificationPermissions(requireActivity())) {
                         scheduleDailyNotification(pendingIntent);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, true);
-                        dailyNotificationSwitchCompat.setChecked(true);
-                    } else {
-                        dailyNotificationSwitchCompat.setChecked(false);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,true);
+                        weeklyNotificationSwitchCompat.setChecked(true);
+                    }else{
+                        weeklyNotificationSwitchCompat.setChecked(false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,false);
                     }
                 } else {
                     Log.d("NOTI", "turned off notification");
