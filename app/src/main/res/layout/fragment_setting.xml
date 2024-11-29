@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SettingFragment">
 
    <TextView
@@ -22,7 +23,10 @@
           android:text="每日早晨通知"
           android:textSize="@dimen/text_size_small"
           android:padding="@dimen/padding_inner_tv"
-          android:id="@+id/daily_notification_switch"/>
+          android:id="@+id/daily_notification_switch"
+          android:thumb="@drawable/switch_thumb"
+          app:track="@drawable/switch_track_style"
+          app:switchPadding="5dp"/>
    </androidx.cardview.widget.CardView>
 
    <androidx.cardview.widget.CardView
@@ -36,7 +40,11 @@
           android:padding="@dimen/padding_inner_tv"
           android:text="每周通知未完成的无日期待办"
           android:textSize="@dimen/text_size_small"
-          android:id="@+id/weekly_notification_switch"/>
+          android:id="@+id/weekly_notification_switch"
+          android:thumb="@drawable/switch_thumb"
+          app:track="@drawable/switch_track_style"
+          app:switchPadding="5dp"/>
+
    </androidx.cardview.widget.CardView>
 
 
@@ -55,6 +63,9 @@
              android:padding="@dimen/padding_inner_tv"
              android:textSize="@dimen/text_size_small"
              android:id="@+id/weekly_clear_switch"
+             android:thumb="@drawable/switch_thumb"
+             app:track="@drawable/switch_track_style"
+             app:switchPadding="5dp"
              android:text="定期清理过期待办"/>
          <android.widget.Button
              android:layout_width="wrap_content"
