@@ -12,13 +12,15 @@
         <TextView
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
             android:id="@+id/attach_info_group_name_tv"
-            android:layout_margin="10dp"
+            android:padding="@dimen/padding_inner_tv"
             android:layout_width="0dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
+            android:textSize="@dimen/text_size_small"
+            android:padding="@dimen/padding_inner_tv"
             android:text=""
             android:id="@+id/attach_info_group_num_tv"/>
 

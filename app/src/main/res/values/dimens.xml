@@ -5,4 +5,5 @@
     <dimen name="text_size_small" >20sp</dimen>
     <dimen name="padding_top_rv">20dp</dimen>
     <dimen name="padding_inner_rv">10dp</dimen>
+    <dimen name="padding_inner_tv">20dp</dimen>
 </resources>

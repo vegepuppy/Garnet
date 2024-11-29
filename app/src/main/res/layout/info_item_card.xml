@@ -7,10 +7,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:text="text"
+        android:padding="@dimen/padding_inner_tv"
         android:id="@+id/info_item_string_tv"
-        android:textSize="20sp" />
+        android:textSize="@dimen/text_size_small" />
 <!--    调整了一下内部，更多留白更美观-->
 
 </androidx.cardview.widget.CardView>
