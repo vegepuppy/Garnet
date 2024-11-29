@@ -8,18 +8,13 @@
     tools:context=".AttachInfoGroupActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
+        style="@style/GarnetHeadingStyle"
         android:text="选择资料"
-        android:textSize="40sp"
         android:id="@+id/attach_info_group_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/GarnetTopRvStyle"
         android:layout_below="@+id/attach_info_group_tv"
-        android:id="@+id/attach_info_group_rv"
-        android:layout_centerHorizontal="true"/>
+        android:id="@+id/attach_info_group_rv" />
 
 </RelativeLayout>

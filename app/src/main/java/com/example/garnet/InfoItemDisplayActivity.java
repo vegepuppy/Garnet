@@ -55,7 +55,6 @@ public class InfoItemDisplayActivity extends AppCompatActivity {
         activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    Toast.makeText(InfoItemDisplayActivity.this,"返回码" + result.getResultCode(), Toast.LENGTH_SHORT).show();
                     if (result.getResultCode() == NoteActivity.RESULT_NOTE_INSERT_CODE) {
                         mainList = mDatabaseHelper.loadInfo(infoGroupId);
                         myAdapter.notifyItemInserted(mainList.size());

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="15dp"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    android:layout_centerHorizontal="true"
+    style="@style/GarnetCardStyle"
     android:id="@+id/info_list_cardview"
     android:foreground="?android:attr/selectableItemBackground">
 
@@ -19,13 +12,15 @@
         <TextView
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
             android:id="@+id/attach_info_group_name_tv"
-            android:layout_margin="10dp"
+            android:padding="@dimen/padding_inner_tv"
             android:layout_width="0dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
+            android:textSize="@dimen/text_size_small"
+            android:padding="@dimen/padding_inner_tv"
             android:text=""
             android:id="@+id/attach_info_group_num_tv"/>
 

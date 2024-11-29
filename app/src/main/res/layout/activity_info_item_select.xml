@@ -8,18 +8,12 @@
     tools:context=".AttachInfoItemActivity">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="选择资料"
-        android:textSize="40sp"
+        style="@style/GarnetHeadingStyle"
         android:id="@+id/select_info_item_title_tv"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/select_info_item_title_tv"
+        style="@style/GarnetTopRvStyle"
         android:id="@+id/select_info_item_rv"
-        android:layout_centerHorizontal="true"/>
+        android:layout_below="@id/select_info_item_title_tv" />
 
 </RelativeLayout>

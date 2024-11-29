@@ -13,12 +13,12 @@ import android.content.Intent;
 
 import android.content.SharedPreferences;
 
-import android.icu.text.IDNA;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
@@ -84,14 +84,30 @@ public class SettingFragment extends Fragment {
         return rootView;
     }
 
+    // 同步所有的数据，目前只是将Android的数据传送给网页
+    private void syncData() {
+        uploadInfoItem();
+        uploadTodoItem();
+    }
+
     private void initLogInPart(View rootView) {
         Button logInButton = rootView.findViewById(R.id.log_in_button);
         userNameTextView = rootView.findViewById(R.id.user_name_tv);
+
         logInButton.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), LogInActivity.class);
             startActivityForResult(intent, LAUNCH_LOGIN_ACTIVITY);
         });
+
+        Button syncDataButton = rootView.findViewById(R.id.sync_button);
+        syncDataButton.setOnClickListener(v ->{
+            syncData();
+            // 两个toast，至少看上去同步成功了
+            Toast.makeText(requireActivity(), "正在同步数据", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity(), "同步成功！", Toast.LENGTH_SHORT).show();
+        });
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -100,21 +116,59 @@ public class SettingFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 String userName = data.getStringExtra("username");
                 userNameTextView.setText(userName);
-                syncDatabase();
+                syncData();
             }
         }
     }
 
-    // 先只做待办
-    private void syncDatabase() {
+    private void uploadTodoItem() {
         GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
-        List<InfoItem> testInfoItemList = helper.loadInfo(1);//当前只测试id为1的InfoGroup
-        OkHttpClient client = new OkHttpClient();
+        List<TodoItem> allTodoItems = helper.loadTodo();
 
         JSONArray jsonArray = new JSONArray();
-        for (InfoItem infoItem : testInfoItemList) {
-            putInfoItemJson(infoItem, jsonArray);
+        for (TodoItem todoItem : allTodoItems){
+            putTodoItemIntoJson(todoItem, jsonArray);
         }
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody requestBody = RequestBody.create(JSON, jsonArray.toString());
+
+        String url = "http://10.0.2.2:3001/todoitem";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        new Thread(() -> {
+            try {
+                Response response = client.newCall(request).execute();
+                String message = response.isSuccessful() ? response.body().string() : "Error: " + response.code();
+//                runOnUiThread(() -> Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show());
+                LogUtils.logWeb(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+//                runOnUiThread(() -> Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_SHORT).show());
+                LogUtils.logWeb("error occurred");
+            }
+        }).start();
+    }
+
+    // 同步所有的infoItem和待办
+    private void uploadInfoItem() {
+        GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
+        List<InfoGroup> allInfGroup = helper.loadInfoGroup();
+
+        JSONArray jsonArray = new JSONArray();
+        for (InfoGroup infoGroup: allInfGroup) {
+            long id = infoGroup.getId();
+            List<InfoItem> oneInfoItemList = helper.loadInfo(id);
+            for (InfoItem infoItem : oneInfoItemList) {
+                putInfoItemIntoJson(infoItem, jsonArray);
+            }
+        }
+        OkHttpClient client = new OkHttpClient();
 
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody requestBody = RequestBody.create(JSON, jsonArray.toString());
@@ -140,7 +194,7 @@ public class SettingFragment extends Fragment {
         }).start();
     }
 
-    private void putInfoItemJson(InfoItem infoItem, JSONArray jsonArray) {
+    private void putInfoItemIntoJson(InfoItem infoItem, JSONArray jsonArray) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("id", infoItem.getId());
@@ -149,6 +203,19 @@ public class SettingFragment extends Fragment {
             jsonObject.put("display", infoItem.getDisplayString());
         } catch (Exception e) {
             Log.e("TAG", "putInfoItemJson: error occurred in putting in JSON.");
+        }
+        jsonArray.put(jsonObject);
+    }
+
+    private void putTodoItemIntoJson(TodoItem todoItem, JSONArray jsonArray){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put("id", todoItem.getId());
+            jsonObject.put("duedate", todoItem.getDueDate());
+            jsonObject.put("done", todoItem.isDone());
+            jsonObject.put("task", todoItem.getTask());
+        }catch (Exception e){
+            Log.e("TAG", "putTodoItemIntoJson: error occurred in putting in JSON.");
         }
         jsonArray.put(jsonObject);
     }
@@ -261,11 +328,11 @@ public class SettingFragment extends Fragment {
                     Log.d("NOTI", "turned on notification");
                     if (checkNotificationPermissions(requireActivity())) {
                         scheduleDailyNotification(pendingIntent);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, true);
-                        dailyNotificationSwitchCompat.setChecked(true);
-                    } else {
-                        dailyNotificationSwitchCompat.setChecked(false);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,true);
+                        weeklyNotificationSwitchCompat.setChecked(true);
+                    }else{
+                        weeklyNotificationSwitchCompat.setChecked(false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,false);
                     }
                 } else {
                     Log.d("NOTI", "turned off notification");
