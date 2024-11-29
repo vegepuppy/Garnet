@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const API_URL = "http://localhost:3001";
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +20,7 @@ const Login = () => {
 
       if (response.data.success) {
         setMessage("登录成功！");
+        navigate('/dashboard')
       } else {
         setMessage("用户名或密码错误！");
       }
