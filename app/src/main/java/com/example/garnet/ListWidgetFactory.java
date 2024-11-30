@@ -15,9 +15,9 @@ import java.util.List;
 public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
 
     private final List<String> widget_list = new ArrayList<>();
-    private final Context context;
-    public ListWidgetFactory(Context context) {
-        this.context = context;
+    private final Context in_context;
+    public ListWidgetFactory(Context context,Intent intent) {
+        in_context = context;
     }
 
     @Override
@@ -44,21 +44,16 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
     @Override
     public RemoteViews getViewAt(int position) {
         if (widget_list.isEmpty()){
-            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget_none);
+            RemoteViews views = new RemoteViews(in_context.getPackageName(),R.layout.widget_none);
             views.setTextViewText(R.id.widget_empty,"今天没有任务哦");
             return views;
         }
         else {
-            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget_link);
+            RemoteViews views = new RemoteViews(in_context.getPackageName(),R.layout.widget_link);
             views.setTextViewText(R.id.widget_link,widget_list.get(position));
-            // 创建 Intent 用于删除
-            Intent intent = new Intent(context, MyWidgetProvider.class);
-            intent.setAction("ACTION_DELETE_ITEM");
-            intent.putExtra("ITEM_POSITION", position); // 传递要删除的项的索引
-            // 设置复选框的点击事件
-            views.setOnClickFillInIntent(R.id.widget_link, intent);
-            String num = String.valueOf(position);
-            Log.v("d_robot", num);
+            Intent deleteIntent = new Intent();
+            deleteIntent.putExtra("ITEM_POSITION", position);
+            views.setOnClickFillInIntent(R.id.widget_link, deleteIntent);
             return views;
         }
     }
@@ -85,7 +80,7 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
 
     private void loadData(){
         widget_list.clear();
-        GarnetDatabaseHelper widget_helper = new GarnetDatabaseHelper(context);
+        GarnetDatabaseHelper widget_helper = new GarnetDatabaseHelper(in_context);
         List<HomeItem> widget_items = widget_helper.loadHome();
         if (widget_items.get(0)!=null){
             for (int i = 0; i< widget_items.size(); i++){

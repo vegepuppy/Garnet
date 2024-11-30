@@ -179,9 +179,11 @@ public class HomeFragment extends Fragment {
             InfoItem content = ContentList.get(position);
             task_view.append(item);
             task_view.append("\n");
-            task_view.setOnClickListener(v->{
-                content.show(getContext());
-            });
+            if(!item.equals("无链接")) {
+                task_view.setOnClickListener(v -> {
+                    content.show(getContext());
+                });
+            }
         }
     }
 }

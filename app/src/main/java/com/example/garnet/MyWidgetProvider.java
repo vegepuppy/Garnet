@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MyWidgetProvider extends AppWidgetProvider{
+    public static final String DELETE_ACTION = "ACTION_DELETE_ITEM";
     Calendar calendar = Calendar.getInstance();
     SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
     final String formattedDate = formatter.format(calendar.getTime());
@@ -34,7 +35,7 @@ public class MyWidgetProvider extends AppWidgetProvider{
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, MyWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 4598456, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         // 设置每 15min 更新一次
         long intervalMillis = 15 * 60 * 1000; // 15min
@@ -53,7 +54,7 @@ public class MyWidgetProvider extends AppWidgetProvider{
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, MyWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1233123, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         alarmManager.cancel(pendingIntent);
     }
@@ -61,8 +62,8 @@ public class MyWidgetProvider extends AppWidgetProvider{
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if ("ACTION_DELETE_ITEM".equals(intent.getAction())) {
-            Log.v("delete_robot", "v: I am testing the delete function.");
+        if (DELETE_ACTION.equals(intent.getAction())) {
+            Log.v("delete_robot", "v: I am testing the delete function." + intent.getIntExtra("ITEM_POSITION", -2));
             int position = intent.getIntExtra("ITEM_POSITION", -1);
             if (position != -1) {
                 new Thread(()->{
@@ -85,13 +86,14 @@ public class MyWidgetProvider extends AppWidgetProvider{
             //获得listview的适配器
             Intent listIntent = new Intent(context, ListWidgetService.class);
             remoteViews.setRemoteAdapter(R.id.widget_lv,listIntent);
+            //设置PendingIntent模板
             Intent intentTemplate = new Intent(context, MyWidgetProvider.class);
-            intentTemplate.setAction("ACTION_DELETE_ITEM");
+            intentTemplate.setAction(DELETE_ACTION);
             PendingIntent pendingIntentTemplate = PendingIntent.getBroadcast(context, 1563298, intentTemplate, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             remoteViews.setPendingIntentTemplate(R.id.widget_lv, pendingIntentTemplate);
             //点击日期跳转到原应用
             Intent intent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 789813, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             remoteViews.setOnClickPendingIntent(R.id.widget_title, pendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetId,remoteViews);
