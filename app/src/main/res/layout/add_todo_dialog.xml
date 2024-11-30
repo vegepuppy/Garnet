@@ -9,7 +9,7 @@
         android:padding="10dp"
         android:layout_marginHorizontal="20dp"
         android:id="@+id/task_et"
-        android:hint="Enter task"/>
+        android:hint="请输入待办"/>
 
     <TextView
         android:layout_width="wrap_content"
