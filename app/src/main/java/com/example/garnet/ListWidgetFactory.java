@@ -1,8 +1,10 @@
 package com.example.garnet;
 
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -16,8 +18,11 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
 
     private final List<String> widget_list = new ArrayList<>();
     private final Context in_context;
+    private int appWidgetId;
     public ListWidgetFactory(Context context,Intent intent) {
         in_context = context;
+        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
@@ -52,8 +57,11 @@ public class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{
             RemoteViews views = new RemoteViews(in_context.getPackageName(),R.layout.widget_link);
             views.setTextViewText(R.id.widget_link,widget_list.get(position));
             Intent deleteIntent = new Intent();
-            deleteIntent.putExtra("ITEM_POSITION", position);
+            Bundle extras = new Bundle();
+            extras.putInt(MyWidgetProvider.extra_item,position);
+            deleteIntent.putExtras(extras);
             views.setOnClickFillInIntent(R.id.widget_link, deleteIntent);
+            Log.v("delete_bot", "v: I am testing the delete function." + deleteIntent.getIntExtra("ITEM_POSITION", -2));
             return views;
         }
     }

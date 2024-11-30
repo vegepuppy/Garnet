@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.RemoteViews;
@@ -22,6 +23,7 @@ import java.util.List;
 
 public class MyWidgetProvider extends AppWidgetProvider{
     public static final String DELETE_ACTION = "ACTION_DELETE_ITEM";
+    public static final String extra_item = "ITEM_POSITION";
     Calendar calendar = Calendar.getInstance();
     SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
     final String formattedDate = formatter.format(calendar.getTime());
@@ -64,7 +66,7 @@ public class MyWidgetProvider extends AppWidgetProvider{
         super.onReceive(context, intent);
         if (DELETE_ACTION.equals(intent.getAction())) {
             Log.v("delete_robot", "v: I am testing the delete function." + intent.getIntExtra("ITEM_POSITION", -2));
-            int position = intent.getIntExtra("ITEM_POSITION", -1);
+            int position = intent.getIntExtra(extra_item, -1);
             if (position != -1) {
                 new Thread(()->{
                     // 从数据源中删除对应的项
