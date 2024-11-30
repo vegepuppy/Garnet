@@ -6,40 +6,50 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".SettingFragment">
+    <TextView
+        style="@style/GarnetHeadingStyle"
+        android:layout_marginBottom="20dp"
+        android:text="设置"
+        android:id="@+id/settings_heading_tv"/>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        app:cardCornerRadius="20dp">
+        android:layout_marginHorizontal="18dp"
+        style="@style/GarnetCardStyle">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/user_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:padding="@dimen/padding_inner_tv"
                 android:text="尚未登录"
-                android:textSize="50px" />
+                android:textSize="@dimen/text_size_small" />
 
-            <Button
+            <android.widget.Button
                 android:id="@+id/log_in_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:padding="@dimen/padding_inner_tv"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/blue_primary"
+                android:textStyle="bold"
+                android:background="@drawable/blank_background"
                 android:text="登录/注册" />
-            <Button
+            <android.widget.Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/sync_button"
                 android:layout_toLeftOf="@+id/log_in_button"
+                android:padding="@dimen/padding_inner_tv"
+                android:textSize="@dimen/text_size_small"
+                android:textColor="@color/blue_primary"
+                android:textStyle="bold"
+                android:background="@drawable/blank_background"
                 android:text="同步数据"/>
 
         </RelativeLayout>
@@ -48,53 +58,31 @@
 
     <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/daily_notification_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        android:drawableStart="@drawable/baseline_123_24"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="20dp">
+        android:layout_marginHorizontal="18dp"
+        style="@style/GarnetCardStyle">
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/daily_notification_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            style="@style/GarnetSwitchStyle"
             android:text="每日早晨通知" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/weekly_notification_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        android:drawableStart="@drawable/baseline_123_24"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="20dp">
+        android:layout_marginHorizontal="18dp"
+        style="@style/GarnetCardStyle">
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/weekly_notification_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            style="@style/GarnetSwitchStyle"
             android:text="每周日通知未完成的无日期待办" />
     </androidx.cardview.widget.CardView>
 
 
     <androidx.cardview.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/clear_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        android:drawableStart="@drawable/baseline_123_24"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardCornerRadius="20dp">
+        android:layout_marginHorizontal="18dp"
+        style="@style/GarnetCardStyle">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -102,10 +90,8 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/weekly_clear_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_margin="10dp"
+                style="@style/GarnetSwitchStyle"
                 android:text="定期清理过期待办" />
 
             <android.widget.Button
@@ -113,12 +99,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="10dp"
+                android:padding="@dimen/padding_inner_tv"
                 android:background="@drawable/blank_background"
-                android:padding="5dp"
                 android:text="立即清理!"
-                android:textColor="#6200EE"
-                android:textSize="20sp" />
+                android:textStyle="bold"
+                android:textColor="@color/blue_primary"
+                android:textSize="@dimen/text_size_small" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
