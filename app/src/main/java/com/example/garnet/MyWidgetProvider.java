@@ -84,7 +84,7 @@ public class MyWidgetProvider extends AppWidgetProvider{
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),R.layout.home_widget);
-            remoteViews.setTextViewText(R.id.widget_title,formattedDate);
+            remoteViews.setTextViewText(R.id.widget_title,"今日待办");
             //获得listview的适配器
             Intent listIntent = new Intent(context, ListWidgetService.class);
             remoteViews.setRemoteAdapter(R.id.widget_lv,listIntent);
