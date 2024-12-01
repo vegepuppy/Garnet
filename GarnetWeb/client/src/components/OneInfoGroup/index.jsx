@@ -48,6 +48,9 @@ export default function OneInfoGroup({ infoGroup }) {
     };
     const API_URL = "http://localhost:3001/newinfoitem";
 
+    // 更新前端UI，显示新加入的InfoItem
+    infoItems.push(data);
+
     fetch(API_URL, {
       method: "POST", // 使用 POST 方法
       headers: {
