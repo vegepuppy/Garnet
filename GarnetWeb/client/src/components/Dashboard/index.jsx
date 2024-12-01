@@ -1,11 +1,13 @@
-import InfoItemDisplay from "../InfoItemsDisplay";
+import InfoGroupDisplay from "../InfoGroupDisplay";
 import TodoItemDisplay from "../TodoItemsDisplay";
 
 export default function Dashboard() {
   return (
     <>
-      <InfoItemDisplay />
+      <InfoGroupDisplay />
       <TodoItemDisplay />
     </>
   );
 }
+
+// infoGroupDisplay -> OneInfoGroup -> InfoItemsDisplay
