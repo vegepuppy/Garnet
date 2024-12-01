@@ -86,15 +86,12 @@ app.post("/infoitem", (req, res) => {
     .json({ success: true, message: "Data uploaded successfully" });
 });
 
-app.post('newinfoitem', (req, res) => {
-  newInfoItems = [...req.body];
+app.post('/newinfoitem', (req, res) => {
+  let newInfoItem = req.body;
 
-  if (!Array.isArray(newInfoItems)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid data format" });
-  }
-  console.log("newInfoItems:", newInfoItems);
+  console.log("newInfoItem:", newInfoItem);
+
+  infoItems.push(newInfoItem);
 
   res
     .status(200)
@@ -131,6 +128,8 @@ app.get("/infogroup", (req, res) =>{
 
 app.get('/newinfoitem', (req, res) =>{
   res.json(newInfoItems);
+
+  newInfoItems = []; //清空数组，防止重复读取
 })
 
 app.listen(PORT, () => {

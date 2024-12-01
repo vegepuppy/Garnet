@@ -7,7 +7,7 @@ export default function OneInfoGroup({ infoGroup }) {
   const [infoItems, setInfoItems] = useState([]); //整个数据库里面所有的InfoItem
 
   const [showInputDialog, setShowInputDialog] = useState(false); //是否显示输入框用于让用户输入链接
-  const [inputLink, setInputLink] = useState('');// 输入框里面的内容
+  const [inputLink, setInputLink] = useState(""); // 输入框里面的内容
 
   // 从后端获取数据，获得的是所有的InfoItem，而不是当前InfoGroup里面的InfoItem
   useEffect(() => {
@@ -33,13 +33,46 @@ export default function OneInfoGroup({ infoGroup }) {
     setShowInputDialog(true);
   }
 
-  function handleConfirm(){
-    // console.log('user input link:', inputLink, `in infoGroup ${infoGroup.name}`);
-    setShowInputDialog(false);// 关闭输入框
-    setInputLink('')// 清空框里面的内容
+  function handleConfirm() {
+    console.log(
+      "user input link:",
+      inputLink,
+      `in infoGroup ${infoGroup.name}`
+    ); // 将用户输入打印出来
+
+    // 把用户的输入作为一个InfoItem发往后端
+    const data = {
+      belong: infoGroup.id,
+      content: inputLink,
+      display: inputLink,
+    };
+    const API_URL = "http://localhost:3001/newinfoitem";
+
+    fetch(API_URL, {
+      method: "POST", // 使用 POST 方法
+      headers: {
+        "Content-Type": "application/json", // 指定发送的数据类型为 JSON
+      },
+      body: JSON.stringify(data), // 将数据转换为 JSON 字符串
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json(); // 解析响应为 JSON
+      })
+      .then((responseData) => {
+        console.log("服务器响应:", responseData);
+      })
+      .catch((error) => {
+        console.error("请求出错:", error);
+      });
+
+    setShowInputDialog(false); // 关闭输入框
+    setInputLink(""); // 清空框里面的内容
   }
 
-  function handleInputChange(){
+  function handleInputChange() {
     setInputLink(event.target.value);
   }
 
