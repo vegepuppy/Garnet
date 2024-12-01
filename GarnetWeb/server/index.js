@@ -6,9 +6,13 @@ const users = [];
 let infoItems = [];
 let todoItems = [];
 let infoGroups = [];
+let newInfoItems = [];
+/* 所有用户在网页端创建的InfoItem，创建时就已经选择好了InfoGroup
+InfoItem同步的逻辑是：用户在前端创建后，点击确定时数据发送到后端，在newInfoItems数组里面暂存
+用户在Android app获取后端的数据，获取之后服务器将数组清空  
+*/
 
 const app = express();
-
 const cors = require("cors");
 app.use(cors({ origin: "http://localhost:5173" })); //允许前端通信
 app.use(express.json());
@@ -82,6 +86,21 @@ app.post("/infoitem", (req, res) => {
     .json({ success: true, message: "Data uploaded successfully" });
 });
 
+app.post('newinfoitem', (req, res) => {
+  newInfoItems = [...req.body];
+
+  if (!Array.isArray(newInfoItems)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid data format" });
+  }
+  console.log("newInfoItems:", newInfoItems);
+
+  res
+    .status(200)
+    .json({ success: true, message: "Data uploaded successfully" });
+});
+
 app.post("/todoitem", (req, res) => {
   todoItems = [...req.body];
 
@@ -108,6 +127,10 @@ app.get("/todoitem", (req, res) => {
 
 app.get("/infogroup", (req, res) =>{
   res.json(infoGroups);
+})
+
+app.get('/newinfoitem', (req, res) =>{
+  res.json(newInfoItems);
 })
 
 app.listen(PORT, () => {

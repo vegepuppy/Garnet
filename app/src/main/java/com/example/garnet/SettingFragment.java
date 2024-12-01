@@ -91,6 +91,12 @@ public class SettingFragment extends Fragment {
         uploadInfoItem();
         uploadInfoGroup();
         uploadTodoItem();
+
+        downloadInfoItem();
+    }
+
+    private void downloadInfoItem() {
+
     }
 
     private void initLogInPart(View rootView) {
