@@ -18,7 +18,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
@@ -41,8 +40,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -96,7 +96,40 @@ public class SettingFragment extends Fragment {
     }
 
     private void downloadInfoItem() {
+        final String API_URL = "http://10.0.2.2:3001/newinfoitem";
 
+        OkHttpClient client = new OkHttpClient();
+
+        // 创建请求对象
+        Request request = new Request.Builder()
+                .url(API_URL) // 指定后端 URL
+                .build();
+
+        // 异步请求
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 请求失败处理
+                Log.d("DLD", "onFailure: ");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    // 获取响应体
+                    String responseData = response.body().string();
+
+                    // 解析 JSON 数据
+//                    Gson gson = new Gson();
+//                    DataModel data = gson.fromJson(responseData, DataModel.class);
+                    Log.d("DLD", "onResponse: " + responseData);
+
+                    Log.d("DLD", "onResponse: ");
+                } else {
+                    Log.d("DLD", "onResponse: " + response.code());
+                }
+            }
+        });
     }
 
     private void initLogInPart(View rootView) {

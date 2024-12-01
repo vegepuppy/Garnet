@@ -91,7 +91,9 @@ app.post('/newinfoitem', (req, res) => {
 
   console.log("newInfoItem:", newInfoItem);
 
-  infoItems.push(newInfoItem);
+  newInfoItems.push(newInfoItem);
+
+  console.log("newInfoItems(ARRAY):", newInfoItems);
 
   res
     .status(200)
