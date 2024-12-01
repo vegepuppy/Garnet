@@ -32,11 +32,14 @@ import android.widget.Toast;
 
 
 import com.example.garnet.utils.LogUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -110,7 +113,7 @@ public class SettingFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 请求失败处理
-                Log.d("DLD", "onFailure: ");
+                Log.d("DLD", "onFailure: ");//fyi: "DLD"是DOWNLOAD的缩写
             }
 
             @Override
@@ -120,9 +123,21 @@ public class SettingFragment extends Fragment {
                     String responseData = response.body().string();
 
                     // 解析 JSON 数据
-//                    Gson gson = new Gson();
-//                    DataModel data = gson.fromJson(responseData, DataModel.class);
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<DataModel>>() {}.getType();
+                    List<DataModel> dataList = gson.fromJson(responseData, listType);
+
                     Log.d("DLD", "onResponse: " + responseData);
+                    Log.d("DLD", "display:" + dataList.get(0).getDisplay());
+                    Log.d("DLD", "content:" + dataList.get(0).getContent());
+                    Log.d("DLD", "belong:" + dataList.get(0).getBelong());
+
+                    for (DataModel dm: dataList) {
+                        WebInfoItem webInfoItem = new WebInfoItem(dm.display, dm.content, dm.belong, InfoItem.LACK_ID);
+                        GarnetDatabaseHelper helper = new GarnetDatabaseHelper(requireActivity());
+                        helper.insertInfoItem(webInfoItem);
+                    }
+
 
                     Log.d("DLD", "onResponse: ");
                 } else {
@@ -130,6 +145,25 @@ public class SettingFragment extends Fragment {
                 }
             }
         });
+    }
+
+    // 数据模型类，用于解析 JSON 数据
+    static class DataModel {
+        private int belong;
+        private String content;
+        private String display;
+
+        public int getBelong() {
+            return belong;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
     }
 
     private void initLogInPart(View rootView) {
