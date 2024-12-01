@@ -4,7 +4,7 @@ import TodoItemDisplay from "../TodoItemsDisplay";
 export default function Dashboard() {
   return (
     <>
-      <InfoItemDisplay />
+      <InfoItemDisplay belong={1}/>
       <TodoItemDisplay />
     </>
   );

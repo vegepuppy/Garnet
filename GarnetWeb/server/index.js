@@ -1,17 +1,19 @@
 const express = require("express");
-
+const InfoGroup = require("../classes/InfoGroup");
 const PORT = process.env.PORT || 3001;
 
 const users = [];
 let infoItems = [];
 let todoItems = [];
+let infoGroups = [];
 
 const app = express();
+
 const cors = require("cors");
 app.use(cors({ origin: "http://localhost:5173" })); //允许前端通信
 app.use(express.json());
 
-app.post('/register', (req, res) => {
+app.post("/register", (req, res) => {
   const { username, password } = req.body;
 
   const userExists = users.some((user) => user.username === username);
@@ -30,7 +32,24 @@ app.post('/register', (req, res) => {
     .json({ success: true, message: "user registered successfully." });
 });
 
-app.post('/login', (req, res) => {
+app.post("/infogroup", (req, res) => {
+  req.body.forEach((element) => {
+    let oneInfoGroup = new InfoGroup(element.id, element.name);
+    infoGroups.push(oneInfoGroup);
+  });
+
+  console.log("receiving infoGroups");
+  console.log("req.body:", req.body);
+
+  if (!Array.isArray(infoItems)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid data format" });
+  }
+  console.log("Received infoGroups:", infoGroups);
+});
+
+app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   // 验证用户是否存在并且密码正确
@@ -51,7 +70,7 @@ app.post('/login', (req, res) => {
   console.log(`username: ${username}, password:${password} login successfully`);
 });
 
-app.post('/infoitem', (req, res) => {
+app.post("/infoitem", (req, res) => {
   infoItems = [...req.body];
 
   if (!Array.isArray(infoItems)) {
@@ -59,23 +78,14 @@ app.post('/infoitem', (req, res) => {
       .status(400)
       .json({ success: false, message: "Invalid data format" });
   }
-
-  console.log("Received multiple data:", infoItems);
-
-  // 遍历数组并处理每个数据
-  infoItems.forEach((data) => {
-    const { id, content, belong, display } = data;
-    console.log(
-      `Processing data: id=${id}, content=${content}, belong=${belong}, display=${display}`
-    );
-  });
+  console.log("Received infoItems:", infoItems);
 
   res
     .status(200)
     .json({ success: true, message: "Data uploaded successfully" });
 });
 
-app.post('/todoitem', (req, res) => {
+app.post("/todoitem", (req, res) => {
   todoItems = [...req.body];
 
   if (!Array.isArray(todoItems)) {
@@ -84,18 +94,18 @@ app.post('/todoitem', (req, res) => {
       .json({ success: false, message: "Invalid data format" });
   }
 
-  console.log("Received multiple data:", todoItems);
+  console.log("Received todo:", todoItems);
 
   res
     .status(200)
     .json({ success: true, message: "Data uploaded successfully" });
 });
 
-app.get('/infoitem', (req, res) => {
+app.get("/infoitem", (req, res) => {
   res.json(infoItems);
 });
 
-app.get('/todoitem', (req, res) => {
+app.get("/todoitem", (req, res) => {
   res.json(todoItems);
 });
 
