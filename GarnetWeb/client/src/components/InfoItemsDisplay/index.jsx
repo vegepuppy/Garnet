@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-// 这个组件从后端获取属于id为belong的InfoGroup，并且显示
-function InfoItemDisplay({belong}) {
+// deprecated
+function InfoItemDisplay() {
 
-  if (belong <= 0){
-    console.log('Wrong value passed for InfoItemDisplay "belong" prop');
-  }
-  const [data, setData] = useState([]); // 存储从后端获取的数据
+  const [infoItems, setInfoItems] = useState([]); // 存储从后端获取的数据
   const [loading, setLoading] = useState(true); // 加载状态
   const [error, setError] = useState(null); // 错误状态
 
@@ -20,7 +17,7 @@ function InfoItemDisplay({belong}) {
         return response.json();
       })
       .then((data) => {
-        setData(data); // 保存数据到state
+        setInfoItems(data); // 保存数据到state
         setLoading(false); // 数据加载完成
       })
       .catch((err) => {
@@ -37,7 +34,7 @@ function InfoItemDisplay({belong}) {
     <div>
       <h1>InfoItems</h1>
       <ul>
-        {data.map((item) => (
+        {infoItems.map((item) => (
           <li key={item.id}>
             <a href={item.content}>{item.display}</a> (Belong: {item.belong})
           </li>

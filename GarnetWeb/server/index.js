@@ -1,5 +1,5 @@
 const express = require("express");
-const InfoGroup = require("../classes/InfoGroup");
+// const InfoGroup = require("../classes/InfoGroup");
 const PORT = process.env.PORT || 3001;
 
 const users = [];
@@ -33,10 +33,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/infogroup", (req, res) => {
-  req.body.forEach((element) => {
-    let oneInfoGroup = new InfoGroup(element.id, element.name);
-    infoGroups.push(oneInfoGroup);
-  });
+  infoGroups = [...req.body]
 
   console.log("receiving infoGroups");
   console.log("req.body:", req.body);
@@ -108,6 +105,10 @@ app.get("/infoitem", (req, res) => {
 app.get("/todoitem", (req, res) => {
   res.json(todoItems);
 });
+
+app.get("/infogroup", (req, res) =>{
+  res.json(infoGroups);
+})
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
