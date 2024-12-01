@@ -137,6 +137,7 @@ app.get('/newinfoitem', (req, res) =>{
   newInfoItems = []; //清空数组，防止重复读取
 })
 
+// 爬取网页不能在前端做，必须在后端做。这里的设计有问题，Android使用的库和网页端使用的库不一致。
 app.get('/gettitle', async (req, res) => {
   const { url } = req.query;
   if (!url) {

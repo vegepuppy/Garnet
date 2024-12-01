@@ -40,7 +40,7 @@ export default function OneInfoGroup({ infoGroup }) {
       `in infoGroup ${infoGroup.name}`
     ); // 将用户输入打印出来
 
-    let pageTitle = "";
+    let pageTitle = "";// 爬到的网页标题
 
     fetch(`http://localhost:3001/gettitle?url=${inputLink}`)
       .then((response) => response.json())
@@ -51,6 +51,7 @@ export default function OneInfoGroup({ infoGroup }) {
       })
       .catch((error) => console.error("Error:", error));
 
+    // 停下来等两秒，否则在爬取到标题之前就把newInfoItem加进去了
     await new Promise((r) => setTimeout(r, 2000));
 
     // 把用户的输入作为一个InfoItem发往后端
@@ -97,7 +98,7 @@ export default function OneInfoGroup({ infoGroup }) {
     return <div>loading...</div>;
   }
 
-  /* 查找的逻辑是：从后端获取所有的InfoItem，不管是不是这个InfoGroup里面的
+  /* 查找显示的逻辑是：从后端获取所有的InfoItem，不管是不是这个InfoGroup里面的
   之后判断：如果InfoItem的belong与这个InfoGroup的id相同，那么就把这个InfoItem显示出来
   这样会引入性能问题（数据取多了），但是目前数据量不太大，而且本地调试不涉及网络通信，先敏捷开发
   */
