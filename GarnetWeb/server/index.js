@@ -1,4 +1,7 @@
 const express = require("express");
+const axios = require('axios');
+const cheerio = require('cheerio');
+
 // const InfoGroup = require("../classes/InfoGroup");
 const PORT = process.env.PORT || 3001;
 
@@ -133,6 +136,21 @@ app.get('/newinfoitem', (req, res) =>{
 
   newInfoItems = []; //清空数组，防止重复读取
 })
+
+app.get('/gettitle', async (req, res) => {
+  const { url } = req.query;
+  if (!url) {
+    return res.status(400).send('URL is required');
+  }
+  try {
+    const response = await axios.get(url);
+    const $ = cheerio.load(response.data);
+    const title = $('title').text();
+    res.json({ title });
+  } catch (error) {
+    res.status(500).send('Error fetching the page');
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

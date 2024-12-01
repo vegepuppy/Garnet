@@ -33,30 +33,44 @@ export default function OneInfoGroup({ infoGroup }) {
     setShowInputDialog(true);
   }
 
-  function handleConfirm() {
+  async function handleConfirm() {
     console.log(
       "user input link:",
       inputLink,
       `in infoGroup ${infoGroup.name}`
     ); // 将用户输入打印出来
 
+    let pageTitle = "";
+
+    fetch(`http://localhost:3001/gettitle?url=${inputLink}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("网页标题:", data.title);
+        if (data.title === null) pageTitle = "无效链接:" + inputLink;
+        else pageTitle = data.title;
+      })
+      .catch((error) => console.error("Error:", error));
+
+    await new Promise((r) => setTimeout(r, 2000));
+
     // 把用户的输入作为一个InfoItem发往后端
-    const data = {
+    const newInfoItem = {
       belong: infoGroup.id,
       content: inputLink,
-      display: inputLink,
+      display: pageTitle,
     };
+    console.log("data", newInfoItem);
     const API_URL = "http://localhost:3001/newinfoitem";
 
     // 更新前端UI，显示新加入的InfoItem
-    infoItems.push(data);
+    setInfoItems([...infoItems, newInfoItem]);
 
     fetch(API_URL, {
       method: "POST", // 使用 POST 方法
       headers: {
         "Content-Type": "application/json", // 指定发送的数据类型为 JSON
       },
-      body: JSON.stringify(data), // 将数据转换为 JSON 字符串
+      body: JSON.stringify(newInfoItem), // 将数据转换为 JSON 字符串
     })
       .then((response) => {
         if (!response.ok) {

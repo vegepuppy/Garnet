@@ -121,16 +121,13 @@ public class SettingFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     // 获取响应体
                     String responseData = response.body().string();
-
+                    if (responseData.equals("[]"))return;
                     // 解析 JSON 数据
                     Gson gson = new Gson();
                     Type listType = new TypeToken<List<DataModel>>() {}.getType();
                     List<DataModel> dataList = gson.fromJson(responseData, listType);
 
                     Log.d("DLD", "onResponse: " + responseData);
-                    Log.d("DLD", "display:" + dataList.get(0).getDisplay());
-                    Log.d("DLD", "content:" + dataList.get(0).getContent());
-                    Log.d("DLD", "belong:" + dataList.get(0).getBelong());
 
                     for (DataModel dm: dataList) {
                         WebInfoItem webInfoItem = new WebInfoItem(dm.display, dm.content, dm.belong, InfoItem.LACK_ID);
