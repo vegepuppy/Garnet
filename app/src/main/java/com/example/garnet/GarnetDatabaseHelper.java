@@ -265,7 +265,7 @@ public class GarnetDatabaseHelper extends SQLiteOpenHelper {
         try (SQLiteDatabase db1 = this.getWritableDatabase()){
             Cursor cursor = db1.query(TABLE_TODO,
                     new String[]{"_id","TASK","DONE"},
-                    "DUE = ?",new String[]{"2024-07-23"},null,null,null);
+                    "DUE = ?",new String[]{formattedDate},null,null,null);
             if(cursor.moveToFirst()){
                 do{
                     final int idIdx = 0;

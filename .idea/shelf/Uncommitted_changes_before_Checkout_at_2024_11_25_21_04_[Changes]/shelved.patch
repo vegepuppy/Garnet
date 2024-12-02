@@ -1,0 +1,171 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\" />\r\n    <uses-permission android:name=\"android.permission.SCHEDULE_EXACT_ALARM\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.Garnet\"\r\n        tools:targetApi=\"31\">\r\n\r\n        <receiver\r\n            android:name=\".DataClearReceiver\"\r\n            android:enabled=\"true\"\r\n            android:exported=\"true\">\r\n        </receiver>\r\n\r\n        <activity\r\n            android:name=\".ReceiveShareActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.SEND\" />\r\n\r\n                <category android:name=\"android.intent.category.DEFAULT\" />\r\n\r\n                <data android:mimeType=\"text/plain\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity\r\n            android:name=\".NoteActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity\r\n            android:name=\".AttachInfoGroupActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".AttachInfoItemActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".InfoItemDisplayActivity\"\r\n            android:exported=\"false\" />\r\n\r\n        <receiver\r\n            android:name=\".Notifier\"\r\n            android:enabled=\"true\" />\r\n\r\n        <receiver android:name=\".MyWidgetProvider\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.appwidget.action.APPWIDGET_UPDATE\" />\r\n                <action android:name=\"ACTION_DELETE_ITEM\" />\r\n            </intent-filter>\r\n            <meta-data\r\n                android:name=\"android.appwidget.provider\"\r\n                android:resource=\"@xml/widget_info\" />\r\n        </receiver>\r\n\r\n        <service\r\n            android:name=\".ListWidgetService\"\r\n            android:exported=\"true\"\r\n            android:permission=\"android.permission.BIND_REMOTEVIEWS\">\r\n            <intent-filter>\r\n                <action android:name=\"android.widget.RemoteViewsService\" />\r\n                <action android:name=\"ACTION_DELETE_ITEM\" />\r\n            </intent-filter>\r\n        </service>\r\n\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	
++++ b/app/src/main/AndroidManifest.xml	
+@@ -61,10 +61,11 @@
+             android:enabled="true" />
+ 
+         <receiver android:name=".MyWidgetProvider"
++            android:enabled="true"
+             android:exported="true">
+             <intent-filter>
+-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+-                <action android:name="ACTION_DELETE_ITEM" />
++                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
++                <action android:name="ACTION_DELETE_ITEM"/>
+             </intent-filter>
+             <meta-data
+                 android:name="android.appwidget.provider"
+Index: app/src/main/java/com/example/garnet/ListWidgetFactory.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.garnet;\r\n\r\nimport android.app.PendingIntent;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.util.Log;\r\nimport android.widget.RemoteViews;\r\nimport android.widget.RemoteViewsService;\r\nimport android.widget.Toast;\r\n\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\npublic class ListWidgetFactory implements RemoteViewsService.RemoteViewsFactory{\r\n\r\n    private final List<String> widget_list = new ArrayList<>();\r\n    private final Context context;\r\n    public ListWidgetFactory(Context context) {\r\n        this.context = context;\r\n    }\r\n\r\n    @Override\r\n    public void onCreate() {\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onDataSetChanged() {\r\n        loadData();\r\n    }\r\n\r\n    @Override\r\n    public void onDestroy() {\r\n\r\n    }\r\n\r\n    @Override\r\n    public int getCount() {\r\n        if (widget_list.isEmpty()){return 1;}\r\n        else {return widget_list.size();}\r\n    }\r\n\r\n    @Override\r\n    public RemoteViews getViewAt(int position) {\r\n        if (widget_list.isEmpty()){\r\n            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget_none);\r\n            views.setTextViewText(R.id.widget_empty,\"今天没有任务哦\");\r\n            return views;\r\n        }\r\n        else {\r\n            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget_link);\r\n            views.setTextViewText(R.id.widget_link,widget_list.get(position));\r\n            // 创建 Intent 用于删除\r\n            Intent intent = new Intent(context, MyWidgetProvider.class);\r\n            intent.setAction(\"ACTION_DELETE_ITEM\");\r\n            intent.putExtra(\"ITEM_POSITION\", position); // 传递要删除的项的索引\r\n            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);\r\n            // 设置复选框的点击事件\r\n            views.setOnClickPendingIntent(R.id.widget_link, pendingIntent);\r\n            String num = String.valueOf(position);\r\n            Log.v(\"d_robot\", num);\r\n            return views;\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public RemoteViews getLoadingView() {\r\n        return null;\r\n    }\r\n\r\n    @Override\r\n    public int getViewTypeCount() {\r\n        return 1;\r\n    }\r\n\r\n    @Override\r\n    public long getItemId(int position) {\r\n        return position;\r\n    }\r\n\r\n    @Override\r\n    public boolean hasStableIds() {\r\n        return true;\r\n    }\r\n\r\n    private void loadData(){\r\n        widget_list.clear();\r\n        GarnetDatabaseHelper widget_helper = new GarnetDatabaseHelper(context);\r\n        List<HomeItem> widget_items = widget_helper.loadHome();\r\n        if (widget_items.get(0)!=null){\r\n            for (int i = 0; i< widget_items.size(); i++){\r\n                if (!widget_items.get(i).getDone()) {\r\n                    String widget_task = widget_items.get(i).getHomeTask();\r\n                    widget_list.add(widget_task);\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/app/src/main/java/com/example/garnet/ListWidgetFactory.java b/app/src/main/java/com/example/garnet/ListWidgetFactory.java
+--- a/app/src/main/java/com/example/garnet/ListWidgetFactory.java	
++++ b/app/src/main/java/com/example/garnet/ListWidgetFactory.java	
+@@ -20,19 +20,21 @@
+         this.context = context;
+     }
+ 
++
+     @Override
+     public void onCreate() {
+-
++        loadData();
+     }
+ 
+     @Override
+     public void onDataSetChanged() {
++        widget_list.clear();
+         loadData();
+     }
+ 
+     @Override
+     public void onDestroy() {
+-
++        widget_list.clear();
+     }
+ 
+     @Override
+@@ -49,17 +51,16 @@
+             return views;
+         }
+         else {
++            String num = String.valueOf(position+1);
+             RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget_link);
+-            views.setTextViewText(R.id.widget_link,widget_list.get(position));
++            views.setTextViewText(R.id.widget_link,num + '.'+' ' + widget_list.get(position));
+             // 创建 Intent 用于删除
++
+             Intent intent = new Intent(context, MyWidgetProvider.class);
+-            intent.setAction("ACTION_DELETE_ITEM");
+-            intent.putExtra("ITEM_POSITION", position); // 传递要删除的项的索引
+-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+-            // 设置复选框的点击事件
+-            views.setOnClickPendingIntent(R.id.widget_link, pendingIntent);
+-            String num = String.valueOf(position);
+-            Log.v("d_robot", num);
++            intent.putExtra(MyWidgetProvider.COLLECTION_VIEW_EXTRA, position);
++            views.setOnClickFillInIntent(R.id.widget_link, intent);
++
++            Log.v("d_robot", num+":"+widget_list.get(position));
+             return views;
+         }
+     }
+@@ -85,7 +86,6 @@
+     }
+ 
+     private void loadData(){
+-        widget_list.clear();
+         GarnetDatabaseHelper widget_helper = new GarnetDatabaseHelper(context);
+         List<HomeItem> widget_items = widget_helper.loadHome();
+         if (widget_items.get(0)!=null){
+Index: app/src/main/res/layout/widget_link.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<CheckBox\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"wrap_content\"\r\n    android:textSize=\"18sp\"\r\n    android:textColor=\"#000000\"\r\n    android:id=\"@+id/widget_link\"/>
+===================================================================
+diff --git a/app/src/main/res/layout/widget_link.xml b/app/src/main/res/layout/widget_link.xml
+--- a/app/src/main/res/layout/widget_link.xml	
++++ b/app/src/main/res/layout/widget_link.xml	
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<CheckBox
++<TextView
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+Index: app/src/main/java/com/example/garnet/MyWidgetProvider.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.garnet;\r\n\r\nimport android.app.AlarmManager;\r\nimport android.app.PendingIntent;\r\nimport android.appwidget.AppWidgetManager;\r\nimport android.appwidget.AppWidgetProvider;\r\nimport android.content.ComponentName;\r\nimport android.content.ContentValues;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.database.sqlite.SQLiteDatabase;\r\nimport android.util.Log;\r\nimport android.widget.ListView;\r\nimport android.widget.RemoteViews;\r\nimport android.widget.Toast;\r\n\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.List;\r\n\r\npublic class MyWidgetProvider extends AppWidgetProvider{\r\n    Calendar calendar = Calendar.getInstance();\r\n    SimpleDateFormat formatter = new SimpleDateFormat(\"YYYY-MM-dd\");\r\n    final String formattedDate = formatter.format(calendar.getTime());\r\n    @Override\r\n    public void onEnabled(Context context) {\r\n        super.onEnabled(context);\r\n        startAlarm(context);\r\n    }\r\n\r\n    private void startAlarm(Context context) {\r\n        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);\r\n        Intent intent = new Intent(context, MyWidgetProvider.class);\r\n        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);\r\n        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);\r\n\r\n        // 设置每 15min 更新一次\r\n        long intervalMillis = 15 * 60 * 1000; // 15min\r\n        long triggerAtMillis = System.currentTimeMillis() + intervalMillis;\r\n\r\n        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, intervalMillis, pendingIntent);\r\n    }\r\n\r\n    @Override\r\n    public void onDisabled(Context context) {\r\n        super.onDisabled(context);\r\n        stopAlarm(context);\r\n    }\r\n\r\n    private void stopAlarm(Context context) {\r\n        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);\r\n        Intent intent = new Intent(context, MyWidgetProvider.class);\r\n        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);\r\n        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);\r\n\r\n        alarmManager.cancel(pendingIntent);\r\n    }\r\n\r\n    @Override\r\n    public void onReceive(Context context, Intent intent) {\r\n        super.onReceive(context, intent);\r\n        if (\"ACTION_DELETE_ITEM\".equals(intent.getAction())) {\r\n            Log.v(\"delete_robot\", \"v: I am testing the delete function.\");\r\n            int position = intent.getIntExtra(\"ITEM_POSITION\", -1);\r\n            if (position != -1) {\r\n                new Thread(()->{\r\n                    // 从数据源中删除对应的项\r\n                    deleteItem(position,context);\r\n                    // 更新小组件\r\n                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);\r\n                    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, MyWidgetProvider.class));\r\n                    onUpdate(context, appWidgetManager, appWidgetIds);  // 更新视图\r\n                }).start();\r\n            }\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {\r\n        for (int appWidgetId : appWidgetIds) {\r\n            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),R.layout.home_widget);\r\n            remoteViews.setTextViewText(R.id.widget_title,formattedDate);\r\n            //获得listview的适配器\r\n            Intent listIntent = new Intent(context, ListWidgetService.class);\r\n            remoteViews.setRemoteAdapter(R.id.widget_lv,listIntent);\r\n\r\n            //点击日期跳转到原应用\r\n            Intent intent = new Intent(context, MainActivity.class);\r\n            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);\r\n            remoteViews.setOnClickPendingIntent(R.id.widget_title, pendingIntent);\r\n\r\n            appWidgetManager.updateAppWidget(appWidgetId,remoteViews);\r\n            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_lv);\r\n            Log.v(\"robot\", \"v: I am testing the log print function.\");\r\n        }\r\n    }\r\n\r\n    private void deleteItem(int position, Context context) {\r\n        GarnetDatabaseHelper widget_helper = new GarnetDatabaseHelper(context);\r\n        List<HomeItem> widget_items = widget_helper.loadHome();\r\n        HomeItem hi = widget_items.get(position);\r\n        widget_helper.updateWidgetStatus(hi);\r\n    }\r\n}
+===================================================================
+diff --git a/app/src/main/java/com/example/garnet/MyWidgetProvider.java b/app/src/main/java/com/example/garnet/MyWidgetProvider.java
+--- a/app/src/main/java/com/example/garnet/MyWidgetProvider.java	
++++ b/app/src/main/java/com/example/garnet/MyWidgetProvider.java	
+@@ -20,6 +20,8 @@
+ import java.util.List;
+ 
+ public class MyWidgetProvider extends AppWidgetProvider{
++    public static final String COLLECTION_VIEW_EXTRA = "com.widget.COLLECTION_VIEW_EXTRA";
++
+     Calendar calendar = Calendar.getInstance();
+     SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-dd");
+     final String formattedDate = formatter.format(calendar.getTime());
+@@ -35,8 +37,8 @@
+         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+ 
+-        // 设置每 15min 更新一次
+-        long intervalMillis = 15 * 60 * 1000; // 15min
++        // 设置每 2min 更新一次
++        long intervalMillis = 2 * 60 * 1000; // 2min
+         long triggerAtMillis = System.currentTimeMillis() + intervalMillis;
+ 
+         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, intervalMillis, pendingIntent);
+@@ -52,7 +54,7 @@
+         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+         Intent intent = new Intent(context, MyWidgetProvider.class);
+         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
++        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+ 
+         alarmManager.cancel(pendingIntent);
+     }
+@@ -60,9 +62,11 @@
+     @Override
+     public void onReceive(Context context, Intent intent) {
+         super.onReceive(context, intent);
++        Log.v("delete_robot", intent.getAction());
+         if ("ACTION_DELETE_ITEM".equals(intent.getAction())) {
+             Log.v("delete_robot", "v: I am testing the delete function.");
+-            int position = intent.getIntExtra("ITEM_POSITION", -1);
++            int position = intent.getIntExtra(COLLECTION_VIEW_EXTRA, -1);
++            Log.v("delete_robot", String.valueOf(position));
+             if (position != -1) {
+                 new Thread(()->{
+                     // 从数据源中删除对应的项
+@@ -87,9 +91,15 @@
+ 
+             //点击日期跳转到原应用
+             Intent intent = new Intent(context, MainActivity.class);
+-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
++            PendingIntent pendingIntent = PendingIntent.getActivity(context, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+             remoteViews.setOnClickPendingIntent(R.id.widget_title, pendingIntent);
+ 
++            //同步更新
++            Intent intentTemplate = new Intent(context, MyWidgetProvider.class);
++            intentTemplate.setAction("ACTION_DELETE_ITEM");
++            PendingIntent pendingIntentTemplate = PendingIntent.getBroadcast(context, 1563298, intentTemplate, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
++            remoteViews.setPendingIntentTemplate(R.id.widget_lv, pendingIntentTemplate);
++
+             appWidgetManager.updateAppWidget(appWidgetId,remoteViews);
+             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_lv);
+             Log.v("robot", "v: I am testing the log print function.");
