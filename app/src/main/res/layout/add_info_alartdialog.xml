@@ -24,7 +24,7 @@
             android:inputType="text"
             android:paddingRight="20dp"
             android:maxLength="20"
-            android:hint="@string/to_hint" />
+            android:hint="请输入标题" />
 
         <TextView
             android:layout_row="1"

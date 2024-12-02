@@ -9,12 +9,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/link" />
+        android:text="@string/link"
+        android:padding="@dimen/padding_inner_tv"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint"
+        android:hint="请输入链接"
         android:maxLines="1"
         android:inputType="text"
         android:id="@+id/link_edit_text"/>
