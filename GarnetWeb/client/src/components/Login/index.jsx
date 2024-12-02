@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import Accordion from 'react-bootstrap/Accordion';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ const Login = () => {
 
       if (response.data.success) {
         setMessage("登录成功！");
-        navigate('/dashboard')
+        navigate("/dashboard");
       } else {
         setMessage("用户名或密码错误！");
       }
