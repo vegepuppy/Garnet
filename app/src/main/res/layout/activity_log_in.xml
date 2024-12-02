@@ -28,14 +28,14 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:hint="User Name"
+        android:hint="用户名"
         android:id="@+id/user_name_et"/>
     <EditText
         android:layout_marginBottom="10dp"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/password_et"
-        android:hint="Password"
+        android:hint="密码"
         android:inputType="textPassword"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/user_name_et"/>
