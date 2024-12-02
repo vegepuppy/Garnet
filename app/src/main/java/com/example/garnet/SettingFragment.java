@@ -18,7 +18,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
@@ -33,15 +32,20 @@ import android.widget.Toast;
 
 
 import com.example.garnet.utils.LogUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -85,9 +89,78 @@ public class SettingFragment extends Fragment {
     }
 
     // 同步所有的数据，目前只是将Android的数据传送给网页
+    // 下面将InfoGroup也传递给网页，并且在网页上按照InfoGroup来显示InfoItem
     private void syncData() {
         uploadInfoItem();
+        uploadInfoGroup();
         uploadTodoItem();
+
+        downloadInfoItem();
+    }
+
+    private void downloadInfoItem() {
+        final String API_URL = "http://10.0.2.2:3001/newinfoitem";
+
+        OkHttpClient client = new OkHttpClient();
+
+        // 创建请求对象
+        Request request = new Request.Builder()
+                .url(API_URL) // 指定后端 URL
+                .build();
+
+        // 异步请求
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // 请求失败处理
+                Log.d("DLD", "onFailure: ");//fyi: "DLD"是DOWNLOAD的缩写
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    // 获取响应体
+                    String responseData = response.body().string();
+                    if (responseData.equals("[]"))return;
+                    // 解析 JSON 数据
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<DataModel>>() {}.getType();
+                    List<DataModel> dataList = gson.fromJson(responseData, listType);
+
+                    Log.d("DLD", "onResponse: " + responseData);
+
+                    for (DataModel dm: dataList) {
+                        WebInfoItem webInfoItem = new WebInfoItem(dm.display, dm.content, dm.belong, InfoItem.LACK_ID);
+                        GarnetDatabaseHelper helper = new GarnetDatabaseHelper(requireActivity());
+                        helper.insertInfoItem(webInfoItem);
+                    }
+
+
+                    Log.d("DLD", "onResponse: ");
+                } else {
+                    Log.d("DLD", "onResponse: " + response.code());
+                }
+            }
+        });
+    }
+
+    // 数据模型类，用于解析 JSON 数据
+    static class DataModel {
+        private int belong;
+        private String content;
+        private String display;
+
+        public int getBelong() {
+            return belong;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public String getDisplay() {
+            return display;
+        }
     }
 
     private void initLogInPart(View rootView) {
@@ -100,7 +173,7 @@ public class SettingFragment extends Fragment {
         });
 
         Button syncDataButton = rootView.findViewById(R.id.sync_button);
-        syncDataButton.setOnClickListener(v ->{
+        syncDataButton.setOnClickListener(v -> {
             syncData();
             // 两个toast，至少看上去同步成功了
             Toast.makeText(requireActivity(), "正在同步数据", Toast.LENGTH_SHORT).show();
@@ -121,12 +194,13 @@ public class SettingFragment extends Fragment {
         }
     }
 
+    // 上传所有的TodoItem
     private void uploadTodoItem() {
         GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
         List<TodoItem> allTodoItems = helper.loadTodo();
 
         JSONArray jsonArray = new JSONArray();
-        for (TodoItem todoItem : allTodoItems){
+        for (TodoItem todoItem : allTodoItems) {
             putTodoItemIntoJson(todoItem, jsonArray);
         }
         OkHttpClient client = new OkHttpClient();
@@ -155,13 +229,13 @@ public class SettingFragment extends Fragment {
         }).start();
     }
 
-    // 同步所有的infoItem和待办
+    // 同步所有的infoItem
     private void uploadInfoItem() {
         GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
         List<InfoGroup> allInfGroup = helper.loadInfoGroup();
 
         JSONArray jsonArray = new JSONArray();
-        for (InfoGroup infoGroup: allInfGroup) {
+        for (InfoGroup infoGroup : allInfGroup) {
             long id = infoGroup.getId();
             List<InfoItem> oneInfoItemList = helper.loadInfo(id);
             for (InfoItem infoItem : oneInfoItemList) {
@@ -194,6 +268,53 @@ public class SettingFragment extends Fragment {
         }).start();
     }
 
+    // 上传所有的InfoGroup
+    // TODO: 2024-12-01 这里应该和InfoItem的同步放在一起耦合的，因为InfoItem必须有一个belong
+    private void uploadInfoGroup() {
+        GarnetDatabaseHelper helper = new GarnetDatabaseHelper(getContext());
+        List<InfoGroup> allInfGroup = helper.loadInfoGroup();
+
+        JSONArray jsonArray = new JSONArray();
+        for (InfoGroup infoGroup : allInfGroup) {
+            putInfoGroupIntoJson(infoGroup, jsonArray);
+        }
+        OkHttpClient client = new OkHttpClient();
+
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        RequestBody requestBody = RequestBody.create(JSON, jsonArray.toString());
+
+        String url = "http://10.0.2.2:3001/infogroup";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        new Thread(() -> {
+            try {
+                Response response = client.newCall(request).execute();
+                String message = response.isSuccessful() ? response.body().string() : "Error: " + response.code();
+//                runOnUiThread(() -> Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show());
+                LogUtils.logWeb(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+//                runOnUiThread(() -> Toast.makeText(requireContext(), "An error occurred", Toast.LENGTH_SHORT).show());
+                LogUtils.logWeb("error occurred");
+            }
+        }).start();
+    }
+
+    private void putInfoGroupIntoJson(InfoGroup infoGroup, JSONArray jsonArray) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("id", infoGroup.getId());
+            jsonObject.put("name", infoGroup.getName());
+        } catch (Exception e) {
+            Log.e("TAG", "putInfoGroupIntoJson: error occurred");
+        }
+        jsonArray.put(jsonObject);
+    }
+
     private void putInfoItemIntoJson(InfoItem infoItem, JSONArray jsonArray) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -207,14 +328,14 @@ public class SettingFragment extends Fragment {
         jsonArray.put(jsonObject);
     }
 
-    private void putTodoItemIntoJson(TodoItem todoItem, JSONArray jsonArray){
+    private void putTodoItemIntoJson(TodoItem todoItem, JSONArray jsonArray) {
         JSONObject jsonObject = new JSONObject();
-        try{
+        try {
             jsonObject.put("id", todoItem.getId());
             jsonObject.put("duedate", todoItem.getDueDate());
             jsonObject.put("done", todoItem.isDone());
             jsonObject.put("task", todoItem.getTask());
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("TAG", "putTodoItemIntoJson: error occurred in putting in JSON.");
         }
         jsonArray.put(jsonObject);
@@ -328,11 +449,11 @@ public class SettingFragment extends Fragment {
                     Log.d("NOTI", "turned on notification");
                     if (checkNotificationPermissions(requireActivity())) {
                         scheduleDailyNotification(pendingIntent);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,true);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, true);
                         weeklyNotificationSwitchCompat.setChecked(true);
-                    }else{
+                    } else {
                         weeklyNotificationSwitchCompat.setChecked(false);
-                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION,false);
+                        editor.putBoolean(PREF_WEEKLY_NOTIFICATION, false);
                     }
                 } else {
                     Log.d("NOTI", "turned off notification");
