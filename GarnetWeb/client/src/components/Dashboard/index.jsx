@@ -1,5 +1,5 @@
 import {useState} from "react";
-import InfoItemDisplay from "../InfoItemsDisplay";
+import InfoItemDisplay from "../InfoGroupDisplay";
 import TodoItemDisplay from "../TodoItemsDisplay";
 import {Container, Nav, Navbar} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css"

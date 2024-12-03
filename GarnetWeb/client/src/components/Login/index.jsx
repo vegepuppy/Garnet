@@ -5,7 +5,6 @@ import {Button} from "react-bootstrap";
 import {Form} from "react-bootstrap";
 import {FloatingLabel} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css';
-import Accordion from 'react-bootstrap/Accordion';
 
 const Login = () => {
   const [username, setUsername] = useState("");
