@@ -5,7 +5,7 @@ import {Button} from "react-bootstrap";
 import {Form} from "react-bootstrap";
 import {FloatingLabel} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css';
-
+import Accordion from 'react-bootstrap/Accordion';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -25,7 +25,7 @@ const Login = () => {
 
       if (response.data.success) {
         setMessage("登录成功！");
-        navigate('/dashboard')
+        navigate("/dashboard");
       } else {
         setMessage("用户名或密码错误！");
       }
