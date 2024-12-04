@@ -36,7 +36,7 @@ export default function InfoGroupDisplay() {
 
   return (
     <>
-      <h1>InfoItems</h1>
+      <h1>资料列表</h1>
       <Accordion className="w-100 min-vw-62" defaultActiveKey="0">
         {allInfoGroup.map((item) => (
           <OneInfoGroup infoGroup={item} key={item.id}/>

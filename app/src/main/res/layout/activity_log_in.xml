@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/icon_note"
         android:layout_centerHorizontal="true"
         android:id="@+id/app_icon_image_view"
         android:layout_above="@+id/login_tv" />
