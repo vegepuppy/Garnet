@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import OneInfoGroup from "../OneInfoGroup";
+import "bootstrap/dist/css/bootstrap.css"
+import "../../App.css"
+import {Accordion} from "react-bootstrap";
+
 
 export default function InfoGroupDisplay() {
   const [loading, setLoading] = useState(true); //要改！！！！！！！！！！！
@@ -28,14 +32,16 @@ export default function InfoGroupDisplay() {
   if (loading) return <div>loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+    console.log("allInfoGroup:", allInfoGroup);
+
   return (
     <>
       <h1>InfoItems</h1>
-      <div>
+      <Accordion className="w-100 min-vw-62" defaultActiveKey="0">
         {allInfoGroup.map((item) => (
           <OneInfoGroup infoGroup={item} key={item.id}/>
         ))}
-      </div>
+      </Accordion>
     </>
   );
 }
