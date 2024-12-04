@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import {Button} from "react-bootstrap";
+import {Form} from "react-bootstrap";
+import {FloatingLabel} from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.css';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -20,7 +24,7 @@ const Login = () => {
 
       if (response.data.success) {
         setMessage("登录成功！");
-        navigate('/dashboard')
+        navigate("/dashboard");
       } else {
         setMessage("用户名或密码错误！");
       }
@@ -31,31 +35,28 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>用户登录</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          用户名:
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
+    <div >
+      <Form onSubmit={handleSubmit} className="w-auto">
+        <h3>登录Garnet</h3>
+        <FloatingLabel label="用户名" controlId="floatingInput" className="mb-3">
+          <Form.Control
+              type="text"
+              onChange={e => setUsername(e.target.value)}
+              value={username}
+              placeholder="Username"
+              required/>
+        </FloatingLabel>
+        <FloatingLabel label="密码" controlId="floatingPassword" className={"mb-3"}>
+          <Form.Control
+              type="password"
+              value={password}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              required
           />
-        </label>
-        <br />
-        <label>
-          密码:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">登录</button>
-      </form>
+        </FloatingLabel>
+        <Button type="submit" size="lg" variant="outline-primary">登录</Button>
+      </Form>
       {message && <p>{message}</p>}
     </div>
   );
