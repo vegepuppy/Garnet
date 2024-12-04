@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.min-vw-62{
+  min-width: 40vw
+}
+
