@@ -16,10 +16,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon_note"
         android:label="@string/app_name"
         android:usesCleartextTraffic="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/icon_note"
         android:supportsRtl="true"
         android:theme="@style/Theme.Garnet"
         tools:targetApi="31">
